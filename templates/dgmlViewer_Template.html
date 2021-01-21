@@ -1,0 +1,41 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src cspSource; script-src 'nonce-nonce';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link href="dgmlViewer.css" rel="stylesheet">
+
+  <script type="text/javascript" src="vis-network.min.js"></script>
+
+</head>
+
+<body>
+  <div id="buttons">
+    <input type="button" id="saveAsPngButton" value="Save as png">
+    <input type="button" id="saveSelectionAsPngButton" value="Save selection as png">
+    <input type="button" id="copyToClipboardButton" value="Copy to clipboard">
+    <div id="hierarchical">Change layout:<input type="checkbox" id="showHierarchicalOptions"></div>
+    <div id="hierarchicalOptions_direction">
+      Direction: <select id="direction">
+        <option value="UD">Up-Down</option>
+        <option value="DU">Down-Up</option>
+        <option value="LR">Left-Right</option>
+        <option value="RL">Right-Left</option>
+      </select>
+    </div>
+    <div id="hierarchicalOptions_sortmethod">
+      Sort method: <select id="sortMethod">
+        <option value="hubsize">Hub size</option>
+        <option value="directed">Directed</option>
+      </select>
+    </div>
+    <div id="helpText">Click and drag to select the area to be saved.</div>
+  </div>
+  <div id="selectionLayer" class="fullScreen"><canvas id="captureCanvas"></canvas></div>
+  <div id="network" class="fullScreen"></div>
+  <script type="text/javascript" src="dgmlViewer.js"></script>
+</body>
+
+</html>
