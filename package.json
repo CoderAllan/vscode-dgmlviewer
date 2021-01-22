@@ -10,7 +10,11 @@
     "vscode": "^1.52.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "dgml"
   ],
   "activationEvents": [
     "onCommand:vscode-dgmlviewer.dgmlViewer",
