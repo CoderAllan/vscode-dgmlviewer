@@ -116,19 +116,21 @@ export class DgmlViewer {
   }
 
   private convertGraphDirectionToVisLayoutValues(directedGraph: IDirectedGraph): string {
-    let direction: string = 'LR';
-    switch(directedGraph.graphDirection.toLowerCase()) {
-      case 'lefttoright': direction = 'LR'; break;
-      case 'righttoleft': direction = 'RL'; break;
-      case 'toptobottom': direction = 'UD'; break;
-      case 'bottomtotop': direction = 'DU'; break;
-      default: direction = 'LR'; break;
+    let direction: string = '';
+    if (directedGraph.graphDirection !== undefined) {
+      switch (directedGraph.graphDirection.toLowerCase()) {
+        case 'lefttoright': direction = 'LR'; break;
+        case 'righttoleft': direction = 'RL'; break;
+        case 'toptobottom': direction = 'UD'; break;
+        case 'bottomtotop': direction = 'DU'; break;
+        default: direction = 'LR'; break;
+      }
     }
     return direction;
-}
+  }
 
   private getDirectedGraphLayoutJs(directedGraph: IDirectedGraph): string {
-    if(directedGraph.graphDirection !== undefined) {
+    if (directedGraph.graphDirection !== undefined) {
       let direction: string = this.convertGraphDirectionToVisLayoutValues(directedGraph);
       return `hierarchical: {enabled: true, direction: '${direction}', sortMethod: 'hubsize' }`;
     }
