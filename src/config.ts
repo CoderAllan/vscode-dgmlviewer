@@ -15,7 +15,6 @@ export class Config {
     return value as T;
   }
 
-  public get dgmlGraphDirection(): string { return this.getSetting<string>('dgmlViewer.graphDirection', 'LeftToRight'); }
   public readonly dgmlZoomLevel = '-1';
   public get defaultNodeBackgroundColor(): string { return this.getSetting<string>('dgmlViewer.defaultNodeBackgroundColor', '#D2E5FF'); }
   public get nodeShape(): string { return this.getSetting<string>('dgmlViewer.nodeShape', 'box'); }

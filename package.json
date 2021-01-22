@@ -26,88 +26,77 @@
         "command": "vscode-dgmlviewer.dgmlFileInfo",
         "title": "DGMLViewer: Show file info"
       }
-    ]
-  },
-  "configuration": {
-    "title": "DGMLViewer",
-    "properties": {
-      "dgmlViewer.dgmlViewer.graphDirection": {
-        "type": "string",
-        "default": "LeftToRight",
-        "enum": [
-          "TopToBottom",
-          "BottomToTop",
-          "LeftToRight",
-          "RightToLeft"
-        ],
-        "description": "This will make the layout algorithm position the directed graph nodes in the specified direction."
-      },
-      "dgmlViewer.dgmlViewer.defaultNodeBackgroundColor": {
-        "type": "string",
-        "default": "#D2E5FF",
-        "description": "The color of the nodes of the directed graph. The string should be in rgb format."
-      },
-      "dgmlViewer.dgmlViewer.edgeArrowToType": {
-        "type": "string",
-        "default": "triangle",
-        "enum": [
-          "arrow",
-          "bar",
-          "box",
-          "circle",
-          "crow",
-          "curve",
-          "diamond",
-          "inv_curve",
-          "inv_triangle",
-          "triangle",
-          "vee"
-        ],
-        "description": "The default ending of the edges."
-      },
-      "dgmlViewer.dgmlViewer.nodeShape": {
-        "type": "string",
-        "default": "box",
-        "enum": [
-          "ellipse",
-          "circle",
-          "database",
-          "box",
-          "text",
-          "diamond",
-          "dot",
-          "star",
-          "triangle",
-          "triangleDown",
-          "hexagon",
-          "square "
-        ],
-        "description": "The shape of the nodes in the directed graph. Notice that 'ellipse','circle','database','box' and 'text' have the label inside the shape, the rest have the label outside the shape."
-      },
-      "dgmlViewer.dgmlViewer.graphSelectionGuidelineColor": {
-        "type": "string",
-        "default": "blue",
-        "description": "The color of the guidelines used when selecting part of a directed graph. The string should be in rgba format or standard css color names."
-      },
-      "dgmlViewer.dgmlViewer.graphSelectionGuidelineWidth": {
-        "type": "number",
-        "default": "1",
-        "description": "The width of the guide lines shown when selecting part of a directed graph"
-      },
-      "dgmlViewer.dgmlViewer.graphSelectionColor": {
-        "type": "string",
-        "default": "red",
-        "description": "The color of the selection rectangle used when selecting part of a directed graph. The string should be in rgba format or standard css color names."
-      },
-      "dgmlViewer.dgmlViewer.graphSelectionWidth": {
-        "type": "number",
-        "default": "2",
-        "description": "The width of the selection rectangle shown when selecting part of a directed graph"
-      },
-      "dgmlViewer.dgmlViewer.pngFilename": {
-        "type": "string",
-        "default": "DirectedGraph.png",
-        "description": "The default name used when saving the directed grap to a Png file."
+    ],
+    "configuration": {
+      "title": "DGMLViewer",
+      "properties": {
+        "dgmlViewer.dgmlViewer.defaultNodeBackgroundColor": {
+          "type": "string",
+          "default": "#D2E5FF",
+          "description": "The color of the nodes of the directed graph. The string should be in rgb format."
+        },
+        "dgmlViewer.dgmlViewer.edgeArrowToType": {
+          "type": "string",
+          "default": "triangle",
+          "enum": [
+            "arrow",
+            "bar",
+            "box",
+            "circle",
+            "crow",
+            "curve",
+            "diamond",
+            "inv_curve",
+            "inv_triangle",
+            "triangle",
+            "vee"
+          ],
+          "description": "The default ending of the edges."
+        },
+        "dgmlViewer.dgmlViewer.nodeShape": {
+          "type": "string",
+          "default": "box",
+          "enum": [
+            "ellipse",
+            "circle",
+            "database",
+            "box",
+            "text",
+            "diamond",
+            "dot",
+            "star",
+            "triangle",
+            "triangleDown",
+            "hexagon",
+            "square "
+          ],
+          "description": "The shape of the nodes in the directed graph. Notice that 'ellipse','circle','database','box' and 'text' have the label inside the shape, the rest have the label outside the shape."
+        },
+        "dgmlViewer.dgmlViewer.graphSelectionGuidelineColor": {
+          "type": "string",
+          "default": "blue",
+          "description": "The color of the guidelines used when selecting part of a directed graph. The string should be in rgba format or standard css color names."
+        },
+        "dgmlViewer.dgmlViewer.graphSelectionGuidelineWidth": {
+          "type": "number",
+          "default": "1",
+          "description": "The width of the guide lines shown when selecting part of a directed graph"
+        },
+        "dgmlViewer.dgmlViewer.graphSelectionColor": {
+          "type": "string",
+          "default": "red",
+          "description": "The color of the selection rectangle used when selecting part of a directed graph. The string should be in rgba format or standard css color names."
+        },
+        "dgmlViewer.dgmlViewer.graphSelectionWidth": {
+          "type": "number",
+          "default": "2",
+          "description": "The width of the selection rectangle shown when selecting part of a directed graph"
+        },
+        "dgmlViewer.dgmlViewer.pngFilename": {
+          "type": "string",
+          "default": "DirectedGraph.png",
+          "description": "The default name used when saving the directed graph to a Png file."
+        }
       }
     }
   },
