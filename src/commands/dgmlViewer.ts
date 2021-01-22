@@ -78,6 +78,7 @@ export class DgmlViewer {
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
     jsContent = jsContent.replace('selectionCanvasContext.lineWidth = 2;', `selectionCanvasContext.lineWidth = ${this.config.graphSelectionWidth};`);
+    jsContent = jsContent.replace("var defaultGraphDirection = ''; // The graph direction from the dgml file itself", `var defaultGraphDirection = '${this.convertGraphDirectionToVisLayoutValues(directedGraph)}'; // The graph direction from the dgml file itself`);
     jsContent = jsContent.replace('layout: {} // The layout of the directed graph', `layout: {${this.getDirectedGraphLayoutJs(directedGraph)}} // The layout of the directed graph`);
     return jsContent;
   }
@@ -114,17 +115,22 @@ export class DgmlViewer {
     return text;
   }
 
+  private convertGraphDirectionToVisLayoutValues(directedGraph: IDirectedGraph): string {
+    let direction: string = 'LR';
+    switch(directedGraph.graphDirection.toLowerCase()) {
+      case 'lefttoright': direction = 'LR'; break;
+      case 'righttoleft': direction = 'RL'; break;
+      case 'toptobottom': direction = 'UD'; break;
+      case 'bottomtotop': direction = 'DU'; break;
+      default: direction = 'LR'; break;
+    }
+    return direction;
+}
+
   private getDirectedGraphLayoutJs(directedGraph: IDirectedGraph): string {
     if(directedGraph.graphDirection !== undefined) {
-      let direction: string = 'LR';
-      switch(directedGraph.graphDirection.toLowerCase()) {
-        case 'lefttoright': direction = 'LR'; break;
-        case 'righttoleft': direction = 'RL'; break;
-        case 'toptobottom': direction = 'UD'; break;
-        case 'bottomtotop': direction = 'DU'; break;
-        default: direction = 'LR'; break;
-      }
-      return "hierarchical: {enabled: true, direction: '', sortMethod: 'hubsize' }";
+      let direction: string = this.convertGraphDirectionToVisLayoutValues(directedGraph);
+      return `hierarchical: {enabled: true, direction: '${direction}', sortMethod: 'hubsize' }`;
     }
     return '';
   }
