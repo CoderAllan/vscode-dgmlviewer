@@ -1,8 +1,10 @@
 # DGMLViewer - Visual Studio Code extension
 
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/coderAllan.vscode-dgmlviewer) ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/coderAllan.vscode-dgmlviewer) ![GitHub top language](https://img.shields.io/github/languages/top/CoderAllan/vscode-dgmlviewer.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/CoderAllan/vscode-dgmlviewer.svg) ![GitHub](https://img.shields.io/github/license/CoderAllan/vscode-dgmlviewer.svg)
+
 The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) can be used to visualize things like processes, hierarchies flows and many other things.
 
-This extension for Visual Studio Code can be used to render a *.dgml file into a graphical representation of the graph.
+This extension for Visual Studio Code can be used to render a *.dgml file into a graphical representation of the graph. Find it on the [Visual Studio Code marketplace](https://marketplace.visualstudio.com/items?itemName=coderAllan.vscode-dgmlviewer).
 
 ## Visualize DGML files
 
