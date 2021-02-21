@@ -4,7 +4,7 @@
   "displayName": "DGMLViewer",
   "description": "DGMLViewer is viewer for dgml (Directed Graph Markup Language) files",
   "icon": "icon.png",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "repository": "https://github.com/CoderAllan/vscode-dgmlviewer",
   "engines": {
     "vscode": "^1.53.0"
@@ -20,7 +20,7 @@
     "onCommand:vscode-dgmlviewer.dgmlViewer",
     "onCommand:vscode-dgmlviewer.dgmlFileInfo"
   ],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
@@ -106,7 +106,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./ && tscpaths -p ./tsconfig.json -s ./src -o ./out",
     "lint": "eslint src --ext ts",
     "watch": "tsc -p ./ && tscpaths -p ./tsconfig.json -s ./src -o ./out && tsc -watch -p ./",
@@ -116,16 +118,19 @@
   "devDependencies": {
     "@types/glob": "^7.1.3",
     "@types/mocha": "^8.2.1",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
+    "@types/node": "^14.14.31",
     "@types/vscode": "^1.53.0",
-    "@types/node": "^14.14.30",
-    "glob": "^7.1.6",
+    "@typescript-eslint/eslint-plugin": "^4.15.1",
     "@typescript-eslint/parser": "^4.15.1",
     "eslint": "^7.20.0",
+    "glob": "^7.1.6",
     "mocha": "^8.3.0",
+    "ts-loader": "^8.0.17",
     "tscpaths": "0.0.9",
     "typescript": "^4.1.5",
-    "vscode-test": "^1.5.1"
+    "vscode-test": "^1.5.1",
+    "webpack": "^5.23.0",
+    "webpack-cli": "^4.5.0"
   },
   "dependencies": {
     "js-base64": "^3.6.0",

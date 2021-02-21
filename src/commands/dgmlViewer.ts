@@ -50,9 +50,9 @@ export class DgmlViewer {
             const outputJsFilename = DgmlViewer._name + '.js';
             let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
 
-            this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('out', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
+            this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
             this.fsUtils.writeFile(
-              this.extensionContext?.asAbsolutePath(path.join('out', outputJsFilename)),
+              this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)),
               jsContent,
               () => {
                 webview.html = htmlContent;
@@ -100,7 +100,7 @@ export class DgmlViewer {
     htmlContent = htmlContent.replace(/<script /g, `<script nonce="${nonce}" `);
     htmlContent = htmlContent.replace('cspSource', webview.cspSource);
 
-    const jsPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'out', outputJsFilename);
+    const jsPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, outputJsFilename);
     const jsUri = webview.asWebviewUri(jsPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.js', jsUri.toString());
     return htmlContent;
