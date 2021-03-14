@@ -38,8 +38,10 @@ export class Node {
   public toJsString(): string {
     const jsStringProperties: string[] = [];
     if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
-    if (this.label !== undefined) { jsStringProperties.push(`label: "${this.label}"`); }
-    if (this.description !== undefined) { jsStringProperties.push(`title: "${this.description}"`); }
+    const label = this.convertNewlines(this.label);
+    if (this.label !== undefined) { jsStringProperties.push(`label: "${label}"`); }
+    const description = this.convertNewlines(this.description);
+    if (this.description !== undefined) { jsStringProperties.push(`title: "${description}"`); }
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`); }
     const jsStringColorProperties: string[] = [];
     if (this.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.stroke}"`); }
@@ -48,5 +50,15 @@ export class Node {
     if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.categoryRef.stroke}"`); }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
     return `{${jsStringProperties.join(', ')}}`;
+  }
+
+  private convertNewlines(text: string | undefined): string {
+    if(text === undefined) {
+      return '';
+    }
+    text = text.replace('&#xD;&#xA;', '\\n');
+    text = text.replace('&#xA;', '\\n');
+    text = text.replace('&#xD;', '\\n');
+    return text;
   }
 }
