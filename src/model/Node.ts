@@ -29,6 +29,11 @@ export class Node {
   public maxWidth: number | undefined;
   public nodeRadius: number | undefined;
   // CodeSchemaAttributes - Not included
+  // Visual Studio generated properties
+  public boundsX: number | undefined;
+  public boundsY: number | undefined;
+  public boundsWidth: number | undefined;
+  public boundsHeight: number | undefined;
 
   private categoryRef: ICategory | undefined;
   public setCategoryRef(categoryRef: ICategory | undefined) {
@@ -39,7 +44,11 @@ export class Node {
     const jsStringProperties: string[] = [];
     if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
     const label = this.convertNewlines(this.label);
-    if (this.label !== undefined) { jsStringProperties.push(`label: "${label}"`); }
+    if (this.label !== undefined) {
+      jsStringProperties.push(`label: "${label}"`);
+    } else {
+      jsStringProperties.push(`label: "${this.id}"`);
+    }
     const description = this.convertNewlines(this.description);
     if (this.description !== undefined) { jsStringProperties.push(`title: "${description}"`); }
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`); }
@@ -49,11 +58,12 @@ export class Node {
     if (this.categoryRef !== undefined && this.background === undefined && this.categoryRef.background !== undefined) { jsStringColorProperties.push(`background: "${this.categoryRef.background}"`); }
     if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.categoryRef.stroke}"`); }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
+    if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
     return `{${jsStringProperties.join(', ')}}`;
   }
 
   private convertNewlines(text: string | undefined): string {
-    if(text === undefined) {
+    if(text === undefined || text.length === 0) {
       return '';
     }
     text = text.replace('&#xD;&#xA;', '\\n');

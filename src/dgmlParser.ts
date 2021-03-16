@@ -101,7 +101,16 @@ export class DgmlParser {
           if (newNode.category === undefined) {
             newNode.category = this.createCategoryRef(xmlNode);
           }
-          nodes.push(newNode);
+          if (attributesCopy['bounds'] !== undefined && attributesCopy['bounds'].indexOf(',') !== -1) {
+            const bounds = attributesCopy['bounds'].split(',');
+            newNode.boundsX =  +bounds[0];
+            newNode.boundsY =  +bounds[1];
+            newNode.boundsWidth =  +bounds[2];
+            newNode.boundsHeight =  +bounds[3];
+          }
+          if (nodes.filter(n => n.id === newNode.id).length === 0) {
+            nodes.push(newNode);
+          }
         }
       });
     }
