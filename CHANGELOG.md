@@ -1,6 +1,12 @@
 # Change Log
 
-## Version 1.0.4
+## Version 1.1.0
+
+- New layout: Fixed. If the nodes in the dgml file has bounds-attributes then the nodes are laid out using these coordinates.
+- Bugfix: The parsing of the dgml file no longer fails if the dgml file contains multiple nodes with the same id.
+- Bugfix: If the nodes in the dgml file does not have a label attribute, then the id attribute value is used for the graph label.
+
+- ## Version 1.0.4
 
 - Newlines in label and description are now rendered correctly.
 
