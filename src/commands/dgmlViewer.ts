@@ -134,7 +134,7 @@ export class DgmlViewer {
       let direction: string = this.convertGraphDirectionToVisLayoutValues(directedGraph);
       return `hierarchical: {enabled: true, direction: '${direction}', sortMethod: 'hubsize' }`;
     }
-    return '';
+    return 'hierarchical: { enabled: false }';
   }
 
   private saveAsPng(messageText: string) {

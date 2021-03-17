@@ -1,5 +1,6 @@
 (function () {
   var nodes = new vis.DataSet([]);
+  var nodeCoordinates = [];
 
   nodes.forEach(nodeId => {
     nodes.get(nodeId).color = {
@@ -35,8 +36,9 @@
   var defaultGraphDirection = ''; // The graph direction from the dgml file itself
   setDefaultGraphDirection();
   var container = document.getElementById('network');
+  var seed = Math.random();
+  options.layout.randomSeed = seed;
   var network = new vis.Network(container, data, options);
-  var seed = network.getSeed();
   network.on("stabilizationIterationsDone", function () {
     network.setOptions( { physics: false } );
   });
@@ -258,10 +260,32 @@
 
   function setDefaultGraphDirection() {
     const hierarchicalOptionsDirection = document.getElementById('direction');
+    let selectedOption = '';
+    selectedOption = defaultGraphDirection === '' ? 'Fixed' : defaultGraphDirection;
     for (var i, j = 0; i = hierarchicalOptionsDirection.options[j]; j++) {
-      if (i.value === defaultGraphDirection) {
+      if (i.value === selectedOption) {
         hierarchicalOptionsDirection.selectedIndex = j;
         break;
+      }
+    }
+  }
+
+  function storeCoordinates(node) {
+    if(node.x !== undefined && node.y !== undefined) {
+      nodeCoordinates[node.id] = { x: node.x, y: node.y };
+    }
+    delete node.x;
+    delete node.y;
+    delete node.fixed;
+  }
+
+  function restoreCoordinates(node) {
+    if (node.id in nodeCoordinates) {
+      var nodeCoords = nodeCoordinates[node.id];
+      if (nodeCoords.x !== undefined && nodeCoords.y !== undefined) {
+        node.x = nodeCoords.x;
+        node.y = nodeCoords.y;
+        node.fixed = { x: true, y: true};
       }
     }
   }
@@ -276,8 +300,12 @@
     const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
     if (showHierarchicalOptionsCheckbox.checked) {
       if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
-        options.layout = {};
+        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id) ));
+        options.layout = { hierarchical: { enabled: false } };
         seed = Math.random();
+      } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Fixed') {
+        options.layout = { hierarchical: { enabled: false } };
+        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)) );
       } else {
         options.layout = {
           hierarchical: {
@@ -289,7 +317,8 @@
       }
     } else {
       if (defaultGraphDirection === '') {
-        options.layout = {};
+        options.layout = { hierarchical: { enabled: false } };
+        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)) );
       } else {
         options.layout = {
           hierarchical: {
@@ -298,9 +327,19 @@
             sortMethod: 'hubsize'
           }
         };
+        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id) ));
       }
     }
     options.layout.randomSeed = seed;
+    network.setOptions( { 
+      physics: {
+        enabled: true,
+        solver: 'repulsion'
+      } 
+    });
+    nodes.getIds().forEach(id => {
+      const node = nodes.get(id);
+    });
     network = new vis.Network(container, data, options);
     network.on("stabilizationIterationsDone", function () {
       network.setOptions( { physics: false } );
