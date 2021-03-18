@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.1.1
+
+- The width and height from the bounds-attribute on the nodes are now used if the attribute is present.
+
 ## Version 1.1.0
 
 - New layout: Fixed. If the nodes in the dgml file has bounds-attributes then the nodes are laid out using these coordinates.

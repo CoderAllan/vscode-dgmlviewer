@@ -59,6 +59,8 @@ export class Node {
     if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.categoryRef.stroke}"`); }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
     if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
+    if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`) }
+    if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`) }
     return `{${jsStringProperties.join(', ')}}`;
   }
 
