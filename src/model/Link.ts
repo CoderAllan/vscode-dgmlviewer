@@ -1,6 +1,7 @@
 import { ICategory } from '@model';
+import { BaseElement } from './BaseElement';
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
-export class Link {
+export class Link extends BaseElement {
   public source: string | undefined;
   public target: string | undefined;
   public category: string | undefined;
@@ -32,8 +33,8 @@ export class Link {
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`width: ${this.strokeThickness}`); }
     if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
     const jsStringColorProperties: string[] = [];
-    if (this.stroke !== undefined) { jsStringColorProperties.push(`color: "${this.stroke}"`); }
-    if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.background !== undefined) { jsStringProperties.push(`color: "${this.categoryRef.background}"`); }
+    if (this.stroke !== undefined) { jsStringColorProperties.push(`color: "${this.convertColorValue(this.stroke)}"`); }
+    if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.background !== undefined) { jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.background)}"`); }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
     return `{${jsStringProperties.join(', ')}}`;
   }

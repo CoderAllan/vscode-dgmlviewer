@@ -3,6 +3,7 @@
 ## Version 1.1.1
 
 - The width and height from the bounds-attribute on the nodes are now used if the attribute is present.
+- Bugfix: Nodes and Edges was not colored correctly when the background tag used the format #aarrggbb.
 
 ## Version 1.1.0
 

@@ -1,7 +1,8 @@
 import { ICategory } from "@model";
+import { BaseElement } from "./BaseElement";
 
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
-export class Node {
+export class Node extends BaseElement {
   public id: string | undefined;
   public category: string | undefined;
   public description: string | undefined;
@@ -54,13 +55,13 @@ export class Node {
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`); }
     const jsStringColorProperties: string[] = [];
     if (this.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.stroke}"`); }
-    if (this.background !== undefined) { jsStringColorProperties.push(`background: "${this.background}"`); }
-    if (this.categoryRef !== undefined && this.background === undefined && this.categoryRef.background !== undefined) { jsStringColorProperties.push(`background: "${this.categoryRef.background}"`); }
-    if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.categoryRef.stroke}"`); }
+    if (this.background !== undefined) { jsStringColorProperties.push(`background: "${this.convertColorValue(this.background)}"`); }
+    if (this.categoryRef !== undefined && this.background === undefined && this.categoryRef.background !== undefined) { jsStringColorProperties.push(`background: "${this.convertColorValue(this.categoryRef.background)}"`); }
+    if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.convertColorValue(this.categoryRef.stroke)}"`); }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
     if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
-    if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`) }
-    if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`) }
+    if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`); }
+    if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`); }
     return `{${jsStringProperties.join(', ')}}`;
   }
 
