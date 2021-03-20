@@ -296,54 +296,38 @@
     const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
     hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
     hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
-    const hierarchicalOptionsDirectionSelect = document.getElementById('direction');
-    const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
+
+    options.layout.hierarchical = {
+      enabled: false
+    };
+    options.physics = {
+      enabled: true,
+      solver: 'repulsion'
+    };
     if (showHierarchicalOptionsCheckbox.checked) {
+      const hierarchicalOptionsDirectionSelect = document.getElementById('direction');
       if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
-        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id) ));
-        options.layout = { hierarchical: { enabled: false } };
+        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
         seed = Math.random();
+        options.layout.randomSeed = seed;
       } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Fixed') {
-        options.layout = { hierarchical: { enabled: false } };
-        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)) );
+        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
       } else {
-        options.layout = {
-          hierarchical: {
-            enabled: true,
-            direction: hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection,
-            sortMethod: hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize'
-          }
+        const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
+        options.layout.hierarchical = {
+          enabled: true,
+          direction: hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection,
+          sortMethod: hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize'
         };
       }
     } else {
-      if (defaultGraphDirection === '') {
-        options.layout = { hierarchical: { enabled: false } };
-        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)) );
-      } else {
-        options.layout = {
-          hierarchical: {
-            enabled: true,
-            direction: defaultGraphDirection,
-            sortMethod: 'hubsize'
-          }
-        };
-        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id) ));
-      }
+      nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
     }
-    options.layout.randomSeed = seed;
-    network.setOptions( { 
-      physics: {
-        enabled: true,
-        solver: 'repulsion'
-      } 
-    });
-    nodes.getIds().forEach(id => {
-      const node = nodes.get(id);
-    });
     network = new vis.Network(container, data, options);
     network.on("stabilizationIterationsDone", function () {
-      network.setOptions( { physics: false } );
+      network.setOptions({
+        physics: false
+      });
     });
   }
-
 }());
