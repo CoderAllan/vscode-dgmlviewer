@@ -16,15 +16,11 @@
   };
   var edges = new vis.DataSet([]);
 
-  var data = {
+  let data = {
     nodes: nodes,
     edges: edges
   };
-  var options = {
-    physics: {
-      enabled: true,
-      solver: 'repulsion'
-    },
+  const options = {
     edges: {
       smooth: false // Make edges straight lines.
     },
@@ -33,43 +29,39 @@
     },
     layout: {} // The layout of the directed graph
   };
-  var defaultGraphDirection = ''; // The graph direction from the dgml file itself
-  setDefaultGraphDirection();
-  var container = document.getElementById('network');
-  var seed = Math.random();
-  options.layout.randomSeed = seed;
-  var network = new vis.Network(container, data, options);
-  network.on("stabilizationIterationsDone", function () {
-    network.setOptions( { physics: false } );
-  });
-
-  const vscode = acquireVsCodeApi();
+  let defaultGraphDirection = ''; // The graph direction from the dgml file itself
+  const container = document.getElementById('network');
+  const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
+  const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
+  const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
+  const hierarchicalOptionsDirectionSelect = document.getElementById('direction');
+  const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
+  const saveAsPngButton = document.getElementById('saveAsPngButton');
+  const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
+  const copyToClipboardButton = document.getElementById('copyToClipboardButton');
+  const graphDiv = document.getElementById('network');
+  const selectionLayer = document.getElementById('selectionLayer');
   const helpTextDiv = document.getElementById('helpText');
+  showHierarchicalOptions();
+  
+  const vscode = acquireVsCodeApi();
   let lastMouseX = lastMouseY = 0;
   let mouseX = mouseY = 0;
   let selection;
   // get the vis.js canvas
-  var graphDiv = document.getElementById('network');
   var visDiv = graphDiv.firstElementChild;
   var graphCanvas = visDiv.firstElementChild;
-  const selectionLayer = document.getElementById('selectionLayer');
   const selectionCanvas = selectionLayer.firstElementChild;
   let selectionCanvasContext;
 
   // add button event listeners
-  const saveAsPngButton = document.getElementById('saveAsPngButton');
   saveAsPngButton.addEventListener('click', saveAsPng);
-  const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
   saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
-  const copyToClipboardButton = document.getElementById('copyToClipboardButton');
   copyToClipboardButton.addEventListener('click', copyToClipboard);
   copyToClipboardButton.style['display'] = 'none'; // TODO: Remove when copyToClipboard is implemented
-  const showHierarchicalOptionsButton = document.getElementById('showHierarchicalOptions');
-  showHierarchicalOptionsButton.addEventListener('click', showHierarchicalOptions);
-  const hierarchicalDirectionSelect = document.getElementById('direction');
-  hierarchicalDirectionSelect.addEventListener('change', setNetworkLayout);
-  const hierarchicalSortMethodSelect = document.getElementById('sortMethod');
-  hierarchicalSortMethodSelect.addEventListener('change', setNetworkLayout);
+  showHierarchicalOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
+  hierarchicalOptionsDirectionSelect.addEventListener('change', setNetworkLayout);
+  hierarchicalOptionsSortMethodSelect.addEventListener('change', setNetworkLayout);
 
   function mouseUpEventListener(event) {
     // Convert the canvas to image data that can be saved
@@ -151,7 +143,6 @@
   }
 
   function saveSelectionAsPng() {
-    graphDiv = document.getElementById('network');
     visDiv = graphDiv.firstElementChild;
     graphCanvas = visDiv.firstElementChild;
 
@@ -174,7 +165,6 @@
   }
 
   function saveAsPng() {
-    graphDiv = document.getElementById('network');
     visDiv = graphDiv.firstElementChild;
     graphCanvas = visDiv.firstElementChild;
 
@@ -259,12 +249,11 @@
   }
 
   function setDefaultGraphDirection() {
-    const hierarchicalOptionsDirection = document.getElementById('direction');
     let selectedOption = '';
     selectedOption = defaultGraphDirection === '' ? 'Fixed' : defaultGraphDirection;
-    for (var i, j = 0; i = hierarchicalOptionsDirection.options[j]; j++) {
+    for (var i, j = 0; i = hierarchicalOptionsDirectionSelect.options[j]; j++) {
       if (i.value === selectedOption) {
-        hierarchicalOptionsDirection.selectedIndex = j;
+        hierarchicalOptionsDirectionSelect.selectedIndex = j;
         break;
       }
     }
@@ -291,21 +280,22 @@
   }
 
   function setNetworkLayout() {
-    const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
-    const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
-    const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
     hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
     hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
 
-    options.layout.hierarchical = {
-      enabled: false
+    options.layout ={
+      hierarchical: {
+        enabled: false
+      }
     };
     options.physics = {
       enabled: true,
-      solver: 'repulsion'
+      barnesHut: {
+        springConstant: 0,
+        avoidOverlap: 0.8
+      }
     };
     if (showHierarchicalOptionsCheckbox.checked) {
-      const hierarchicalOptionsDirectionSelect = document.getElementById('direction');
       if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
         nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
         seed = Math.random();
@@ -313,20 +303,50 @@
       } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Fixed') {
         nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
       } else {
-        const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
-        options.layout.hierarchical = {
+        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
+        options.layout = {
+            hierarchical: {
+            enabled: true,
+            levelSeparation: 200,
+            nodeSpacing: 200,
+            direction: hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection,
+            sortMethod: hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize'
+          }
+        };
+        options.physics = {
           enabled: true,
-          direction: hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection,
-          sortMethod: hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize'
+          hierarchicalRepulsion: {
+            springConstant: 0,
+            avoidOverlap: 0.2
+          }
         };
       }
     } else {
-      nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
+      if(defaultGraphDirection !== '') {
+        options.layout = {
+            hierarchical: {
+            enabled: true,
+            levelSeparation: 200,
+            nodeSpacing: 200,
+            direction: defaultGraphDirection,
+          }
+        };
+        options.physics = {
+          enabled: true,
+          hierarchicalRepulsion: {
+            springConstant: 0,
+            avoidOverlap: 0.2
+          }
+        };
+        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
+      } else {
+        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
+      }
     }
-    network = new vis.Network(container, data, options);
+    var network = new vis.Network(container, data, options);
     network.on("stabilizationIterationsDone", function () {
       network.setOptions({
-        physics: false
+        physics: { enabled: false }
       });
     });
   }
