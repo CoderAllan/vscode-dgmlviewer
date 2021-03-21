@@ -1,9 +1,12 @@
 # Change Log
 
-## Version 1.1.1
+## Version 1.2.0
 
 - The width and height from the bounds-attribute on the nodes are now used if the attribute is present.
-- Bugfix: Nodes and Edges was not colored correctly when the background tag used the format #aarrggbb.
+- Improved the layout to better avoid overlapping nodes.
+- Styling from the styles nodes are node applied to the nodes and edges.
+- Bugfix: Nodes and edges was not colored correctly when the background tag used the format #aarrggbb.
+- Bugfix: Label on edges are now rendered correctly.
 
 ## Version 1.1.0
 
