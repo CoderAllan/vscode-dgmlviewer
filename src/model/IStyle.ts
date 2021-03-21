@@ -10,5 +10,5 @@ export interface IStyle {
   valueLabel: string;
   toolTip: string;
   condition: ICondition;
-  setter: ISetter;
+  setters: ISetter[];
 }

@@ -34,7 +34,20 @@ export class Link extends BaseElement {
     if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
     const jsStringColorProperties: string[] = [];
     if (this.stroke !== undefined) { jsStringColorProperties.push(`color: "${this.convertColorValue(this.stroke)}"`); }
-    if (this.categoryRef !== undefined && this.stroke === undefined && this.categoryRef.background !== undefined) { jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.background)}"`); }
+    if (this.categoryRef !== undefined){
+      if (this.categoryRef.background !== undefined) {
+        jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.background)}"`);
+      }
+      if (this.categoryRef.stroke !== undefined) {
+        jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.stroke)}"`);
+      }
+      if (this.categoryRef.strokeDashArray !== undefined) {
+        jsStringProperties.push(`dashes: true`);
+      }
+      if (this.categoryRef.strokeThickness !== undefined) {
+        jsStringProperties.push(`width: ${this.categoryRef.strokeThickness}`);
+      }
+    }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
     return `{${jsStringProperties.join(', ')}}`;
   }

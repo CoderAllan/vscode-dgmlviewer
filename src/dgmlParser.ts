@@ -15,7 +15,7 @@ import {
 } from '@model';
 
 export class DgmlParser {
-  
+
   public parseDgmlFile(filename: string): IDirectedGraph | undefined {
     const xml = fs.readFileSync(filename, 'utf8');
     const obj = parse(xml);
@@ -51,6 +51,7 @@ export class DgmlParser {
       });
       this.addCategoryStylingToNodes(directedGraph);
       this.addCategoryStylingToLinks(directedGraph);
+      this.addStylingToCategories(directedGraph);
     }
     return directedGraph;
   }
@@ -103,10 +104,10 @@ export class DgmlParser {
           }
           if (attributesCopy['bounds'] !== undefined && attributesCopy['bounds'].indexOf(',') !== -1) {
             const bounds = attributesCopy['bounds'].split(',');
-            newNode.boundsX =  +bounds[0];
-            newNode.boundsY =  +bounds[1];
-            newNode.boundsWidth =  +bounds[2];
-            newNode.boundsHeight =  +bounds[3];
+            newNode.boundsX = +bounds[0];
+            newNode.boundsY = +bounds[1];
+            newNode.boundsWidth = +bounds[2];
+            newNode.boundsHeight = +bounds[3];
           }
           if (nodes.filter(n => n.id === newNode.id).length === 0) {
             nodes.push(newNode);
@@ -126,6 +127,7 @@ export class DgmlParser {
           const newLink = new Link();
           newLink.source = attributesCopy['source'];
           newLink.target = attributesCopy['target'];
+          newLink.label = attributesCopy['label'];
           newLink.category = attributesCopy['category'];
           newLink.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'] === 'hidden' : false;
           newLink.background = attributesCopy['background'];
@@ -245,7 +247,7 @@ export class DgmlParser {
             valueLabel: attributesCopy['valuelabel'],
             toolTip: attributesCopy['tooltip'],
             condition: this.createCondition(xmlNode),
-            setter: this.createSetter(xmlNode)
+            setters: this.createSetter(xmlNode)
           } as IStyle;
           styles.push(newProperty);
         }
@@ -270,22 +272,25 @@ export class DgmlParser {
     return condition;
   }
 
-  private createSetter(xmlNode: IXmlNode): ISetter | undefined {
-    let setter: ISetter | undefined = undefined;
+  private createSetter(xmlNode: IXmlNode): ISetter[] | undefined {
+    let setters: ISetter[] | undefined = undefined;
     if (xmlNode.children !== undefined) {
       xmlNode.children.forEach(childNode => {
-        if (childNode.name.toLowerCase() === 'setter' && childNode.attributes !== undefined && setter === undefined) {
+        if (childNode.name.toLowerCase() === 'setter' && childNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(childNode.attributes);
           const newSetter = {
             expression: attributesCopy['expression'],
             property: attributesCopy['property'],
             value: attributesCopy['value']
           } as ISetter;
-          setter = newSetter;
+          if (!setters) {
+            setters = [];
+          }
+          setters?.push(newSetter);
         }
       });
     }
-    return setter;
+    return setters;
   }
 
   private addCategoryStylingToNodes(directedGraph: IDirectedGraph): void {
@@ -311,6 +316,72 @@ export class DgmlParser {
         if (link.category !== undefined) {
           const category = directedGraph.categories.find(category => category.id.toLowerCase() === link.category?.toLowerCase());
           link.setCategoryRef(category);
+        }
+      });
+    }
+  }
+
+  private addStylingToCategories(directedGraph: IDirectedGraph): void {
+    if (directedGraph.categories !== undefined &&
+      directedGraph.categories.length > 0 &&
+      directedGraph.styles !== undefined &&
+      directedGraph.styles.length > 0) {
+      directedGraph.styles.forEach(style => {
+        if (style.condition !== undefined &&
+          style.condition.expression !== undefined &&
+          style.setters !== undefined &&
+          style.setters.length > 0) {
+          const regex = /HasCategory\(['"](\w+)['"]\)+/ig;
+          const match = regex.exec(style.condition.expression);
+          if (match) {
+            const categoryName = match[1];
+            const category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
+            if (category) {
+              style.setters.forEach(setter => {
+                if (setter.property !== undefined) {
+                  if (setter.property.toLowerCase() === 'stroke') {
+                    category.stroke = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'strokethickness') {
+                    category.strokeThickness = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'strokedasharray') {
+                    category.strokeDashArray = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'strokedasharray') {
+                    category.strokeDashArray = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'fontfamily') {
+                    category.fontFamily = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'fontsize') {
+                    category.fontSize = +setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'fontstyle') {
+                    category.fontStyle = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'fontweight') {
+                    category.fontWeight = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'background') {
+                    category.background = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'horizontalalignment') {
+                    category.horizontalAlignment = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'verticalalignment') {
+                    category.verticalAlignment = setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'minwidth') {
+                    category.minWidth = +setter.value;
+                  }
+                  if (setter.property.toLowerCase() === 'maxwidth') {
+                    category.maxWidth = +setter.value;
+                  }
+                }
+              });
+            }
+          }
         }
       });
     }
