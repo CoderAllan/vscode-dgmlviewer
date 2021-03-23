@@ -29,7 +29,7 @@
     },
     layout: {} // The layout of the directed graph
   };
-  let defaultGraphDirection = ''; // The graph direction from the dgml file itself
+  const defaultGraphDirection = ''; // The graph direction from the dgml file itself
   const container = document.getElementById('network');
   const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
   const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
@@ -259,24 +259,48 @@
     }
   }
 
-  function storeCoordinates(node) {
-    if(node.x !== undefined && node.y !== undefined) {
-      nodeCoordinates[node.id] = { x: node.x, y: node.y };
-    }
-    delete node.x;
-    delete node.y;
-    delete node.fixed;
+  function storeCoordinates() {
+    nodes.forEach(node => {
+      if (node.x !== undefined && node.y !== undefined) {
+        nodeCoordinates[node.id] = { x: node.x, y: node.y };
+      }
+      delete node.x;
+      delete node.y;
+      delete node.fixed;
+    });
   }
 
-  function restoreCoordinates(node) {
-    if (node.id in nodeCoordinates) {
-      var nodeCoords = nodeCoordinates[node.id];
-      if (nodeCoords.x !== undefined && nodeCoords.y !== undefined) {
-        node.x = nodeCoords.x;
-        node.y = nodeCoords.y;
-        node.fixed = { x: true, y: true};
+  function restoreCoordinates() {
+    nodes.forEach(function(node) {
+      if (node.id in nodeCoordinates) {
+        var nodeCoords = nodeCoordinates[node.id];
+        nodes.update({
+          id: node.id,
+          fixed: true,
+          x: nodeCoords.x,
+          y: nodeCoords.y
+        });
       }
-    }
+    });
+  }
+
+  function setHierarchicalLayout(direction, sortMethod) {
+    options.layout = {
+        hierarchical: {
+        enabled: true,
+        levelSeparation: 200,
+        nodeSpacing: 200,
+        direction: direction,
+        sortMethod: sortMethod
+      }
+    };
+    options.physics = {
+      enabled: true,
+      hierarchicalRepulsion: {
+        springConstant: 0,
+        avoidOverlap: 0.2
+      }
+    };
   }
 
   function setNetworkLayout() {
@@ -295,59 +319,45 @@
         avoidOverlap: 0.8
       }
     };
+    var unfixNodes = false;
     if (showHierarchicalOptionsCheckbox.checked) {
       if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
-        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
+        storeCoordinates();
         seed = Math.random();
         options.layout.randomSeed = seed;
       } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Fixed') {
-        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
+        restoreCoordinates();
+        options.physics.enabled = false;
+        unfixNodes = true;
       } else {
-        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
-        options.layout = {
-            hierarchical: {
-            enabled: true,
-            levelSeparation: 200,
-            nodeSpacing: 200,
-            direction: hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection,
-            sortMethod: hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize'
-          }
-        };
-        options.physics = {
-          enabled: true,
-          hierarchicalRepulsion: {
-            springConstant: 0,
-            avoidOverlap: 0.2
-          }
-        };
+        storeCoordinates();
+        const direction = hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection;
+        const sortMethod = hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize';
+        setHierarchicalLayout(direction, sortMethod);
       }
     } else {
       if(defaultGraphDirection !== '') {
-        options.layout = {
-            hierarchical: {
-            enabled: true,
-            levelSeparation: 200,
-            nodeSpacing: 200,
-            direction: defaultGraphDirection,
-          }
-        };
-        options.physics = {
-          enabled: true,
-          hierarchicalRepulsion: {
-            springConstant: 0,
-            avoidOverlap: 0.2
-          }
-        };
-        nodes.getIds().forEach(id => storeCoordinates(nodes.get(id)));
+        storeCoordinates();
+        setHierarchicalLayout(defaultGraphDirection, 'hubsize');
       } else {
-        nodes.getIds().forEach(id => restoreCoordinates(nodes.get(id)));
+        restoreCoordinates();
+        unfixNodes = false;
       }
     }
+    console.log(options);
     var network = new vis.Network(container, data, options);
+    if (unfixNodes) {
+      nodes.forEach(function(node) {
+        nodes.update({id: node.id, fixed: false});
+      });
+    }
     network.on("stabilizationIterationsDone", function () {
       network.setOptions({
         physics: { enabled: false }
       });
-    });
+      nodes.forEach(function(node) {
+        nodes.update({id: node.id, fixed: false});
+      });
+  });
   }
 }());

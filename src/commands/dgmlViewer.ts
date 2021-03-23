@@ -78,7 +78,7 @@ export class DgmlViewer {
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
     jsContent = jsContent.replace('selectionCanvasContext.lineWidth = 2;', `selectionCanvasContext.lineWidth = ${this.config.graphSelectionWidth};`);
-    jsContent = jsContent.replace("var defaultGraphDirection = ''; // The graph direction from the dgml file itself", `var defaultGraphDirection = '${this.convertGraphDirectionToVisLayoutValues(directedGraph)}'; // The graph direction from the dgml file itself`);
+    jsContent = jsContent.replace("const defaultGraphDirection = ''; // The graph direction from the dgml file itself", `const defaultGraphDirection = '${this.convertGraphDirectionToVisLayoutValues(directedGraph)}'; // The graph direction from the dgml file itself`);
     jsContent = jsContent.replace('layout: {} // The layout of the directed graph', `layout: {${this.getDirectedGraphLayoutJs(directedGraph)}} // The layout of the directed graph`);
     return jsContent;
   }

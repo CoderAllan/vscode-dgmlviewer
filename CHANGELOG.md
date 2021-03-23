@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.2.1
+
+- Bugfix: The GraphDirection attribute is now used correctly when rendering the graph.
+- Bugfix: It is now possible to moved nodes when Fixed direction is used.
+
 ## Version 1.2.0
 
 - The width and height from the bounds-attribute on the nodes are now used if the attribute is present.
