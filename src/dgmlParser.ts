@@ -49,9 +49,9 @@ export class DgmlParser {
           directedGraph.styles = this.convertXmlToStyles(xmlNode.children);
         }
       });
+      this.addStylingToCategories(directedGraph);
       this.addCategoryStylingToNodes(directedGraph);
       this.addCategoryStylingToLinks(directedGraph);
-      this.addStylingToCategories(directedGraph);
     }
     return directedGraph;
   }
@@ -331,56 +331,58 @@ export class DgmlParser {
           style.condition.expression !== undefined &&
           style.setters !== undefined &&
           style.setters.length > 0) {
-          const regex = /HasCategory\(['"](\w+)['"]\)+/ig;
+          const regex = /HasCategory\(['"](.+)['"]\)+/ig;
           const match = regex.exec(style.condition.expression);
           if (match) {
             const categoryName = match[1];
-            const category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
-            if (category) {
-              style.setters.forEach(setter => {
-                if (setter.property !== undefined) {
-                  if (setter.property.toLowerCase() === 'stroke') {
-                    category.stroke = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'strokethickness') {
-                    category.strokeThickness = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'strokedasharray') {
-                    category.strokeDashArray = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'strokedasharray') {
-                    category.strokeDashArray = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'fontfamily') {
-                    category.fontFamily = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'fontsize') {
-                    category.fontSize = +setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'fontstyle') {
-                    category.fontStyle = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'fontweight') {
-                    category.fontWeight = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'background') {
-                    category.background = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'horizontalalignment') {
-                    category.horizontalAlignment = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'verticalalignment') {
-                    category.verticalAlignment = setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'minwidth') {
-                    category.minWidth = +setter.value;
-                  }
-                  if (setter.property.toLowerCase() === 'maxwidth') {
-                    category.maxWidth = +setter.value;
-                  }
-                }
-              });
+            let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
+            if (!category) {
+              category = { id: categoryName };
+              directedGraph.categories.push(category);
             }
+            style.setters.forEach(setter => {
+              if (category && setter.property !== undefined) {
+                if (setter.property.toLowerCase() === 'stroke') {
+                  category.stroke = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'strokethickness') {
+                  category.strokeThickness = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'strokedasharray') {
+                  category.strokeDashArray = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'strokedasharray') {
+                  category.strokeDashArray = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'fontfamily') {
+                  category.fontFamily = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'fontsize') {
+                  category.fontSize = +setter.value;
+                }
+                if (setter.property.toLowerCase() === 'fontstyle') {
+                  category.fontStyle = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'fontweight') {
+                  category.fontWeight = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'background') {
+                  category.background = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'horizontalalignment') {
+                  category.horizontalAlignment = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'verticalalignment') {
+                  category.verticalAlignment = setter.value;
+                }
+                if (setter.property.toLowerCase() === 'minwidth') {
+                  category.minWidth = +setter.value;
+                }
+                if (setter.property.toLowerCase() === 'maxwidth') {
+                  category.maxWidth = +setter.value;
+                }
+              }
+            });
           }
         }
       });

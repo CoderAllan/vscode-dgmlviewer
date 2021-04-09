@@ -1,40 +1,39 @@
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
 export interface ICategory {
   id: string;
-  basedOn: string;
-  canLinkedNodesBeDataDriven: string;
-  canBeDataDriven: string;
-  defaultAction: string;
-  incomingActionLabel: string;
-  isProviderRoot: boolean;
-  isContainment: boolean;
-  isTag: boolean;
-  navigationActionLabel: string;
-  outgoingActionLabel: string;
-  sourceCategory: string;
-  targetCategory: string;
-  details: string;
-  inboundName: string;
-  outboundName: string;
+  basedOn?: string;
+  canLinkedNodesBeDataDriven?: string;
+  canBeDataDriven?: string;
+  defaultAction?: string;
+  incomingActionLabel?: string;
+  isProviderRoot?: boolean;
+  isContainment?: boolean;
+  isTag?: boolean;
+  navigationActionLabel?: string;
+  outgoingActionLabel?: string;
+  sourceCategory?: string;
+  targetCategory?: string;
+  details?: string;
+  inboundName?: string;
+  outboundName?: string;
   // CommonAttributes
-  label: string;
-  visibility: string;
-  background: string;
-  fontSize: number;
-  fontFamily: string;
-  fontStyle: string;
-  fontWeight: string;
-  stroke: string;
-  strokeThickness: string;
-  strokeDashArray: string;
+  label?: string;
+  visibility?: string;
+  background?: string;
+  fontSize?: number;
+  fontFamily?: string;
+  fontStyle?: string;
+  fontWeight?: string;
+  stroke?: string;
+  strokeThickness?: string;
+  strokeDashArray?: string;
   // CategorizableNodeProperties
-  icon: string;
-  shape: string;
-  style: string;
-  horizontalAlignment: string;
-  verticalAlignment: string;
-  minWidth: number;
-  maxWidth: number;
-  nodeRadius: number;
-
+  icon?: string;
+  shape?: string;
+  style?: string;
+  horizontalAlignment?: string;
+  verticalAlignment?: string;
+  minWidth?: number;
+  maxWidth?: number;
+  nodeRadius?: number;
 }
