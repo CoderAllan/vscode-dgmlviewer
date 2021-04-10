@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.3.0
+
+- If nodes contain attributes that are defined as a reference property the node is now clickable and will open the referenced file in vscode.
+- Bugfix: Styling is now applied correctly for styles without a defined category
+
 ## Version 1.2.1
 
 - Bugfix: The GraphDirection attribute is now used correctly when rendering the graph.

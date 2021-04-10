@@ -12,17 +12,21 @@ To visualize a dgml file i Visual Studio code you click on the file to open it, 
 
 When the dgml file has been rendered you can save the representation into a PNG file.
 
-![DGML file info](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_save.gif)
+![DGML save to Png file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_save.gif)
 
 You can also choose to only save a selected part of the graph.
 
 You do this by clicking the 'Save selection as png' button, then right-click and drag to select the area you want to save. The selection is saved when you let go of the mouse button.
 
-![DGML file info](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_saveSelection.gif)
+![DGML save selection to Png file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_saveSelection.gif)
+
+In a DirectedGraph file you can [link a node to  an external file](https://docs.microsoft.com/en-us/previous-versions/visualstudio/visual-studio-2015/modeling/customize-code-maps-by-editing-the-dgml-files?view=vs-2015#to-link-a-document-or-url-to-a-code-element"). DGMLViewer will determine if the file is accessible on the disk and if it is then the node is clickable and will open the file in vscode when the node is clicked.
+
+![DGML click on a node](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_clickOnNodes.gif)
 
 By default if the DirectedGraph element of the dgml file has a GraphDirection attribute, then this value is used to layout the graph. But by clicking the 'Change layout' checkbox you can change the layout of the graph. It will not change the dgml file itself, it will only change the rendering of the file.
 
-![DGML file info](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_changeLayout.gif)
+![DGML change layout](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_changeLayout.gif)
 
 ## Show information about the DGML file
 
@@ -51,4 +55,4 @@ See the full list of settings below the screenshot.
 
 ## Known Issues
 
-The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) has the ability to specify conditional rendering of the graph. This is done by using the Style elements in the specification. In the current version of this DGMLViewer extension for Visual Studio code this conditional rendering has not been implemented. This extension only renders the colors of the nodes and links if they have categories specified or any of the styling attributes.
+The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) has the ability to specify conditional rendering of the graph. This is done by using the Style elements in the specification. In the current version of this DGMLViewer extension for Visual Studio code this conditional rendering is very limited. Only the 'HasCategory(...)' condition is evaluated.
