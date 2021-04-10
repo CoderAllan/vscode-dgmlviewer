@@ -27,6 +27,16 @@ export class DgmlViewer {
           case 'saveAsPng':
             this.saveAsPng(message.text);
             return;
+          case 'openFile':
+              const filename = message.text;
+              if (this.fsUtils.fileExists(filename)) {
+                console.log('message.text', filename);
+                var openPath = vscode.Uri.parse("file:///" + filename);
+                vscode.workspace.openTextDocument(openPath).then(doc => {
+                  vscode.window.showTextDocument(doc);
+                });
+              }
+            return;
         }
       },
       undefined,
@@ -50,7 +60,7 @@ export class DgmlViewer {
             const outputJsFilename = DgmlViewer._name + '.js';
             let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
 
-            this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
+            // this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
             this.fsUtils.writeFile(
               this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)),
               jsContent,

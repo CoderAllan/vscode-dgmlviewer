@@ -1,8 +1,11 @@
-import { ICategory } from "@model";
+import { ICategory, IProperty } from "@model";
+import path = require("path");
+import { FileSystemUtils } from "@src";
 import { BaseElement } from "./BaseElement";
 
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
 export class Node extends BaseElement {
+  public filename: string;
   public id: string | undefined;
   public category: string | undefined;
   public description: string | undefined;
@@ -41,13 +44,20 @@ export class Node extends BaseElement {
     this.categoryRef = categoryRef;
   }
 
+  public properties: IProperty[] = [];
+
+  constructor(filename: string) {
+    super();
+    this.filename = filename;
+  }
+
   public toJsString(): string {
     const jsStringProperties: string[] = [];
     if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
     let label = this.convertNewlines(this.label);
     if (this.fontWeight !== undefined &&
       this.fontWeight.toLowerCase().startsWith('bold')) {
-        label = `<b>${label}</b>`;
+      label = `<b>${label}</b>`;
     }
     const description = this.convertNewlines(this.description);
     if (this.description !== undefined) { jsStringProperties.push(`title: "${description}"`); }
@@ -66,7 +76,7 @@ export class Node extends BaseElement {
       }
       if (this.stroke === undefined &&
         this.categoryRef.stroke !== undefined) {
-          jsStringColorProperties.push(`border: "${this.convertColorValue(this.categoryRef.stroke)}"`);
+        jsStringColorProperties.push(`border: "${this.convertColorValue(this.categoryRef.stroke)}"`);
       }
       if (this.strokeThickness === undefined &&
         this.categoryRef.strokeThickness !== undefined) {
@@ -74,8 +84,8 @@ export class Node extends BaseElement {
       }
       if (this.strokeDashArray === undefined &&
         this.categoryRef.strokeDashArray !== undefined) {
-          jsStringProperties.push(`shapeProperties: { borderDashes: true }`);
-        }
+        jsStringProperties.push(`shapeProperties: { borderDashes: true }`);
+      }
       if (this.fontFamily === undefined &&
         this.categoryRef.fontFamily !== undefined) {
         jsStringFontProperties.push(`face: ${this.categoryRef.fontFamily}`);
@@ -87,7 +97,7 @@ export class Node extends BaseElement {
       if (this.fontWeight === undefined &&
         this.categoryRef.fontWeight !== undefined &&
         this.categoryRef.fontWeight.toLowerCase().startsWith('bold')) {
-          label = `<b>${label}</b>`;
+        label = `<b>${label}</b>`;
       }
     }
     if (this.label !== undefined) {
@@ -103,6 +113,23 @@ export class Node extends BaseElement {
     if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
     if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`); }
     if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`); }
+    if (this.properties.length > 0) {
+      const referenceProperties = this.properties.find(property => property.isReference === true);
+      if (referenceProperties !== undefined && referenceProperties.value !== undefined) {
+        const fsUtil = new FileSystemUtils();
+        if (fsUtil.fileExists(referenceProperties.value)) {
+          let referenceFilename = referenceProperties.value.split('\\').join('/');
+          jsStringProperties.push(`filepath: "${referenceFilename}"`);
+        } else {
+          const currentDocumentFolder = path.dirname(this.filename);
+          let referenceFilename = path.join(currentDocumentFolder, referenceProperties.value);
+          if (fsUtil.fileExists(referenceFilename)) {
+            referenceFilename = referenceFilename.split('\\').join('/');
+            jsStringProperties.push(`filepath: "${referenceFilename}"`);
+          }
+        }
+      }
+    }
     return `{${jsStringProperties.join(', ')}}`;
   }
 

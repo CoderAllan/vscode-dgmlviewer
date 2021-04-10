@@ -21,6 +21,9 @@
     edges: edges
   };
   const options = {
+    interaction: {
+      hover: true
+    },
     edges: {
       smooth: false // Make edges straight lines.
     },
@@ -43,7 +46,7 @@
   const selectionLayer = document.getElementById('selectionLayer');
   const helpTextDiv = document.getElementById('helpText');
   showHierarchicalOptions();
-  
+
   const vscode = acquireVsCodeApi();
   let lastMouseX = lastMouseY = 0;
   let mouseX = mouseY = 0;
@@ -164,6 +167,13 @@
     selectionLayer.addEventListener("mousemove", mouseMoveEventListener, true);
   }
 
+  function openFileInVsCode(filepath) {
+    vscode.postMessage({
+      command: 'openFile',
+      text: filepath
+    });
+  }
+
   function saveAsPng() {
     visDiv = graphDiv.firstElementChild;
     graphCanvas = visDiv.firstElementChild;
@@ -262,7 +272,10 @@
   function storeCoordinates() {
     nodes.forEach(node => {
       if (node.x !== undefined && node.y !== undefined) {
-        nodeCoordinates[node.id] = { x: node.x, y: node.y };
+        nodeCoordinates[node.id] = {
+          x: node.x,
+          y: node.y
+        };
       }
       delete node.x;
       delete node.y;
@@ -271,7 +284,7 @@
   }
 
   function restoreCoordinates() {
-    nodes.forEach(function(node) {
+    nodes.forEach(function (node) {
       if (node.id in nodeCoordinates) {
         var nodeCoords = nodeCoordinates[node.id];
         nodes.update({
@@ -286,7 +299,7 @@
 
   function setHierarchicalLayout(direction, sortMethod) {
     options.layout = {
-        hierarchical: {
+      hierarchical: {
         enabled: true,
         levelSeparation: 200,
         nodeSpacing: 200,
@@ -307,7 +320,7 @@
     hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
     hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
 
-    options.layout ={
+    options.layout = {
       hierarchical: {
         enabled: false
       }
@@ -336,7 +349,7 @@
         setHierarchicalLayout(direction, sortMethod);
       }
     } else {
-      if(defaultGraphDirection !== '') {
+      if (defaultGraphDirection !== '') {
         storeCoordinates();
         setHierarchicalLayout(defaultGraphDirection, 'hubsize');
       } else {
@@ -344,20 +357,43 @@
         unfixNodes = false;
       }
     }
-    console.log(options);
+
     var network = new vis.Network(container, data, options);
     if (unfixNodes) {
-      nodes.forEach(function(node) {
-        nodes.update({id: node.id, fixed: false});
+      nodes.forEach(function (node) {
+        nodes.update({
+          id: node.id,
+          fixed: false
+        });
       });
     }
     network.on("stabilizationIterationsDone", function () {
       network.setOptions({
-        physics: { enabled: false }
+        physics: {
+          enabled: false
+        }
       });
-      nodes.forEach(function(node) {
-        nodes.update({id: node.id, fixed: false});
+      nodes.forEach(function (node) {
+        nodes.update({
+          id: node.id,
+          fixed: false
+        });
       });
-  });
+    });
+    network.on("selectNode", function (params) {
+      if (params.nodes.length === 1) {
+        var node = nodes.get(params.nodes[0]);
+        openFileInVsCode(node.filepath);
+      }
+    });
+    network.on("hoverNode", function (params) {
+      var node = nodes.get(params.node);
+      if (node.filepath && node.filepath.length > 0) {
+        network.canvas.body.container.style.cursor = 'pointer';
+      }
+    });
+    network.on("blurNode", function (params) {
+      network.canvas.body.container.style.cursor = 'default';
+    });
   }
 }());

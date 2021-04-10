@@ -38,7 +38,7 @@ export class DgmlParser {
       const children: IXmlNode[] = obj.root.children as IXmlNode[];
       children.forEach(xmlNode => {
         if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'nodes') {
-          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children);
+          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'links') {
           directedGraph.links = this.convertXmlToLinks(xmlNode.children);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'categories') {
@@ -52,6 +52,7 @@ export class DgmlParser {
       this.addStylingToCategories(directedGraph);
       this.addCategoryStylingToNodes(directedGraph);
       this.addCategoryStylingToLinks(directedGraph);
+      this.enrichNodes(directedGraph);
     }
     return directedGraph;
   }
@@ -68,46 +69,58 @@ export class DgmlParser {
     return dictKeysCopy;
   }
 
-  private convertXmlToNodes(xmlNodes: IXmlNode[]): Node[] {
+  private convertXmlToNodes(xmlNodes: IXmlNode[], filename: string): Node[] {
     const nodes: Node[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
         if (xmlNode.attributes !== undefined) {
+          const newNode = new Node(filename);
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
-          const newNode = new Node();
-          newNode.id = attributesCopy['id'];
-          newNode.category = attributesCopy['category'];
-          newNode.description = attributesCopy['description'];
-          newNode.reference = attributesCopy['reference'];
-          newNode.isVertical = attributesCopy['isvertical'] !== undefined ? attributesCopy['isvertical'] === 'true' : undefined;
-          newNode.group = attributesCopy['group'];
-          newNode.label = attributesCopy['label'];
-          newNode.visibility = attributesCopy['visibility'];
-          newNode.background = attributesCopy['background'];
-          newNode.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
-          newNode.fontFamily = attributesCopy['fontfamily'];
-          newNode.fontStyle = attributesCopy['fontstyle'];
-          newNode.fontWeight = attributesCopy['fontweight'];
-          newNode.stroke = attributesCopy['stroke'];
-          newNode.strokeThickness = attributesCopy['strokethickness'];
-          newNode.strokeDashArray = attributesCopy['strokedasharray'];
-          newNode.icon = attributesCopy['icon'];
-          newNode.shape = attributesCopy['shape'];
-          newNode.style = attributesCopy['style'];
-          newNode.horizontalAlignment = attributesCopy['horizontalalignment'];
-          newNode.verticalAlignment = attributesCopy['verticalalignment'];
-          newNode.minWidth = attributesCopy['minwidth'] !== undefined ? +attributesCopy['minwidth'] : undefined;
-          newNode.maxWidth = attributesCopy['maxwidth'] !== undefined ? +attributesCopy['maxwidth'] : undefined;
-          newNode.nodeRadius = attributesCopy['noderadius'] !== undefined ? +attributesCopy['noderadius'] : undefined;
+          newNode.id = this.getAttributeValue(attributesCopy, 'id');
+          newNode.category = this.getAttributeValue(attributesCopy, 'category');
+          newNode.description = this.getAttributeValue(attributesCopy, 'description');
+          newNode.reference = this.getAttributeValue(attributesCopy, 'reference');
+          const isVertical = this.getAttributeValue(attributesCopy, 'isvertical');
+          newNode.isVertical = isVertical !== undefined ? isVertical === 'true' : undefined;
+          newNode.group = this.getAttributeValue(attributesCopy, 'group');
+          newNode.label = this.getAttributeValue(attributesCopy, 'label');
+          newNode.visibility = this.getAttributeValue(attributesCopy, 'visibility');
+          newNode.background = this.getAttributeValue(attributesCopy, 'background');
+          const fontsize = this.getAttributeValue(attributesCopy, 'fontsize');
+          newNode.fontSize = fontsize !== undefined ? +fontsize : undefined;
+          newNode.fontFamily = this.getAttributeValue(attributesCopy, 'fontfamily');
+          newNode.fontStyle = this.getAttributeValue(attributesCopy, 'fontstyle');
+          newNode.fontWeight = this.getAttributeValue(attributesCopy, 'fontweight');
+          newNode.stroke = this.getAttributeValue(attributesCopy, 'stroke');
+          newNode.strokeThickness = this.getAttributeValue(attributesCopy, 'strokethickness');
+          newNode.strokeDashArray = this.getAttributeValue(attributesCopy, 'strokedasharray');
+          newNode.icon = this.getAttributeValue(attributesCopy, 'icon');
+          newNode.shape = this.getAttributeValue(attributesCopy, 'shape');
+          newNode.style = this.getAttributeValue(attributesCopy, 'style');
+          newNode.horizontalAlignment = this.getAttributeValue(attributesCopy, 'horizontalalignment');
+          newNode.verticalAlignment = this.getAttributeValue(attributesCopy, 'verticalalignment');
+          const minWidth = this.getAttributeValue(attributesCopy, 'minwidth');
+          newNode.minWidth = minWidth !== undefined ? +minWidth : undefined;
+          const maxWidth = this.getAttributeValue(attributesCopy, 'maxwidth');
+          newNode.maxWidth = maxWidth !== undefined ? +maxWidth : undefined;
+          const nodeRadius = this.getAttributeValue(attributesCopy, 'noderadius');
+          newNode.nodeRadius = nodeRadius !== undefined ? +nodeRadius : undefined;
           if (newNode.category === undefined) {
             newNode.category = this.createCategoryRef(xmlNode);
           }
-          if (attributesCopy['bounds'] !== undefined && attributesCopy['bounds'].indexOf(',') !== -1) {
-            const bounds = attributesCopy['bounds'].split(',');
+          const boundsValue = this.getAttributeValue(attributesCopy, 'bounds');
+          if (boundsValue !== undefined && boundsValue.indexOf(',') !== -1) {
+            const bounds = boundsValue.split(',');
             newNode.boundsX = +bounds[0];
             newNode.boundsY = +bounds[1];
             newNode.boundsWidth = +bounds[2];
             newNode.boundsHeight = +bounds[3];
+          }
+          const additionalProperties = Object.keys(attributesCopy);
+          if (additionalProperties.length > 0) {
+            additionalProperties.forEach(property => {
+              newNode.properties.push({ id: property, value: attributesCopy[property] });
+            });
           }
           if (nodes.filter(n => n.id === newNode.id).length === 0) {
             nodes.push(newNode);
@@ -116,6 +129,12 @@ export class DgmlParser {
       });
     }
     return nodes;
+  }
+
+  private getAttributeValue(attributes: { [key: string]: string }, attributeName: string): string {
+    const value = attributes[attributeName];
+    delete attributes[attributeName];
+    return value;
   }
 
   private convertXmlToLinks(xmlNodes: IXmlNode[]): Link[] {
@@ -129,7 +148,7 @@ export class DgmlParser {
           newLink.target = attributesCopy['target'];
           newLink.label = attributesCopy['label'];
           newLink.category = attributesCopy['category'];
-          newLink.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'] === 'hidden' : false;
+          newLink.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
           newLink.background = attributesCopy['background'];
           newLink.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
           newLink.fontFamily = attributesCopy['fontfamily'];
@@ -139,7 +158,7 @@ export class DgmlParser {
           newLink.strokeThickness = attributesCopy['strokethickness'];
           newLink.strokeDashArray = attributesCopy['strokedasharray'];
           newLink.seeder = attributesCopy['seeder'] !== undefined ? attributesCopy['seeder'] === 'true' : undefined;
-          newLink.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'] === 'true' : undefined;
+          newLink.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
           if (newLink.category === undefined) {
             newLink.category = this.createCategoryRef(xmlNode);
           }
@@ -176,8 +195,8 @@ export class DgmlParser {
             canBeDataDriven: attributesCopy['canbedatadriven'],
             defaultAction: attributesCopy['defaultaction'],
             incomingActionLabel: attributesCopy['incomingactionlabel'],
-            isProviderRoot: attributesCopy['isproviderroot'] !== undefined ? attributesCopy['isproviderroot'] === 'true' : undefined,
-            isContainment: attributesCopy['iscontainment'] !== undefined ? attributesCopy['iscontainment'] === 'true' : undefined,
+            isProviderRoot: attributesCopy['isproviderroot'] !== undefined ? attributesCopy['isproviderroot'].toLowerCase() === 'true' : undefined,
+            isContainment: attributesCopy['iscontainment'] !== undefined ? attributesCopy['iscontainment'].toLowerCase() === 'true' : undefined,
             isTag: attributesCopy['istag'] !== undefined ? attributesCopy['istag'] === 'true' : undefined,
             navigationActionLabel: attributesCopy['navigationactionlabel'],
             outgoingActionLabel: attributesCopy['outgoingactionlabel'],
@@ -220,7 +239,7 @@ export class DgmlParser {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           const newProperty = {
             id: attributesCopy['id'],
-            isReference: attributesCopy['isreference'] !== undefined ? attributesCopy['isreference'] === 'true' : undefined,
+            isReference: attributesCopy['isreference'] !== undefined ? attributesCopy['isreference'].toLowerCase() === 'true' : undefined,
             label: attributesCopy['label'],
             dataType: attributesCopy['datatype'],
             description: attributesCopy['description'],
@@ -242,7 +261,7 @@ export class DgmlParser {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           const newProperty = {
             targetType: attributesCopy['targettype'],
-            isEnabled: attributesCopy['isenabled'] !== undefined ? attributesCopy['isenabled'] === 'true' : undefined,
+            isEnabled: attributesCopy['isenabled'] !== undefined ? attributesCopy['isenabled'].toLowerCase() === 'true' : undefined,
             groupLabel: attributesCopy['grouplabel'],
             valueLabel: attributesCopy['valuelabel'],
             toolTip: attributesCopy['tooltip'],
@@ -387,5 +406,18 @@ export class DgmlParser {
         }
       });
     }
+  }
+
+  private enrichNodes(directedGraph: IDirectedGraph): void {
+    directedGraph.properties.forEach(property => {
+      directedGraph.nodes.forEach(node => {
+        if (node.properties.length > 0) {
+          const existingPropertyIdx = node.properties.findIndex(nodeProperty => nodeProperty.id.toLowerCase() === property.id.toLowerCase());
+          if (existingPropertyIdx !== -1) {
+            Object.assign(node.properties[existingPropertyIdx], property);
+          }
+        }
+      });
+    });
   }
 }

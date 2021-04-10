@@ -25,6 +25,13 @@ export class FileSystemUtils {
     return files;
   }
 
+  public fileExists(filename: string): boolean {
+    try{
+      return fs.lstatSync(filename).isFile();
+    } catch {
+      return false;
+    }
+  }
   private isDirectory(directoryName: any): boolean {
     return fs.lstatSync(directoryName).isDirectory();
   };
