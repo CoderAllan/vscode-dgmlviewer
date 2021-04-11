@@ -2,6 +2,7 @@ export * from './ICategory';
 export * from './ICondition';
 export * from './IDirectedGraph';
 export * from './Link';
+export * from './IPath';
 export * from './IProperty';
 export * from './ISetter';
 export * from './IStyle';

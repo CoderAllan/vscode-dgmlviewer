@@ -6,12 +6,13 @@ import {
   ICategory,
   ICondition,
   IDirectedGraph,
-  Link,
-  Node,
+  IPath,
   IProperty,
   ISetter,
   IStyle,
-  IXmlNode
+  IXmlNode,
+  Link,
+  Node
 } from '@model';
 
 export class DgmlParser {
@@ -47,6 +48,8 @@ export class DgmlParser {
           directedGraph.properties = this.convertXmlToProperties(xmlNode.children);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'styles') {
           directedGraph.styles = this.convertXmlToStyles(xmlNode.children);
+        } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'paths') {
+          directedGraph.paths = this.convertXmlToPaths(xmlNode.children);
         }
       });
       this.addStylingToCategories(directedGraph);
@@ -99,6 +102,7 @@ export class DgmlParser {
           newNode.style = this.getAttributeValue(attributesCopy, 'style');
           newNode.horizontalAlignment = this.getAttributeValue(attributesCopy, 'horizontalalignment');
           newNode.verticalAlignment = this.getAttributeValue(attributesCopy, 'verticalalignment');
+          newNode.filePath = this.getAttributeValue(attributesCopy, 'filepath');
           const minWidth = this.getAttributeValue(attributesCopy, 'minwidth');
           newNode.minWidth = minWidth !== undefined ? +minWidth : undefined;
           const maxWidth = this.getAttributeValue(attributesCopy, 'maxwidth');
@@ -116,10 +120,10 @@ export class DgmlParser {
             newNode.boundsWidth = +bounds[2];
             newNode.boundsHeight = +bounds[3];
           }
-          const additionalProperties = Object.keys(attributesCopy);
-          if (additionalProperties.length > 0) {
-            additionalProperties.forEach(property => {
-              newNode.properties.push({ id: property, value: attributesCopy[property] });
+          const customProperties = Object.keys(attributesCopy);
+          if (customProperties.length > 0) {
+            customProperties.forEach(property => {
+              newNode.customProperties.push({ id: property, value: attributesCopy[property] });
             });
           }
           if (nodes.filter(n => n.id === newNode.id).length === 0) {
@@ -275,6 +279,23 @@ export class DgmlParser {
     return styles;
   }
 
+  private convertXmlToPaths(xmlNodes: IXmlNode[]): IPath[] {
+    const paths: IPath[] = [];
+    if (xmlNodes.length > 0) {
+      xmlNodes.forEach(xmlNode => {
+        if (xmlNode.attributes !== undefined) {
+          const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
+          const newProperty = {
+            id: attributesCopy['id'],
+            value: attributesCopy['value'],
+          } as IPath;
+          paths.push(newProperty);
+        }
+      });
+    }
+    return paths;
+  }
+
   private createCondition(xmlNode: IXmlNode): ICondition | undefined {
     let condition: ICondition | undefined = undefined;
     if (xmlNode.children !== undefined) {
@@ -409,15 +430,31 @@ export class DgmlParser {
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
-    directedGraph.properties.forEach(property => {
-      directedGraph.nodes.forEach(node => {
-        if (node.properties.length > 0) {
-          const existingPropertyIdx = node.properties.findIndex(nodeProperty => nodeProperty.id.toLowerCase() === property.id.toLowerCase());
+    directedGraph.nodes.forEach(node => {
+      if (node.filePath !== undefined) {
+        node.filePath = this.replacePaths(node.filePath, directedGraph);
+      }
+      if (node.customProperties !== undefined && node.customProperties.length > 0) {
+        directedGraph.properties.forEach(property => {
+          const existingPropertyIdx = node.customProperties.findIndex(nodeProperty => nodeProperty.id.toLowerCase() === property.id.toLowerCase());
           if (existingPropertyIdx !== -1) {
-            Object.assign(node.properties[existingPropertyIdx], property);
+            Object.assign(node.customProperties[existingPropertyIdx], property);
+            if (node.customProperties[existingPropertyIdx].isReference) {
+              node.customProperties[existingPropertyIdx].value = this.replacePaths(node.customProperties[existingPropertyIdx].value, directedGraph);
+            }
           }
-        }
-      });
+        });
+      }
     });
+  }
+  
+  private replacePaths(filePath: string | undefined, directedGraph: IDirectedGraph): string | undefined {
+    let fixedFilepath = filePath;
+    if (fixedFilepath !== undefined && directedGraph.paths !== undefined && directedGraph.paths.length > 0) {
+      directedGraph.paths.forEach(path => {
+        fixedFilepath = fixedFilepath?.replace(`\$(${path.id})`, path.value);
+      });
+    }
+    return fixedFilepath;
   }
 }

@@ -32,7 +32,8 @@ export class Node extends BaseElement {
   public minWidth: number | undefined;
   public maxWidth: number | undefined;
   public nodeRadius: number | undefined;
-  // CodeSchemaAttributes - Not included
+  // CodeSchemaAttributes - Not all included
+  public filePath: string | undefined;
   // Visual Studio generated properties
   public boundsX: number | undefined;
   public boundsY: number | undefined;
@@ -44,7 +45,7 @@ export class Node extends BaseElement {
     this.categoryRef = categoryRef;
   }
 
-  public properties: IProperty[] = [];
+  public customProperties: IProperty[] = [];
 
   constructor(filename: string) {
     super();
@@ -113,24 +114,37 @@ export class Node extends BaseElement {
     if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
     if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`); }
     if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`); }
-    if (this.properties.length > 0) {
-      const referenceProperties = this.properties.find(property => property.isReference === true);
-      if (referenceProperties !== undefined && referenceProperties.value !== undefined) {
-        const fsUtil = new FileSystemUtils();
-        if (fsUtil.fileExists(referenceProperties.value)) {
-          let referenceFilename = referenceProperties.value.split('\\').join('/');
-          jsStringProperties.push(`filepath: "${referenceFilename}"`);
-        } else {
-          const currentDocumentFolder = path.dirname(this.filename);
-          let referenceFilename = path.join(currentDocumentFolder, referenceProperties.value);
-          if (fsUtil.fileExists(referenceFilename)) {
-            referenceFilename = referenceFilename.split('\\').join('/');
-            jsStringProperties.push(`filepath: "${referenceFilename}"`);
-          }
-        }
+    let referencePropertyValue: string | undefined;
+    if (this.filePath !== undefined) {
+      referencePropertyValue = this.getReferenceFilename(this.filePath);
+    }
+    if (referencePropertyValue === undefined && this.customProperties.length > 0) {
+      const firstReferenceProperty = this.customProperties.find(property => property.isReference === true);
+      if (firstReferenceProperty !== undefined && firstReferenceProperty.value !== undefined) {
+        referencePropertyValue = this.getReferenceFilename(firstReferenceProperty.value);
       }
     }
-    return `{${jsStringProperties.join(', ')}}`;
+    if (referencePropertyValue !== undefined) {
+      jsStringProperties.push(`filepath: "${referencePropertyValue}"`);
+    }
+  return `{${jsStringProperties.join(', ')}}`;
+  }
+
+  private getReferenceFilename(propertyValue: string): string | undefined {
+    let referenceFilename: string | undefined = undefined;
+    const fsUtil = new FileSystemUtils();
+    if (fsUtil.fileExists(propertyValue)) {
+      referenceFilename = propertyValue.split('\\').join('/');
+    } else {
+      const currentDocumentFolder = path.dirname(this.filename);
+      referenceFilename = path.join(currentDocumentFolder, propertyValue);
+      if (fsUtil.fileExists(referenceFilename)) {
+        referenceFilename = referenceFilename.split('\\').join('/');
+      } else {
+        referenceFilename = undefined;
+      }
+    }
+    return referenceFilename;
   }
 
   private convertNewlines(text: string | undefined): string {

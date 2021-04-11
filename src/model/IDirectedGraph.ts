@@ -1,8 +1,9 @@
 import {
   ICategory,
-  Link,
+  IPath,
   IProperty,
   IStyle,
+  Link,
   Node
 } from '@model';
 
@@ -22,4 +23,5 @@ export interface IDirectedGraph {
   categories: ICategory[];
   properties: IProperty[];
   styles: IStyle[];
+  paths: IPath[];
 }

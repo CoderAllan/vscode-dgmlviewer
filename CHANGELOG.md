@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.3.1
+
+- Paths are now parsed from the dgml file and substituted into the reference properties.
+- The FilePath attribute on a node is now parsed and used as a reference property.
+
 ## Version 1.3.0
 
 - If nodes contain attributes that are defined as a reference property the node is now clickable and will open the referenced file in vscode.
