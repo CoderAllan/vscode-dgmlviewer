@@ -30,7 +30,6 @@ export class DgmlViewer {
           case 'openFile':
               const filename = message.text;
               if (this.fsUtils.fileExists(filename)) {
-                console.log('message.text', filename);
                 var openPath = vscode.Uri.parse("file:///" + filename);
                 vscode.workspace.openTextDocument(openPath).then(doc => {
                   vscode.window.showTextDocument(doc);
