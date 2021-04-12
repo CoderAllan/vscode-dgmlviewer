@@ -46,6 +46,7 @@ export class Node extends BaseElement {
   }
 
   public customProperties: IProperty[] = [];
+  public showPopupsOverNodesAndLinks: boolean = true;
 
   constructor(filename: string) {
     super();
@@ -54,14 +55,19 @@ export class Node extends BaseElement {
 
   public toJsString(): string {
     const jsStringProperties: string[] = [];
+    const titleElements: string[] = [];
     if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
     let label = this.convertNewlines(this.label);
+    titleElements.push(`Label: ${this.removeNewLines(label)}`);
     if (this.fontWeight !== undefined &&
       this.fontWeight.toLowerCase().startsWith('bold')) {
       label = `<b>${label}</b>`;
     }
     const description = this.convertNewlines(this.description);
-    if (this.description !== undefined) { jsStringProperties.push(`title: "${description}"`); }
+    if (this.description !== undefined) {
+      jsStringProperties.push(`title: "${description}"`);
+      titleElements.push(`Description: ${this.removeNewLines(description)}`);
+    }
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`); }
     if (this.strokeDashArray !== undefined) { jsStringProperties.push(`shapeProperties: { borderDashes: true }`); }
     const jsStringColorProperties: string[] = [];
@@ -71,6 +77,7 @@ export class Node extends BaseElement {
     if (this.fontFamily === undefined) { jsStringFontProperties.push(`face: ${this.fontFamily}`); }
     if (this.fontSize === undefined) { jsStringFontProperties.push(`size: ${this.fontSize}`); }
     if (this.categoryRef !== undefined) {
+      titleElements.push(`Category: ${this.categoryRef.id}`);
       if (this.background === undefined &&
         this.categoryRef.background !== undefined) {
         jsStringColorProperties.push(`background: "${this.convertColorValue(this.categoryRef.background)}"`);
@@ -117,17 +124,25 @@ export class Node extends BaseElement {
     let referencePropertyValue: string | undefined;
     if (this.filePath !== undefined) {
       referencePropertyValue = this.getReferenceFilename(this.filePath);
+      titleElements.push(`Filepath: ${referencePropertyValue}`);
     }
     if (referencePropertyValue === undefined && this.customProperties.length > 0) {
       const firstReferenceProperty = this.customProperties.find(property => property.isReference === true);
       if (firstReferenceProperty !== undefined && firstReferenceProperty.value !== undefined) {
         referencePropertyValue = this.getReferenceFilename(firstReferenceProperty.value);
       }
+      this.customProperties.forEach(property => {
+        titleElements.push(`${property.id}: ${property.value}`);
+      });
     }
     if (referencePropertyValue !== undefined) {
       jsStringProperties.push(`filepath: "${referencePropertyValue}"`);
     }
-  return `{${jsStringProperties.join(', ')}}`;
+    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+      let title = titleElements.join('\\n');
+      jsStringProperties.push(`title: "${title}"`);
+    }
+    return `{${jsStringProperties.join(', ')}}`;
   }
 
   private getReferenceFilename(propertyValue: string): string | undefined {
@@ -151,9 +166,17 @@ export class Node extends BaseElement {
     if (text === undefined || text.length === 0) {
       return '';
     }
-    text = text.replace('&#xD;&#xA;', '\\n');
-    text = text.replace('&#xA;', '\\n');
-    text = text.replace('&#xD;', '\\n');
+    text = text.split('&#xD;&#xA;').join('\\n');
+    text = text.split('&#xA;').join('\\n');
+    text = text.split('&#xD;').join('\\n');
+    return text;
+  }
+
+  private removeNewLines(text: string | undefined): string {
+    if (text === undefined || text.length === 0) {
+      return '';
+    }
+    text = text.split('\\n').join(' ');
     return text;
   }
 }

@@ -15,7 +15,7 @@ export class FileInfo {
       let doc = vscode.window.activeTextEditor.document;
       if (doc.fileName.toLowerCase().endsWith('.dgml')) {
         const dgmlParser = new DgmlParser();
-        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName);
+        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName, this.config);
         if (directedGraph !== undefined) {
           const dgmlViewerOutput = vscode.window.createOutputChannel(this.config.dgmlViewerOutputChannel);
           dgmlViewerOutput.clear();
@@ -25,6 +25,7 @@ export class FileInfo {
           dgmlViewerOutput.appendLine(`Categories: ${directedGraph.categories.length}`);
           dgmlViewerOutput.appendLine(`Properties: ${directedGraph.properties.length}`);
           dgmlViewerOutput.appendLine(`Styles: ${directedGraph.styles.length}`);
+          dgmlViewerOutput.appendLine(`Paths: ${directedGraph.paths.length}`);
           try {
             const stats = fs.statSync(doc.fileName);
             dgmlViewerOutput.appendLine(`Created: ${stats.birthtime}`);

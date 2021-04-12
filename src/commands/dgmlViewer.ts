@@ -46,7 +46,7 @@ export class DgmlViewer {
       let doc = vscode.window.activeTextEditor.document;
       if (doc.fileName.toLowerCase().endsWith('.dgml')) {
         const dgmlParser = new DgmlParser();
-        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName);
+        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName, this.config);
         if (directedGraph !== undefined) {
           const nodesJson = directedGraph.nodes
             .map((node, index, arr) => { return node.toJsString(); })
@@ -96,13 +96,19 @@ export class DgmlViewer {
     const templateHtmlFilename = DgmlViewer._name + '_Template.html';
     let htmlContent = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateHtmlFilename)), 'utf8');
 
-    const visPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', 'vis-network.min.js');
+    const visJsMinJs = 'vis-network.min.js';
+    const visPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', visJsMinJs);
     const visUri = webview.asWebviewUri(visPath);
-    htmlContent = htmlContent.replace('vis-network.min.js', visUri.toString());
+    htmlContent = htmlContent.replace(visJsMinJs, visUri.toString());
 
     const cssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', DgmlViewer._name + '.css');
     const cssUri = webview.asWebviewUri(cssPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.css', cssUri.toString());
+    
+    const visJsMinCss = 'vis-network.min.css';
+    const visCssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', visJsMinCss);
+    const visCssUri = webview.asWebviewUri(visCssPath);
+    htmlContent = htmlContent.replace(visJsMinCss, visCssUri.toString());
 
     const nonce = this.getNonce();
     htmlContent = htmlContent.replace('nonce-nonce', `nonce-${nonce}`);

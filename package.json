@@ -101,6 +101,11 @@
           "type": "string",
           "default": "DirectedGraph.png",
           "description": "The default name used when saving the directed graph to a Png file."
+        },
+        "dgmlViewer.showPopupsOverNodesAndLinks": {
+          "type": "boolean",
+          "default": true,
+          "description": "When the setting is set to true a popup with various information from node or edge will be shown when the mouse pointer hovers over nodes and edges."
         }
       }
     }

@@ -25,16 +25,29 @@ export class Link extends BaseElement {
     this.categoryRef = categoryRef;
   }
 
+  public showPopupsOverNodesAndLinks: boolean = true;
+
   public toJsString(): string {
     const jsStringProperties: string[] = ['arrows: arrowAttr'];
-    if (this.source !== undefined) { jsStringProperties.push(`from: "${this.source}"`); }
-    if (this.target !== undefined) { jsStringProperties.push(`to: "${this.target}"`); }
-    if (this.label !== undefined) { jsStringProperties.push(`label: "${this.label}"`); }
+    const titleElements: string[] = [];
+    if (this.label !== undefined) {
+      jsStringProperties.push(`label: "${this.label}"`);
+      titleElements.push(`Label: ${this.label}`);
+    }
+    if (this.source !== undefined) {
+      jsStringProperties.push(`from: "${this.source}"`);
+      titleElements.push(`Source: ${this.source}`);
+    }
+    if (this.target !== undefined) {
+      jsStringProperties.push(`to: "${this.target}"`);
+      titleElements.push(`Target: ${this.target}`);
+    }
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`width: ${this.strokeThickness}`); }
     if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
     const jsStringColorProperties: string[] = [];
     if (this.stroke !== undefined) { jsStringColorProperties.push(`color: "${this.convertColorValue(this.stroke)}"`); }
     if (this.categoryRef !== undefined){
+      titleElements.push(`Category: ${this.categoryRef.id}`);
       if (this.categoryRef.background !== undefined) {
         jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.background)}"`);
       }
@@ -49,6 +62,10 @@ export class Link extends BaseElement {
       }
     }
     if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
+    if (this.showPopupsOverNodesAndLinks &&titleElements.length > 0) {
+      let title = titleElements.join('\\n');
+      jsStringProperties.push(`title: "${title}"`);
+    }
     return `{${jsStringProperties.join(', ')}}`;
   }
 }

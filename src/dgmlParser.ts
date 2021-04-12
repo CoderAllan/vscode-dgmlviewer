@@ -14,10 +14,11 @@ import {
   Link,
   Node
 } from '@model';
+import { Config } from '@src';
 
 export class DgmlParser {
 
-  public parseDgmlFile(filename: string): IDirectedGraph | undefined {
+  public parseDgmlFile(filename: string, config: Config): IDirectedGraph | undefined {
     const xml = fs.readFileSync(filename, 'utf8');
     const obj = parse(xml);
     if (obj.root.name.toLowerCase() !== 'directedgraph') {
@@ -39,9 +40,9 @@ export class DgmlParser {
       const children: IXmlNode[] = obj.root.children as IXmlNode[];
       children.forEach(xmlNode => {
         if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'nodes') {
-          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename);
+          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename, config.showPopupsOverNodesAndLinks);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'links') {
-          directedGraph.links = this.convertXmlToLinks(xmlNode.children);
+          directedGraph.links = this.convertXmlToLinks(xmlNode.children, config.showPopupsOverNodesAndLinks);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'categories') {
           directedGraph.categories = this.convertXmlToCategories(xmlNode.children);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'properties') {
@@ -72,7 +73,7 @@ export class DgmlParser {
     return dictKeysCopy;
   }
 
-  private convertXmlToNodes(xmlNodes: IXmlNode[], filename: string): Node[] {
+  private convertXmlToNodes(xmlNodes: IXmlNode[], filename: string, showPopupsOverNodesAndLinks: boolean): Node[] {
     const nodes: Node[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
@@ -80,6 +81,7 @@ export class DgmlParser {
           const newNode = new Node(filename);
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           newNode.id = this.getAttributeValue(attributesCopy, 'id');
+          newNode.showPopupsOverNodesAndLinks = showPopupsOverNodesAndLinks;
           newNode.category = this.getAttributeValue(attributesCopy, 'category');
           newNode.description = this.getAttributeValue(attributesCopy, 'description');
           newNode.reference = this.getAttributeValue(attributesCopy, 'reference');
@@ -141,13 +143,14 @@ export class DgmlParser {
     return value;
   }
 
-  private convertXmlToLinks(xmlNodes: IXmlNode[]): Link[] {
+  private convertXmlToLinks(xmlNodes: IXmlNode[], showPopupsOverNodesAndLinks: boolean): Link[] {
     const links: Link[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
         if (xmlNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           const newLink = new Link();
+          newLink.showPopupsOverNodesAndLinks = showPopupsOverNodesAndLinks;
           newLink.source = attributesCopy['source'];
           newLink.target = attributesCopy['target'];
           newLink.label = attributesCopy['label'];
