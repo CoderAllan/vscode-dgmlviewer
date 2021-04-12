@@ -52,6 +52,7 @@ See the full list of settings below the screenshot.
 | dgmlViewer.graphSelectionColor | The color of the selection rectangle used when selecting part of a directed graph. The string should be in rgba format or standard css color names. |
 | dgmlViewer.graphSelectionWidth | The width of the selection rectangle shown when selecting part of a directed graph. |
 | dgmlViewer.pngFilename | The default name used when saving the directed graph to a Png file. |
+| dgmlViewer.showPopupsOverNodesAndLinks | When the setting is set to true a popup with various information from node or edge will be shown when the mouse pointer hovers over nodes and edges. |
 
 ## Known Issues
 

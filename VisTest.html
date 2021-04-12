@@ -1,0 +1,81 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://unpkg.com/vis-network@9.0.4/dist/vis-network.min.js"></script>
+</head>
+<body>
+  Example 1: Behaves as expected. Nodes are fixed to the coordinates specified.
+  <div id="network1" style="width: 250px; height: 250px; border: 1px solid #000"></div>
+  Example 2: Does not behave as expected. Why is the random layout ignored? And physics is not turned off as expected when dragging nodes. Physics is correctly turned off in the next example 3 with the same code.
+  <div id="network2" style="width: 250px; height: 250px; border: 1px solid #000"></div>
+  Example 3: Behaves as expected. Nodes are assigned new coordinates randomly on every reload and physics is turned off correctly as specified in the code.
+  <div id="network3" style="width: 250px; height: 250px; border: 1px solid #000"></div>
+  <script type="text/javascript" >
+    var options = {
+      physics: { enabled: true, solver: 'repulsion' },
+      edges: { smooth: false },
+      nodes: { shape: 'box' },
+      layout: { hierarchical: { enabled: false } }
+    };
+    var arrowAttr = {  to: { enabled: true, type: "triangle" }};
+    var edges = new vis.DataSet([
+      {arrows: arrowAttr, from: "1", to: "2", hidden: false},
+      {arrows: arrowAttr, from: "3", to: "4", hidden: false},
+      {arrows: arrowAttr, from: "1", to: "4", hidden: false},
+      {arrows: arrowAttr, from: "2", to: "3", hidden: false},
+    ]);
+
+    // Example 1
+    var nodes1 = new vis.DataSet([
+    {id: "1", label: "Ex 1, Node 1", x: -50, y: -50, fixed: { x: true, y: true}},
+    {id: "2", label: "Ex 1, Node 2", x: -50, y: 50, fixed: { x: true, y: true}},
+    {id: "3", label: "Ex 1, Node 3", x: 50, y: -50, fixed: { x: true, y: true}},
+    {id: "4", label: "Ex 1, Node 4", x: 50, y: 50, fixed: { x: true, y: true}}
+  ]);
+  var data1 = {
+    nodes: nodes1,
+    edges: edges
+  };  
+  var container1 = document.getElementById('network1');
+  var network = new vis.Network(container1, data1, options);
+  network.on("stabilizationIterationsDone", function () {
+    network.setOptions( { physics: false } );
+  });
+  
+    // Example 2
+    var nodes2 = new vis.DataSet([
+    {id: "1", label: "Ex 2, Node 1", x: -50, y: -50, fixed: { x: false, y: false}},
+    {id: "2", label: "Ex 2, Node 2", x: -50, y: 50, fixed: { x: false, y: false}},
+    {id: "3", label: "Ex 2, Node 3", x: 50, y: -50, fixed: { x: false, y: false}},
+    {id: "4", label: "Ex 2, Node 4", x: 50, y: 50, fixed: { x: false, y: false}}
+  ]);
+  var data2 = {
+    nodes: nodes2,
+    edges: edges
+  };
+  options.layout.randomSeed = Math.random();
+  var container2 = document.getElementById('network2');
+  var network = new vis.Network(container2, data2, options);
+  network.on("stabilizationIterationsDone", function () {
+    network.setOptions( { physics: false } );
+  });
+  
+    // Example 3
+    var nodes3 = new vis.DataSet([
+    {id: "1", label: "Ex 3, Node 1"},
+    {id: "2", label: "Ex 3, Node 2"},
+    {id: "3", label: "Ex 3, Node 3"},
+    {id: "4", label: "Ex 3, Node 4"}
+  ]);
+  var data3 = {
+    nodes: nodes3,
+    edges: edges
+  };
+  options.layout.randomSeed = Math.random();
+  var container3 = document.getElementById('network3');
+  var network = new vis.Network(container3, data3, options);
+  network.on("stabilizationIterationsDone", function () {
+    network.setOptions( { physics: false } );
+  });
+  </script>
+</body>
+</html>

@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 1.3.2
+
+- When the mouse pointer is hovering over a node or an edge a popup is shown with various information about the node or edge.
+- Bugfix: Settings are now read correctly and the values are used when rendering the graph.
+
 ## Version 1.3.1
 
 - Paths are now parsed from the dgml file and substituted into the reference properties.
