@@ -134,7 +134,7 @@
     "tscpaths": "0.0.9",
     "typescript": "^4.2.4",
     "vscode-test": "^1.5.2",
-    "webpack": "^5.31.0",
+    "webpack": "^5.31.2",
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
