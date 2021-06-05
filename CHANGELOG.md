@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.3.3
+
+- Bugfix: When edges have the same source and target the edges no longer overlap.
+
 ## Version 1.3.2
 
 - When the mouse pointer is hovering over a node or an edge a popup is shown with various information about the node or edge.

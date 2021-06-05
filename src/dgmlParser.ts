@@ -169,6 +169,11 @@ export class DgmlParser {
           if (newLink.category === undefined) {
             newLink.category = this.createCategoryRef(xmlNode);
           }
+          const mutualLinks = links.filter(l => l.target === newLink.source && l.source === newLink.target);
+          if (mutualLinks.length > 0) {
+            newLink.mutualLinkCount += 1;
+            mutualLinks.forEach(l => l.mutualLinkCount += 1 );
+          }
           links.push(newLink);
         }
       });

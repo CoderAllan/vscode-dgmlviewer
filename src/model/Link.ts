@@ -4,6 +4,7 @@ import { BaseElement } from './BaseElement';
 export class Link extends BaseElement {
   public source: string | undefined;
   public target: string | undefined;
+  public mutualLinkCount: number = 1;
   public category: string | undefined;
   // CommonAttributes
   public label: string | undefined;
@@ -41,6 +42,11 @@ export class Link extends BaseElement {
     if (this.target !== undefined) {
       jsStringProperties.push(`to: "${this.target}"`);
       titleElements.push(`Target: ${this.target}`);
+    }
+    if (this.mutualLinkCount > 1) {
+      jsStringProperties.push(`smooth: {type: 'curvedCW', roundness: 0.2}`);
+    } else {
+      jsStringProperties.push(`smooth: false`);
     }
     if (this.strokeThickness !== undefined) { jsStringProperties.push(`width: ${this.strokeThickness}`); }
     if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }

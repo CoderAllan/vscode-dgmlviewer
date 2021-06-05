@@ -24,9 +24,6 @@
     interaction: {
       hover: true
     },
-    edges: {
-      smooth: false // Make edges straight lines.
-    },
     nodes: {
       shape: 'box' // The shape of the nodes.
     },
