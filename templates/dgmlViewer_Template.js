@@ -1,36 +1,34 @@
 (function () {
-  var nodes = new vis.DataSet([]);
+  
+  var nodeElements = [];
+  var edgeElements = [];
   var nodeCoordinates = [];
+  
+  // var nodes = new vis.DataSet([]);
 
-  nodes.forEach(nodeId => {
-    nodes.get(nodeId).color = {
-      background: "#D2E5FF" // nodes default background color
-    };
-  });
+  // nodes.forEach(nodeId => {
+  //   nodes.get(nodeId).color = {
+  //     background: "#D2E5FF" // nodes default background color
+  //   };
+  // });
 
-  var arrowAttr = {
-    to: {
-      enabled: true,
-      type: "triangle" // edge arrow to type
-    }
-  };
-  var edges = new vis.DataSet([]);
+  // var edges = new vis.DataSet([]);
 
-  let data = {
-    nodes: nodes,
-    edges: edges
-  };
-  const options = {
-    interaction: {
-      hover: true
-    },
-    nodes: {
-      shape: 'box' // The shape of the nodes.
-    },
-    layout: {} // The layout of the directed graph
-  };
+  // let data = {
+  //   nodes: nodes,
+  //   edges: edges
+  // };
+  // const options = {
+  //   interaction: {
+  //     hover: true
+  //   },
+  //   nodes: {
+  //     shape: 'box' // The shape of the nodes.
+  //   },
+  //   layout: {} // The layout of the directed graph
+  // };
   const defaultGraphDirection = ''; // The graph direction from the dgml file itself
-  const container = document.getElementById('network');
+  const cyContainerDiv = document.getElementById('cy');
   const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
   const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
   const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
@@ -38,8 +36,7 @@
   const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
   const saveAsPngButton = document.getElementById('saveAsPngButton');
   const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
-  const copyToClipboardButton = document.getElementById('copyToClipboardButton');
-  const graphDiv = document.getElementById('network');
+  // const graphDiv = document.getElementById('network');
   const selectionLayer = document.getElementById('selectionLayer');
   const helpTextDiv = document.getElementById('helpText');
   showHierarchicalOptions();
@@ -49,7 +46,7 @@
   let mouseX = mouseY = 0;
   let selection;
   // get the vis.js canvas
-  var visDiv = graphDiv.firstElementChild;
+  var visDiv = cyContainerDiv.firstElementChild;
   var graphCanvas = visDiv.firstElementChild;
   const selectionCanvas = selectionLayer.firstElementChild;
   let selectionCanvasContext;
@@ -57,8 +54,6 @@
   // add button event listeners
   saveAsPngButton.addEventListener('click', saveAsPng);
   saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
-  copyToClipboardButton.addEventListener('click', copyToClipboard);
-  copyToClipboardButton.style['display'] = 'none'; // TODO: Remove when copyToClipboard is implemented
   showHierarchicalOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
   hierarchicalOptionsDirectionSelect.addEventListener('change', setNetworkLayout);
   hierarchicalOptionsSortMethodSelect.addEventListener('change', setNetworkLayout);
@@ -246,10 +241,6 @@
     };
   }
 
-  function copyToClipboard() {
-    console.log('Not implemented yet...');
-  }
-
   function showHierarchicalOptions() {
     setDefaultGraphDirection();
     setNetworkLayout();
@@ -267,68 +258,68 @@
   }
 
   function storeCoordinates() {
-    nodes.forEach(node => {
-      if (node.x !== undefined && node.y !== undefined) {
-        nodeCoordinates[node.id] = {
-          x: node.x,
-          y: node.y
-        };
-      }
-      delete node.x;
-      delete node.y;
-      delete node.fixed;
-    });
+    // nodes.forEach(node => {
+    //   if (node.x !== undefined && node.y !== undefined) {
+    //     nodeCoordinates[node.id] = {
+    //       x: node.x,
+    //       y: node.y
+    //     };
+    //   }
+    //   delete node.x;
+    //   delete node.y;
+    //   delete node.fixed;
+    // });
   }
 
   function restoreCoordinates() {
-    nodes.forEach(function (node) {
-      if (node.id in nodeCoordinates) {
-        var nodeCoords = nodeCoordinates[node.id];
-        nodes.update({
-          id: node.id,
-          fixed: true,
-          x: nodeCoords.x,
-          y: nodeCoords.y
-        });
-      }
-    });
+    // nodes.forEach(function (node) {
+    //   if (node.id in nodeCoordinates) {
+    //     var nodeCoords = nodeCoordinates[node.id];
+    //     nodes.update({
+    //       id: node.id,
+    //       fixed: true,
+    //       x: nodeCoords.x,
+    //       y: nodeCoords.y
+    //     });
+    //   }
+    // });
   }
 
   function setHierarchicalLayout(direction, sortMethod) {
-    options.layout = {
-      hierarchical: {
-        enabled: true,
-        levelSeparation: 200,
-        nodeSpacing: 200,
-        direction: direction,
-        sortMethod: sortMethod
-      }
-    };
-    options.physics = {
-      enabled: true,
-      hierarchicalRepulsion: {
-        springConstant: 0,
-        avoidOverlap: 0.2
-      }
-    };
+    // options.layout = {
+    //   hierarchical: {
+    //     enabled: true,
+    //     levelSeparation: 200,
+    //     nodeSpacing: 200,
+    //     direction: direction,
+    //     sortMethod: sortMethod
+    //   }
+    // };
+    // options.physics = {
+    //   enabled: true,
+    //   hierarchicalRepulsion: {
+    //     springConstant: 0,
+    //     avoidOverlap: 0.2
+    //   }
+    // };
   }
 
   function setNetworkLayout() {
     hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
     hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
 
-    options.layout = {
-      hierarchical: {
-        enabled: false
-      }
-    };
-    options.physics = {
-      enabled: true,
-      barnesHut: {
-        springConstant: 0,
-        avoidOverlap: 0.8
-      }
-    };
+    // options.layout = {
+    //   hierarchical: {
+    //     enabled: false
+    //   }
+    // };
+    // options.physics = {
+    //   enabled: true,
+    //   barnesHut: {
+    //     springConstant: 0,
+    //     avoidOverlap: 0.8
+    //   }
+    // };
     var unfixNodes = false;
     if (showHierarchicalOptionsCheckbox.checked) {
       if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
@@ -354,43 +345,78 @@
         unfixNodes = false;
       }
     }
-
-    var network = new vis.Network(container, data, options);
-    if (unfixNodes) {
-      nodes.forEach(function (node) {
-        nodes.update({
-          id: node.id,
-          fixed: false
-        });
-      });
-    }
-    network.on("stabilizationIterationsDone", function () {
-      network.setOptions({
-        physics: {
-          enabled: false
-        }
-      });
-      nodes.forEach(function (node) {
-        nodes.update({
-          id: node.id,
-          fixed: false
-        });
-      });
-    });
-    network.on("selectNode", function (params) {
-      if (params.nodes.length === 1) {
-        var node = nodes.get(params.nodes[0]);
-        openFileInVsCode(node.filepath);
-      }
-    });
-    network.on("hoverNode", function (params) {
-      var node = nodes.get(params.node);
-      if (node.filepath && node.filepath.length > 0) {
-        network.canvas.body.container.style.cursor = 'pointer';
-      }
-    });
-    network.on("blurNode", function (params) {
-      network.canvas.body.container.style.cursor = 'default';
-    });
+    var cy = cytoscape({
+      container: cyContainerDiv,
+  
+      style: [
+  
+      ],
+  
+      elements: {
+  
+          nodes: nodeElements,
+          edges: edgeElements
+      },
+  
+      layout: {
+          name: 'cose',
+          idealEdgeLength: 100,
+          nodeOverlap: 20,
+          refresh: 20,
+          fit: true,
+          padding: 30,
+          randomize: false,
+          componentSpacing: 100,
+          nodeRepulsion: 400000,
+          edgeElasticity: 100,
+          nestingFactor: 5,
+          gravity: 80,
+          numIter: 1000,
+          initialTemp: 200,
+          coolingFactor: 0.95,
+          minTemp: 1.0
+      },
+      minZoom: 0.5,
+      maxZoom: 3,
+      motionBlur: true,
+      wheelSensitivity: 0.05,
+  });
+    // var network = new vis.Network(container, data, options);
+    // if (unfixNodes) {
+    //   nodes.forEach(function (node) {
+    //     nodes.update({
+    //       id: node.id,
+    //       fixed: false
+    //     });
+    //   });
+    // }
+    // network.on("stabilizationIterationsDone", function () {
+    //   network.setOptions({
+    //     physics: {
+    //       enabled: false
+    //     }
+    //   });
+    //   nodes.forEach(function (node) {
+    //     nodes.update({
+    //       id: node.id,
+    //       fixed: false
+    //     });
+    //   });
+    // });
+    // network.on("selectNode", function (params) {
+    //   if (params.nodes.length === 1) {
+    //     var node = nodes.get(params.nodes[0]);
+    //     openFileInVsCode(node.filepath);
+    //   }
+    // });
+    // network.on("hoverNode", function (params) {
+    //   var node = nodes.get(params.node);
+    //   if (node.filepath && node.filepath.length > 0) {
+    //     network.canvas.body.container.style.cursor = 'pointer';
+    //   }
+    // });
+    // network.on("blurNode", function (params) {
+    //   network.canvas.body.container.style.cursor = 'default';
+    // });
   }
 }());

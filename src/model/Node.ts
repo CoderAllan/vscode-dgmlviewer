@@ -142,7 +142,7 @@ export class Node extends BaseElement {
       let title = titleElements.join('\\n');
       jsStringProperties.push(`title: "${title}"`);
     }
-    return `{${jsStringProperties.join(', ')}}`;
+    return `{ data: {${jsStringProperties.join(', ')}}}`;
   }
 
   private getReferenceFilename(propertyValue: string): string | undefined {

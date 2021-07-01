@@ -29,18 +29,18 @@ export class Link extends BaseElement {
   public showPopupsOverNodesAndLinks: boolean = true;
 
   public toJsString(): string {
-    const jsStringProperties: string[] = ['arrows: arrowAttr'];
+    const jsStringProperties: string[] = ['arrows: "triangle"'];
     const titleElements: string[] = [];
     if (this.label !== undefined) {
       jsStringProperties.push(`label: "${this.label}"`);
       titleElements.push(`Label: ${this.label}`);
     }
     if (this.source !== undefined) {
-      jsStringProperties.push(`from: "${this.source}"`);
+      jsStringProperties.push(`source: "${this.source}"`);
       titleElements.push(`Source: ${this.source}`);
     }
     if (this.target !== undefined) {
-      jsStringProperties.push(`to: "${this.target}"`);
+      jsStringProperties.push(`target: "${this.target}"`);
       titleElements.push(`Target: ${this.target}`);
     }
     if (this.mutualLinkCount > 1) {
@@ -72,6 +72,6 @@ export class Link extends BaseElement {
       let title = titleElements.join('\\n');
       jsStringProperties.push(`title: "${title}"`);
     }
-    return `{${jsStringProperties.join(', ')}}`;
+    return `{ data: {${jsStringProperties.join(', ')}}}`;
   }
 }

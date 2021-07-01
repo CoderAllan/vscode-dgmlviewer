@@ -78,8 +78,8 @@ export class DgmlViewer {
   private generateJavascriptContent(nodesJson: string, edgesJson: string, directedGraph: IDirectedGraph): string {
     const templateJsFilename = DgmlViewer._name + '_Template.js';
     let template = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateJsFilename)), 'utf8');
-    let jsContent = template.replace('var nodes = new vis.DataSet([]);', `var nodes = new vis.DataSet([${nodesJson}]);`);
-    jsContent = jsContent.replace('var edges = new vis.DataSet([]);', `var edges = new vis.DataSet([${edgesJson}]);`);
+    let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
+    jsContent = jsContent.replace('var edgeElements = [];', `var edgeElements = [${edgesJson}];`);
     jsContent = jsContent.replace('background: "#D2E5FF" // nodes default background color', `background: "${this.config.defaultNodeBackgroundColor}" // nodes default background color`);
     jsContent = jsContent.replace('shape: \'box\' // The shape of the nodes.', `shape: '${this.config.nodeShape}'// The shape of the nodes.`);
     jsContent = jsContent.replace('type: "triangle" // edge arrow to type', `type: "${this.config.edgeArrowToType}" // edge arrow to type}`);
@@ -96,7 +96,7 @@ export class DgmlViewer {
     const templateHtmlFilename = DgmlViewer._name + '_Template.html';
     let htmlContent = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateHtmlFilename)), 'utf8');
 
-    const visJsMinJs = 'vis-network.min.js';
+    const visJsMinJs = 'cytoscape.min.js';
     const visPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', visJsMinJs);
     const visUri = webview.asWebviewUri(visPath);
     htmlContent = htmlContent.replace(visJsMinJs, visUri.toString());
@@ -105,11 +105,6 @@ export class DgmlViewer {
     const cssUri = webview.asWebviewUri(cssPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.css', cssUri.toString());
     
-    const visJsMinCss = 'vis-network.min.css';
-    const visCssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', visJsMinCss);
-    const visCssUri = webview.asWebviewUri(visCssPath);
-    htmlContent = htmlContent.replace(visJsMinCss, visCssUri.toString());
-
     const nonce = this.getNonce();
     htmlContent = htmlContent.replace('nonce-nonce', `nonce-${nonce}`);
     htmlContent = htmlContent.replace(/<script /g, `<script nonce="${nonce}" `);
