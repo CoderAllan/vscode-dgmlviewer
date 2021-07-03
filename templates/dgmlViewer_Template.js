@@ -1,9 +1,10 @@
 (function () {
-  
+
   var nodeElements = [];
   var edgeElements = [];
   var nodeCoordinates = [];
-  
+  const edgeArrowType = 'triangle'; // edge arrow to type
+
   // var nodes = new vis.DataSet([]);
 
   // nodes.forEach(nodeId => {
@@ -29,6 +30,8 @@
   // };
   const defaultGraphDirection = ''; // The graph direction from the dgml file itself
   const cyContainerDiv = document.getElementById('cy');
+  const txtCanvas = document.createElement('canvas');
+  const txtCtx = txtCanvas.getContext('2d');
   const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
   const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
   const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
@@ -304,6 +307,14 @@
     // };
   }
 
+  function calculateLabelWidths() {
+    nodeElements.forEach(node => {
+      if(node.data.label && node.data.label.length > 0) {
+        node.data.width = txtCtx.measureText(node.data.label).width * 1.75; // Don't know why, but the width of node has to be about 75% bigger than the width of the label text.
+      }
+    });
+  }
+
   function setNetworkLayout() {
     hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
     hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
@@ -345,42 +356,65 @@
         unfixNodes = false;
       }
     }
+    calculateLabelWidths();
     var cy = cytoscape({
       container: cyContainerDiv,
-  
-      style: [
-  
+
+      style: [{
+          selector: 'node',
+          style: {
+            'width': 'data(width)',
+            'label': 'data(label)',
+            'text-valign': 'center',
+            'color': "white",
+            'shape': 'round-rectangle',
+            'background-color': 'data(background)',
+            'border-style': 'data(borderStyle)',
+            'border-width': 'data(borderWidth)',
+            'border-color': 'data(borderColor)',
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 'data(width)',
+            'line-color': 'data(color)',
+            'curve-style': 'bezier',
+            'target-arrow-shape': edgeArrowType,
+            'line-style': 'data(lineStyle)',
+          }
+        }
       ],
-  
+
       elements: {
-  
-          nodes: nodeElements,
-          edges: edgeElements
+
+        nodes: nodeElements,
+        edges: edgeElements
       },
-  
+
       layout: {
-          name: 'cose',
-          idealEdgeLength: 100,
-          nodeOverlap: 20,
-          refresh: 20,
-          fit: true,
-          padding: 30,
-          randomize: false,
-          componentSpacing: 100,
-          nodeRepulsion: 400000,
-          edgeElasticity: 100,
-          nestingFactor: 5,
-          gravity: 80,
-          numIter: 1000,
-          initialTemp: 200,
-          coolingFactor: 0.95,
-          minTemp: 1.0
+        name: 'cose',
+        idealEdgeLength: 100,
+        nodeOverlap: 20,
+        refresh: 20,
+        fit: true,
+        padding: 30,
+        randomize: false,
+        componentSpacing: 100,
+        nodeRepulsion: 400000,
+        edgeElasticity: 100,
+        nestingFactor: 5,
+        gravity: 80,
+        numIter: 1000,
+        initialTemp: 200,
+        coolingFactor: 0.95,
+        minTemp: 1.0
       },
       minZoom: 0.5,
       maxZoom: 3,
       motionBlur: true,
       wheelSensitivity: 0.05,
-  });
+    });
     // var network = new vis.Network(container, data, options);
     // if (unfixNodes) {
     //   nodes.forEach(function (node) {

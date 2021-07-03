@@ -68,59 +68,96 @@ export class Node extends BaseElement {
       jsStringProperties.push(`title: "${description}"`);
       titleElements.push(`Description: ${this.removeNewLines(description)}`);
     }
-    if (this.strokeThickness !== undefined) { jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`); }
-    if (this.strokeDashArray !== undefined) { jsStringProperties.push(`shapeProperties: { borderDashes: true }`); }
-    const jsStringColorProperties: string[] = [];
-    if (this.stroke !== undefined) { jsStringColorProperties.push(`border: "${this.stroke}"`); }
-    if (this.background !== undefined) { jsStringColorProperties.push(`background: "${this.convertColorValue(this.background)}"`); }
-    const jsStringFontProperties: string[] = [];
-    if (this.fontFamily === undefined) { jsStringFontProperties.push(`face: ${this.fontFamily}`); }
-    if (this.fontSize === undefined) { jsStringFontProperties.push(`size: ${this.fontSize}`); }
-    if (this.categoryRef !== undefined) {
-      titleElements.push(`Category: ${this.categoryRef.id}`);
-      if (this.background === undefined &&
-        this.categoryRef.background !== undefined) {
-        jsStringColorProperties.push(`background: "${this.convertColorValue(this.categoryRef.background)}"`);
+    // const jsStringFontProperties: string[] = [];
+    // if (this.fontFamily === undefined) { jsStringFontProperties.push(`face: ${this.fontFamily}`); }
+    // if (this.fontSize === undefined) { jsStringFontProperties.push(`size: ${this.fontSize}`); }
+    // if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
+    if (this.background === undefined &&
+      this.categoryRef !== undefined &&
+      this.categoryRef.background !== undefined) {
+      jsStringProperties.push(`background: \'${this.convertColorValue(this.categoryRef.background)}\'`);
+    }
+    else {
+      if (this.background !== undefined) {
+        jsStringProperties.push(`background: "${this.convertColorValue(this.background)}"`);
       }
-      if (this.stroke === undefined &&
-        this.categoryRef.stroke !== undefined) {
-        jsStringColorProperties.push(`border: "${this.convertColorValue(this.categoryRef.stroke)}"`);
-      }
-      if (this.strokeThickness === undefined &&
-        this.categoryRef.strokeThickness !== undefined) {
-        jsStringProperties.push(`borderWidth: "${this.convertColorValue(this.categoryRef.strokeThickness)}"`);
-      }
-      if (this.strokeDashArray === undefined &&
-        this.categoryRef.strokeDashArray !== undefined) {
-        jsStringProperties.push(`shapeProperties: { borderDashes: true }`);
-      }
-      if (this.fontFamily === undefined &&
-        this.categoryRef.fontFamily !== undefined) {
-        jsStringFontProperties.push(`face: ${this.categoryRef.fontFamily}`);
-      }
-      if (this.fontSize === undefined &&
-        this.categoryRef.fontSize !== undefined) {
-        jsStringFontProperties.push(`size: ${this.categoryRef.fontSize}`);
-      }
-      if (this.fontWeight === undefined &&
-        this.categoryRef.fontWeight !== undefined &&
-        this.categoryRef.fontWeight.toLowerCase().startsWith('bold')) {
-        label = `<b>${label}</b>`;
+      else {
+        jsStringProperties.push(`background: \'grey\'`);
       }
     }
+    if (this.stroke === undefined &&
+      this.categoryRef !== undefined &&
+      this.categoryRef.stroke !== undefined) {
+      jsStringProperties.push(`borderColor: \'${this.convertColorValue(this.categoryRef.stroke)}\'`);
+    }
+    else {
+      if (this.stroke !== undefined) {
+        jsStringProperties.push(`borderColor: \'${this.stroke}\'`);
+      }
+      else {
+        jsStringProperties.push(`borderColor: \'grey\'`);
+      }
+    }
+    if (this.strokeThickness === undefined &&
+      this.categoryRef !== undefined &&
+      this.categoryRef.strokeThickness !== undefined) {
+      jsStringProperties.push(`borderWidth: ${this.categoryRef.strokeThickness}`);
+    }
+    else {
+      if (this.strokeThickness !== undefined) {
+        jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`);
+      }
+      else {
+        if (this.stroke !== undefined ||
+          this.categoryRef !== undefined && this.categoryRef.stroke !== undefined ||
+          this.strokeDashArray !== undefined ||
+          this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
+            jsStringProperties.push(`borderWidth: 2`);
+        }
+        else {
+          jsStringProperties.push(`borderWidth: 0`);
+        }
+      }
+    }
+    if (this.strokeDashArray === undefined &&
+      this.categoryRef !== undefined &&
+      this.categoryRef.strokeDashArray !== undefined) {
+      jsStringProperties.push(`borderStyle: \'dashed\'`);
+    }
+    else {
+      if (this.strokeDashArray !== undefined) {
+        jsStringProperties.push(`borderStyle: \'dashed\'`);
+      }
+      jsStringProperties.push(`borderStyle: \'solid\'`);
+    }
+    // if (this.fontFamily === undefined &&
+    //   this.categoryRef !== undefined &&
+    //   this.categoryRef.fontFamily !== undefined) {
+    //   jsStringFontProperties.push(`face: ${this.categoryRef.fontFamily}`);
+    // }
+    // if (this.fontSize === undefined &&
+    //   this.categoryRef !== undefined &&
+    //   this.categoryRef.fontSize !== undefined) {
+    //   jsStringFontProperties.push(`size: ${this.categoryRef.fontSize}`);
+    // }
+    // if (this.fontWeight === undefined &&
+    //   this.categoryRef !== undefined &&
+    //   this.categoryRef.fontWeight !== undefined &&
+    //   this.categoryRef.fontWeight.toLowerCase().startsWith('bold')) {
+    //   label = `<b>${label}</b>`;
+    // }
+    // if (jsStringFontProperties.length > 0) {
+    //   jsStringFontProperties.push(`multi: 'html'`);
+    //   jsStringProperties.push(`font: { ${jsStringFontProperties.join(', ')} }`);
+    // }
     if (this.label !== undefined) {
       jsStringProperties.push(`label: "${label}"`);
     } else {
       jsStringProperties.push(`label: "${this.id}"`);
     }
-    if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
-    if (jsStringFontProperties.length > 0) {
-      jsStringFontProperties.push(`multi: 'html'`);
-      jsStringProperties.push(`font: { ${jsStringFontProperties.join(', ')} }`);
-    }
-    if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}, fixed: { x: true, y: true}`); }
-    if (this.boundsWidth !== undefined) { jsStringProperties.push(`widthConstraint: { minimum: ${this.boundsWidth} }`); }
-    if (this.boundsHeight !== undefined) { jsStringProperties.push(`heightConstraint: { minimum: ${this.boundsHeight}, valign: top }`); }
+    if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}`); }
+    if (this.boundsWidth !== undefined) { jsStringProperties.push(`width: ${Math.round(this.boundsWidth)}`); }
+    if (this.boundsHeight !== undefined) { jsStringProperties.push(`height: ${Math.round(this.boundsHeight)}`); }
     let referencePropertyValue: string | undefined;
     if (this.filePath !== undefined) {
       referencePropertyValue = this.getReferenceFilename(this.filePath);
@@ -138,10 +175,13 @@ export class Node extends BaseElement {
     if (referencePropertyValue !== undefined) {
       jsStringProperties.push(`filepath: "${referencePropertyValue}"`);
     }
-    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
-      let title = titleElements.join('\\n');
-      jsStringProperties.push(`title: "${title}"`);
+    else {
+      jsStringProperties.push(`filepath: \'\'`);
     }
+    // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+    //   let title = titleElements.join('\\n');
+    //   jsStringProperties.push(`title: "${title}"`);
+    // }
     return `{ data: {${jsStringProperties.join(', ')}}}`;
   }
 

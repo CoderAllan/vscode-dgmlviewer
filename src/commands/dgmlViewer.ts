@@ -81,8 +81,8 @@ export class DgmlViewer {
     let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
     jsContent = jsContent.replace('var edgeElements = [];', `var edgeElements = [${edgesJson}];`);
     jsContent = jsContent.replace('background: "#D2E5FF" // nodes default background color', `background: "${this.config.defaultNodeBackgroundColor}" // nodes default background color`);
-    jsContent = jsContent.replace('shape: \'box\' // The shape of the nodes.', `shape: '${this.config.nodeShape}'// The shape of the nodes.`);
-    jsContent = jsContent.replace('type: "triangle" // edge arrow to type', `type: "${this.config.edgeArrowToType}" // edge arrow to type}`);
+    jsContent = jsContent.replace('\'shape\': \'round-rectangle\' // The shape of the nodes.', `shape: '${this.config.nodeShape}'// The shape of the nodes.`);
+    jsContent = jsContent.replace('const edgeArrowType = \'triangle\' // edge arrow to type', `const edgeArrowType = \'${this.config.edgeArrowToType}\' // edge arrow to type}`);
     jsContent = jsContent.replace('ctx.strokeStyle = \'blue\'; // graph selection guideline color', `ctx.strokeStyle = '${this.config.graphSelectionGuidelineColor}'; // graph selection guideline color`);
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
@@ -96,11 +96,11 @@ export class DgmlViewer {
     const templateHtmlFilename = DgmlViewer._name + '_Template.html';
     let htmlContent = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateHtmlFilename)), 'utf8');
 
-    const visJsMinJs = 'cytoscape.min.js';
-    const visPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', visJsMinJs);
-    const visUri = webview.asWebviewUri(visPath);
-    htmlContent = htmlContent.replace(visJsMinJs, visUri.toString());
-
+    const cytoscapeMinJs = 'cytoscape.min.js';
+    const cytoscapePath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', cytoscapeMinJs);
+    const cytoscapeUri = webview.asWebviewUri(cytoscapePath);
+    htmlContent = htmlContent.replace(cytoscapeMinJs, cytoscapeUri.toString());
+    
     const cssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', DgmlViewer._name + '.css');
     const cssUri = webview.asWebviewUri(cssPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.css', cssUri.toString());

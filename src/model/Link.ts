@@ -29,7 +29,7 @@ export class Link extends BaseElement {
   public showPopupsOverNodesAndLinks: boolean = true;
 
   public toJsString(): string {
-    const jsStringProperties: string[] = ['arrows: "triangle"'];
+    const jsStringProperties: string[] = [];
     const titleElements: string[] = [];
     if (this.label !== undefined) {
       jsStringProperties.push(`label: "${this.label}"`);
@@ -43,35 +43,48 @@ export class Link extends BaseElement {
       jsStringProperties.push(`target: "${this.target}"`);
       titleElements.push(`Target: ${this.target}`);
     }
-    if (this.mutualLinkCount > 1) {
-      jsStringProperties.push(`smooth: {type: 'curvedCW', roundness: 0.2}`);
-    } else {
-      jsStringProperties.push(`smooth: false`);
+    // if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
+    // if (this.categoryRef !== undefined) {
+    //   titleElements.push(`Category: ${this.categoryRef.id}`);
+    // }
+    if (this.categoryRef !== undefined && this.categoryRef.background !== undefined) {
+      jsStringProperties.push(`backgroundColor: \'${this.convertColorValue(this.categoryRef.background)}\'`);
     }
-    if (this.strokeThickness !== undefined) { jsStringProperties.push(`width: ${this.strokeThickness}`); }
-    if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
-    const jsStringColorProperties: string[] = [];
-    if (this.stroke !== undefined) { jsStringColorProperties.push(`color: "${this.convertColorValue(this.stroke)}"`); }
-    if (this.categoryRef !== undefined){
-      titleElements.push(`Category: ${this.categoryRef.id}`);
-      if (this.categoryRef.background !== undefined) {
-        jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.background)}"`);
+    else {
+      jsStringProperties.push(`backgroundColor: \'grey\'`);
+    }
+    if (this.categoryRef !== undefined && this.categoryRef.stroke !== undefined) {
+      jsStringProperties.push(`color: \'${this.convertColorValue(this.categoryRef.stroke)}\'`);
+    }
+    else {
+      if (this.stroke !== undefined) {
+        jsStringProperties.push(`color: \'${this.convertColorValue(this.stroke)}\'`);
       }
-      if (this.categoryRef.stroke !== undefined) {
-        jsStringProperties.push(`color: "${this.convertColorValue(this.categoryRef.stroke)}"`);
-      }
-      if (this.categoryRef.strokeDashArray !== undefined) {
-        jsStringProperties.push(`dashes: true`);
-      }
-      if (this.categoryRef.strokeThickness !== undefined) {
-        jsStringProperties.push(`width: ${this.categoryRef.strokeThickness}`);
+      else {
+        jsStringProperties.push(`color: \'grey\'`);
       }
     }
-    if (jsStringColorProperties.length > 0) { jsStringProperties.push(`color: { ${jsStringColorProperties.join(', ')} }`); }
-    if (this.showPopupsOverNodesAndLinks &&titleElements.length > 0) {
-      let title = titleElements.join('\\n');
-      jsStringProperties.push(`title: "${title}"`);
+    if (this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
+      jsStringProperties.push(`lineStyle: 'dashed'`);
     }
+    else {
+      jsStringProperties.push(`lineStyle: 'solid'`);
+    }
+    if (this.categoryRef !== undefined && this.categoryRef.strokeThickness !== undefined) {
+      jsStringProperties.push(`width: ${this.categoryRef.strokeThickness}`);
+    }
+    else {
+      if (this.strokeThickness !== undefined) {
+        jsStringProperties.push(`width: ${this.strokeThickness}`);
+      }
+      else {
+        jsStringProperties.push(`width: 2`);
+      }
+    }
+    // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+    //   let title = titleElements.join('\\n');
+    //   jsStringProperties.push(`title: "${title}"`);
+    // }
     return `{ data: {${jsStringProperties.join(', ')}}}`;
   }
 }
