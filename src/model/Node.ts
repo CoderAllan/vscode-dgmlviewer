@@ -155,7 +155,10 @@ export class Node extends BaseElement {
     } else {
       jsStringProperties.push(`label: "${this.id}"`);
     }
-    if (this.boundsX !== undefined && this.boundsY !== undefined) { jsStringProperties.push(`x: ${this.boundsX}, y: ${this.boundsY}`); }
+    let position = '';
+    if (this.boundsX !== undefined && this.boundsY !== undefined) {
+      position = `, position: { x: ${Math.round(this.boundsX)}, y: ${Math.round(this.boundsY)}}`;
+    }
     if (this.boundsWidth !== undefined) { jsStringProperties.push(`width: ${Math.round(this.boundsWidth)}`); }
     if (this.boundsHeight !== undefined) { jsStringProperties.push(`height: ${Math.round(this.boundsHeight)}`); }
     let referencePropertyValue: string | undefined;
@@ -182,7 +185,7 @@ export class Node extends BaseElement {
     //   let title = titleElements.join('\\n');
     //   jsStringProperties.push(`title: "${title}"`);
     // }
-    return `{ data: {${jsStringProperties.join(', ')}}}`;
+    return `{ data: {${jsStringProperties.join(', ')}}${position}}`;
   }
 
   private getReferenceFilename(propertyValue: string): string | undefined {

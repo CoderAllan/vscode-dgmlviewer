@@ -6,7 +6,6 @@ export class BaseElement {
     const match = regex.exec(colorValue);
     if (match) {
       let a = this.toNum(match[1]);
-      console.log(a);
       a = a / 255;
       return `rgba(${this.toNum(match[2])}, ${this.toNum(match[3])}, ${this.toNum(match[4])}, ${a})`;
     } else {

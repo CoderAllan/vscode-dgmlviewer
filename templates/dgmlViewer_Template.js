@@ -32,14 +32,11 @@
   const cyContainerDiv = document.getElementById('cy');
   const txtCanvas = document.createElement('canvas');
   const txtCtx = txtCanvas.getContext('2d');
-  const hierarchicalOptionsDirection = document.getElementById('hierarchicalOptions_direction');
-  const hierarchicalOptionsSortMethod = document.getElementById('hierarchicalOptions_sortmethod');
+  const hierarchicalOptionsLayout = document.getElementById('hierarchicalOptions_layout');
   const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
-  const hierarchicalOptionsDirectionSelect = document.getElementById('direction');
-  const hierarchicalOptionsSortMethodSelect = document.getElementById('sortMethod');
+  const hierarchicalOptionsLayoutSelect = document.getElementById('layout');
   const saveAsPngButton = document.getElementById('saveAsPngButton');
   const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
-  // const graphDiv = document.getElementById('network');
   const selectionLayer = document.getElementById('selectionLayer');
   const helpTextDiv = document.getElementById('helpText');
   showHierarchicalOptions();
@@ -58,8 +55,7 @@
   saveAsPngButton.addEventListener('click', saveAsPng);
   saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
   showHierarchicalOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
-  hierarchicalOptionsDirectionSelect.addEventListener('change', setNetworkLayout);
-  hierarchicalOptionsSortMethodSelect.addEventListener('change', setNetworkLayout);
+  hierarchicalOptionsLayoutSelect.addEventListener('change', setNetworkLayout);
 
   function mouseUpEventListener(event) {
     // Convert the canvas to image data that can be saved
@@ -252,9 +248,9 @@
   function setDefaultGraphDirection() {
     let selectedOption = '';
     selectedOption = defaultGraphDirection === '' ? 'Fixed' : defaultGraphDirection;
-    for (var i, j = 0; i = hierarchicalOptionsDirectionSelect.options[j]; j++) {
+    for (var i, j = 0; i = hierarchicalOptionsLayoutSelect.options[j]; j++) {
       if (i.value === selectedOption) {
-        hierarchicalOptionsDirectionSelect.selectedIndex = j;
+        hierarchicalOptionsLayoutSelect.selectedIndex = j;
         break;
       }
     }
@@ -316,46 +312,6 @@
   }
 
   function setNetworkLayout() {
-    hierarchicalOptionsDirection.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
-    hierarchicalOptionsSortMethod.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
-
-    // options.layout = {
-    //   hierarchical: {
-    //     enabled: false
-    //   }
-    // };
-    // options.physics = {
-    //   enabled: true,
-    //   barnesHut: {
-    //     springConstant: 0,
-    //     avoidOverlap: 0.8
-    //   }
-    // };
-    var unfixNodes = false;
-    if (showHierarchicalOptionsCheckbox.checked) {
-      if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Random') {
-        storeCoordinates();
-        seed = Math.random();
-        options.layout.randomSeed = seed;
-      } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'Fixed') {
-        restoreCoordinates();
-        options.physics.enabled = false;
-        unfixNodes = true;
-      } else {
-        storeCoordinates();
-        const direction = hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection;
-        const sortMethod = hierarchicalOptionsSortMethodSelect.value ? hierarchicalOptionsSortMethodSelect.value : 'hubsize';
-        setHierarchicalLayout(direction, sortMethod);
-      }
-    } else {
-      if (defaultGraphDirection !== '') {
-        storeCoordinates();
-        setHierarchicalLayout(defaultGraphDirection, 'hubsize');
-      } else {
-        restoreCoordinates();
-        unfixNodes = false;
-      }
-    }
     calculateLabelWidths();
     var cy = cytoscape({
       container: cyContainerDiv,
@@ -381,6 +337,7 @@
             'line-color': 'data(color)',
             'curve-style': 'bezier',
             'target-arrow-shape': edgeArrowType,
+            'target-arrow-color': 'data(color)',
             'line-style': 'data(lineStyle)',
           }
         }
@@ -393,7 +350,7 @@
       },
 
       layout: {
-        name: 'cose',
+        name: 'preset',
         idealEdgeLength: 100,
         nodeOverlap: 20,
         refresh: 20,
@@ -412,45 +369,59 @@
       },
       minZoom: 0.5,
       maxZoom: 3,
-      motionBlur: true,
-      wheelSensitivity: 0.05,
+      wheelSensitivity: 0.10,
     });
-    // var network = new vis.Network(container, data, options);
-    // if (unfixNodes) {
-    //   nodes.forEach(function (node) {
-    //     nodes.update({
-    //       id: node.id,
-    //       fixed: false
-    //     });
-    //   });
-    // }
-    // network.on("stabilizationIterationsDone", function () {
-    //   network.setOptions({
-    //     physics: {
-    //       enabled: false
-    //     }
-    //   });
-    //   nodes.forEach(function (node) {
-    //     nodes.update({
-    //       id: node.id,
-    //       fixed: false
-    //     });
-    //   });
-    // });
-    // network.on("selectNode", function (params) {
-    //   if (params.nodes.length === 1) {
-    //     var node = nodes.get(params.nodes[0]);
-    //     openFileInVsCode(node.filepath);
-    //   }
-    // });
-    // network.on("hoverNode", function (params) {
-    //   var node = nodes.get(params.node);
-    //   if (node.filepath && node.filepath.length > 0) {
-    //     network.canvas.body.container.style.cursor = 'pointer';
-    //   }
-    // });
-    // network.on("blurNode", function (params) {
-    //   network.canvas.body.container.style.cursor = 'default';
-    // });
+    hierarchicalOptionsLayout.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
+
+    if (showHierarchicalOptionsCheckbox.checked) {
+      let layout;
+      if (hierarchicalOptionsLayoutSelect.value) {
+        layout = cy.layout({ name: hierarchicalOptionsLayoutSelect.value });
+        if (hierarchicalOptionsLayoutSelect.value === 'cose') {
+          layout.options.randomize = true;
+          layout.options.gravity = 1;
+          layout.options.nestingFactor = 1.2;
+          layout.options.nodeRepulsion = 1000000;
+        }
+      }
+      // if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'random') {
+      //   layout = cy.layout({ name: 'random' });
+      //   storeCoordinates();
+      //   seed = Math.random();
+      //   options.layout.randomSeed = seed;
+      // } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'fixed') {
+      //   layout = cy.layout({ name: 'preset' });
+      //   restoreCoordinates();
+      //   options.physics.enabled = false;
+      // } else {
+      //   storeCoordinates();
+      //   const direction = hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection;
+      //   setHierarchicalLayout(direction, sortMethod);
+      // }
+      layout.run();
+    } else {
+      if (defaultGraphDirection !== '') {
+        storeCoordinates();
+        setHierarchicalLayout(defaultGraphDirection, 'hubsize');
+      } else {
+        restoreCoordinates();
+      }
+    }
+
+    cy.on('click', 'node', function (evt) {
+      var filepath = evt.target.data().filepath;
+      if (filepath && filepath.length > 0) {
+        openFileInVsCode(filepath);
+      }
+    });
+    cy.on('mouseover', 'node', function (evt) {
+      var filepath = evt.target.data().filepath;
+      if (filepath && filepath.length > 0) {
+        evt.cy.container().style.cursor = 'pointer';
+      }
+    });
+    cy.on('mouseout', 'node', function (evt) {
+      evt.cy.container().style.cursor = 'default';
+    });
   }
 }());
