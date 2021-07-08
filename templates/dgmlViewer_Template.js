@@ -5,36 +5,13 @@
   var nodeCoordinates = [];
   const edgeArrowType = 'triangle'; // edge arrow to type
 
-  // var nodes = new vis.DataSet([]);
-
-  // nodes.forEach(nodeId => {
-  //   nodes.get(nodeId).color = {
-  //     background: "#D2E5FF" // nodes default background color
-  //   };
-  // });
-
-  // var edges = new vis.DataSet([]);
-
-  // let data = {
-  //   nodes: nodes,
-  //   edges: edges
-  // };
-  // const options = {
-  //   interaction: {
-  //     hover: true
-  //   },
-  //   nodes: {
-  //     shape: 'box' // The shape of the nodes.
-  //   },
-  //   layout: {} // The layout of the directed graph
-  // };
-  const defaultGraphDirection = ''; // The graph direction from the dgml file itself
+  const defaultLayout = ''; // The graph layout from the dgml file itself
   const cyContainerDiv = document.getElementById('cy');
   const txtCanvas = document.createElement('canvas');
   const txtCtx = txtCanvas.getContext('2d');
-  const hierarchicalOptionsLayout = document.getElementById('hierarchicalOptions_layout');
-  const showHierarchicalOptionsCheckbox = document.getElementById('showHierarchicalOptions');
-  const hierarchicalOptionsLayoutSelect = document.getElementById('layout');
+  const layoutDiv = document.getElementById('layoutDiv');
+  const showLayoutOptionsCheckbox = document.getElementById('showLayoutOptions');
+  const layoutSelect = document.getElementById('layout');
   const saveAsPngButton = document.getElementById('saveAsPngButton');
   const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
   const selectionLayer = document.getElementById('selectionLayer');
@@ -54,8 +31,8 @@
   // add button event listeners
   saveAsPngButton.addEventListener('click', saveAsPng);
   saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
-  showHierarchicalOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
-  hierarchicalOptionsLayoutSelect.addEventListener('change', setNetworkLayout);
+  showLayoutOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
+  layoutSelect.addEventListener('change', setNetworkLayout);
 
   function mouseUpEventListener(event) {
     // Convert the canvas to image data that can be saved
@@ -241,71 +218,46 @@
   }
 
   function showHierarchicalOptions() {
-    setDefaultGraphDirection();
+    setDefaultLayout();
     setNetworkLayout();
   }
 
-  function setDefaultGraphDirection() {
+  function setDefaultLayout() {
     let selectedOption = '';
-    selectedOption = defaultGraphDirection === '' ? 'Fixed' : defaultGraphDirection;
-    for (var i, j = 0; i = hierarchicalOptionsLayoutSelect.options[j]; j++) {
+    selectedOption = defaultLayout === '' ? 'preset' : defaultLayout;
+    for (var i, j = 0; i = layoutSelect.options[j]; j++) {
       if (i.value === selectedOption) {
-        hierarchicalOptionsLayoutSelect.selectedIndex = j;
+        layoutSelect.selectedIndex = j;
         break;
       }
     }
   }
 
-  function storeCoordinates() {
-    // nodes.forEach(node => {
-    //   if (node.x !== undefined && node.y !== undefined) {
-    //     nodeCoordinates[node.id] = {
-    //       x: node.x,
-    //       y: node.y
-    //     };
-    //   }
-    //   delete node.x;
-    //   delete node.y;
-    //   delete node.fixed;
-    // });
+
+  function storeCoordinates(cy) {
+    cy.elements().forEach(ele => {
+      if (ele.isNode() && ele.position('x') !== 0 && ele.position('y') !== 0) {
+        nodeCoordinates[ele.id()] = {
+          'x': ele.position('x'),
+          'y': ele.position('y')
+        };
+      }
+    });
+    console.log(nodeCoordinates);
   }
 
-  function restoreCoordinates() {
-    // nodes.forEach(function (node) {
-    //   if (node.id in nodeCoordinates) {
-    //     var nodeCoords = nodeCoordinates[node.id];
-    //     nodes.update({
-    //       id: node.id,
-    //       fixed: true,
-    //       x: nodeCoords.x,
-    //       y: nodeCoords.y
-    //     });
-    //   }
-    // });
-  }
-
-  function setHierarchicalLayout(direction, sortMethod) {
-    // options.layout = {
-    //   hierarchical: {
-    //     enabled: true,
-    //     levelSeparation: 200,
-    //     nodeSpacing: 200,
-    //     direction: direction,
-    //     sortMethod: sortMethod
-    //   }
-    // };
-    // options.physics = {
-    //   enabled: true,
-    //   hierarchicalRepulsion: {
-    //     springConstant: 0,
-    //     avoidOverlap: 0.2
-    //   }
-    // };
+  function restoreCoordinates(cy) {
+    cy.elements().forEach(ele => {
+      if (ele.isNode() && ele.id() in nodeCoordinates) {
+        var nodeCoords = nodeCoordinates[ele.id()];
+        ele.position(nodeCoords);
+      }
+    });
   }
 
   function calculateLabelWidths() {
     nodeElements.forEach(node => {
-      if(node.data.label && node.data.label.length > 0) {
+      if (node.data.label && node.data.label.length > 0) {
         node.data.width = txtCtx.measureText(node.data.label).width * 1.75; // Don't know why, but the width of node has to be about 75% bigger than the width of the label text.
       }
     });
@@ -371,40 +323,39 @@
       maxZoom: 3,
       wheelSensitivity: 0.10,
     });
-    hierarchicalOptionsLayout.style['display'] = showHierarchicalOptionsCheckbox.checked ? 'block' : 'none';
 
-    if (showHierarchicalOptionsCheckbox.checked) {
+    layoutDiv.style['display'] = showLayoutOptionsCheckbox.checked ? 'block' : 'none';
+
+    if (showLayoutOptionsCheckbox.checked) {
       let layout;
-      if (hierarchicalOptionsLayoutSelect.value) {
-        layout = cy.layout({ name: hierarchicalOptionsLayoutSelect.value });
-        if (hierarchicalOptionsLayoutSelect.value === 'cose') {
+      if (layoutSelect.value) {
+        layout = cy.layout({
+          name: layoutSelect.value
+        });
+        if (layoutSelect.value === 'cose') {
+          layout.name = layoutSelect.value;
           layout.options.randomize = true;
           layout.options.gravity = 1;
           layout.options.nestingFactor = 1.2;
           layout.options.nodeRepulsion = 1000000;
+        } else if (layoutSelect.value && layoutSelect.value === 'preset') {
+          restoreCoordinates(cy);
+        } else {
+          storeCoordinates(cy);
+        }
+        layout.run();
+      } else {
+        if (defaultLayout !== '' && defaultLayout !== 'preset') {
+          storeCoordinates(cy);
+        } else {
+          restoreCoordinates(cy);
         }
       }
-      // if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'random') {
-      //   layout = cy.layout({ name: 'random' });
-      //   storeCoordinates();
-      //   seed = Math.random();
-      //   options.layout.randomSeed = seed;
-      // } else if (hierarchicalOptionsDirectionSelect.value && hierarchicalOptionsDirectionSelect.value === 'fixed') {
-      //   layout = cy.layout({ name: 'preset' });
-      //   restoreCoordinates();
-      //   options.physics.enabled = false;
-      // } else {
-      //   storeCoordinates();
-      //   const direction = hierarchicalOptionsDirectionSelect.value ? hierarchicalOptionsDirectionSelect.value : defaultGraphDirection;
-      //   setHierarchicalLayout(direction, sortMethod);
-      // }
-      layout.run();
     } else {
-      if (defaultGraphDirection !== '') {
-        storeCoordinates();
-        setHierarchicalLayout(defaultGraphDirection, 'hubsize');
+      if (defaultLayout !== '' && defaultLayout !== 'preset') {
+        storeCoordinates(cy);
       } else {
-        restoreCoordinates();
+        restoreCoordinates(cy);
       }
     }
 
