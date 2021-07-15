@@ -13,6 +13,7 @@ export class DgmlViewer {
   private extensionContext: vscode.ExtensionContext;
   private config = new Config();
   private fsUtils = new FileSystemUtils();
+  private directedGraph: IDirectedGraph | undefined;
   public static get commandName(): string { return DgmlViewer._name; }
 
   constructor(context: vscode.ExtensionContext) {
@@ -28,13 +29,25 @@ export class DgmlViewer {
             this.saveAsPng(message.text);
             return;
           case 'openFile':
-              const filename = message.text;
-              if (this.fsUtils.fileExists(filename)) {
-                var openPath = vscode.Uri.parse("file:///" + filename);
-                vscode.workspace.openTextDocument(openPath).then(doc => {
-                  vscode.window.showTextDocument(doc);
-                });
+            const filename = message.text;
+            if (this.fsUtils.fileExists(filename)) {
+              var openPath = vscode.Uri.parse("file:///" + filename);
+              vscode.workspace.openTextDocument(openPath).then(doc => {
+                vscode.window.showTextDocument(doc);
+              });
+            }
+            return;
+          case 'nodeCoordinateUpdate':
+            if (this.directedGraph !== undefined) {
+              const nodeId = message.text.nodeId;
+              const position = message.text.position;
+              const node = this.directedGraph.nodes.find(node => node.id === nodeId);
+              if (node !== undefined) {
+                node.boundsX = position.x;
+                node.boundsY = position.y;
+                this.generateAndWriteJavascriptFile(() => { });
               }
+            }
             return;
         }
       },
@@ -46,36 +59,35 @@ export class DgmlViewer {
       let doc = vscode.window.activeTextEditor.document;
       if (doc.fileName.toLowerCase().endsWith('.dgml')) {
         const dgmlParser = new DgmlParser();
-        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName, this.config);
-        if (directedGraph !== undefined) {
-          const nodesJson = directedGraph.nodes
-            .map((node, index, arr) => { return node.toJsString(); })
-            .join(',\n');
-          const edgesJson = directedGraph.links
-            .map((link, index, arr) => { return link.toJsString(); })
-            .join(',\n');
-          try {
-            const jsContent = this.generateJavascriptContent(nodesJson, edgesJson, directedGraph);
-            const outputJsFilename = DgmlViewer._name + '.js';
-            let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
-
-            // this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
-            this.fsUtils.writeFile(
-              this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)),
-              jsContent,
-              () => {
-                webview.html = htmlContent;
-              }
-            );
-          } catch (ex) {
-            console.log('Dgml Viewer Exception:' + ex);
-          }
-        }
+        this.directedGraph = dgmlParser.parseDgmlFile(doc.fileName, this.config);
+        const outputJsFilename = DgmlViewer._name + '.js';
+        let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
+        this.generateAndWriteJavascriptFile(() => {
+          webview.html = htmlContent;
+        });
       }
     }
   }
 
-  private generateJavascriptContent(nodesJson: string, edgesJson: string, directedGraph: IDirectedGraph): string {
+  private generateAndWriteJavascriptFile(callbackFunction: () => void) {
+    if (this.directedGraph !== undefined) {
+      const nodesJson = this.directedGraph.nodes
+        .map((node, index, arr) => { return node.toJsString(); })
+        .join(',\n');
+      const edgesJson = this.directedGraph.links
+        .map((link, index, arr) => { return link.toJsString(); })
+        .join(',\n');
+      const jsContent = this.generateJavascriptContent(nodesJson, edgesJson);
+      const outputJsFilename = DgmlViewer._name + '.js';
+      try {
+        this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)), jsContent, callbackFunction);
+      } catch (ex) {
+        console.log('Dgml Viewer Exception:' + ex);
+      }
+    }
+  }
+
+  private generateJavascriptContent(nodesJson: string, edgesJson: string): string {
     const templateJsFilename = DgmlViewer._name + '_Template.js';
     let template = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateJsFilename)), 'utf8');
     let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
@@ -99,11 +111,11 @@ export class DgmlViewer {
     const cytoscapePath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', cytoscapeMinJs);
     const cytoscapeUri = webview.asWebviewUri(cytoscapePath);
     htmlContent = htmlContent.replace(cytoscapeMinJs, cytoscapeUri.toString());
-    
+
     const cssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', DgmlViewer._name + '.css');
     const cssUri = webview.asWebviewUri(cssPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.css', cssUri.toString());
-    
+
     const nonce = this.getNonce();
     htmlContent = htmlContent.replace('nonce-nonce', `nonce-${nonce}`);
     htmlContent = htmlContent.replace(/<script /g, `<script nonce="${nonce}" `);

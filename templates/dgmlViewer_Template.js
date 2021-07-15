@@ -243,7 +243,6 @@
         };
       }
     });
-    console.log(nodeCoordinates);
   }
 
   function restoreCoordinates(cy) {
@@ -344,6 +343,7 @@
           storeCoordinates(cy);
         }
         layout.run();
+        cy.center();
       } else {
         if (defaultLayout !== '' && defaultLayout !== 'preset') {
           storeCoordinates(cy);
@@ -359,6 +359,19 @@
       }
     }
 
+    cy.on('dragfree', 'node', function (evt) {
+      nodeId = evt.target.id();
+      position = evt.target.position();
+      nodeCoordinates[nodeId] = position;
+      vscode.postMessage({
+        command: 'nodeCoordinateUpdate',
+        text: {
+          nodeId: nodeId,
+          position: position
+        }
+      });
+  
+    });
     cy.on('click', 'node', function (evt) {
       var filepath = evt.target.data().filepath;
       if (filepath && filepath.length > 0) {
