@@ -14,6 +14,7 @@ export class DgmlViewer {
   private config = new Config();
   private fsUtils = new FileSystemUtils();
   private directedGraph: IDirectedGraph | undefined;
+  private zoom: number = 1.25;
   public static get commandName(): string { return DgmlViewer._name; }
 
   constructor(context: vscode.ExtensionContext) {
@@ -48,6 +49,10 @@ export class DgmlViewer {
                 this.generateAndWriteJavascriptFile(() => { });
               }
             }
+            return;
+          case 'zoom':
+            this.zoom = message.text;
+            this.generateAndWriteJavascriptFile(() => { });
             return;
         }
       },
@@ -100,6 +105,7 @@ export class DgmlViewer {
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
     jsContent = jsContent.replace('selectionCanvasContext.lineWidth = 2;', `selectionCanvasContext.lineWidth = ${this.config.graphSelectionWidth};`);
     jsContent = jsContent.replace("const defaultLayout = ''; // The graph layout from the dgml file itself", `const defaultLayout = '${this.config.defaultLayout}'; // The graph layout from the dgml file itself`);
+    jsContent = jsContent.replace('const defaultZoom = 1.25;', `const defaultZoom = ${this.zoom};`);
     return jsContent;
   }
 

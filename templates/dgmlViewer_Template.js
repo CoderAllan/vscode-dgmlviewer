@@ -4,6 +4,7 @@
   var edgeElements = [];
   var nodeCoordinates = [];
   const edgeArrowType = 'triangle'; // edge arrow to type
+  const defaultZoom = 1.25;
 
   const defaultLayout = ''; // The graph layout from the dgml file itself
   const cyContainerDiv = document.getElementById('cy');
@@ -305,7 +306,6 @@
         idealEdgeLength: 100,
         nodeOverlap: 20,
         refresh: 20,
-        fit: true,
         padding: 30,
         randomize: false,
         componentSpacing: 100,
@@ -318,8 +318,12 @@
         coolingFactor: 0.95,
         minTemp: 1.0
       },
-      minZoom: 0.5,
-      maxZoom: 3,
+      pan: {
+        x: 0,
+        y: 0
+      },
+      minZoom: 0,
+      maxZoom: 4,
       wheelSensitivity: 0.10,
     });
 
@@ -343,7 +347,6 @@
           storeCoordinates(cy);
         }
         layout.run();
-        cy.center();
       } else {
         if (defaultLayout !== '' && defaultLayout !== 'preset') {
           storeCoordinates(cy);
@@ -359,6 +362,8 @@
       }
     }
 
+    cy.zoom(defaultZoom);
+    cy.center();
     cy.on('dragfree', 'node', function (evt) {
       nodeId = evt.target.id();
       position = evt.target.position();
@@ -370,7 +375,6 @@
           position: position
         }
       });
-  
     });
     cy.on('click', 'node', function (evt) {
       var filepath = evt.target.data().filepath;
@@ -386,6 +390,12 @@
     });
     cy.on('mouseout', 'node', function (evt) {
       evt.cy.container().style.cursor = 'default';
+    });
+    cy.on('zoom', function (evt) {
+      vscode.postMessage({
+        command: 'zoom',
+        text: cy.zoom()
+      });
     });
   }
 }());
