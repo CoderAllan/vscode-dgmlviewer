@@ -2,7 +2,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src cspSource; script-src 'nonce-nonce';">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src cspSource; img-src 'self' data:; script-src 'nonce-nonce';">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="dgmlViewer.css" rel="stylesheet">
@@ -29,7 +29,7 @@
     </div>
     <div id="helpText">Click and drag to select the area to be saved.</div>
   </div>
-  <div id="selectionLayer" class="fullScreen"><canvas id="captureCanvas"></canvas></div>
+  <div id="selectionLayer" class="fullScreen"><canvas id="selectionCanvas"></canvas><image id="tmpImage"></image></div>
   <div id="cy" class="fullScreen"></div>
   <script type="text/javascript" src="dgmlViewer.js"></script>
 </body>

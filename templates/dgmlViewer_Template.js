@@ -36,31 +36,40 @@
 
   function mouseUpEventListener(event) {
     // Convert the canvas to image data that can be saved
-    const aspectRatioX = graphCanvas.width / selectionCanvas.width;
-    const aspectRatioY = graphCanvas.height / selectionCanvas.height;
-    const finalSelectionCanvas = document.createElement('canvas');
-    finalSelectionCanvas.width = selection.width;
-    finalSelectionCanvas.height = selection.height;
-    const finalSelectionCanvasContext = finalSelectionCanvas.getContext('2d');
-    finalSelectionCanvasContext.drawImage(graphCanvas, selection.top * aspectRatioX, selection.left * aspectRatioY, selection.width * aspectRatioX, selection.height * aspectRatioY, 0, 0, selection.width, selection.height);
-
-    // Call back to the extension context to save the selected image to the workspace folder.
-    vscode.postMessage({
-      command: 'saveAsPng',
-      text: finalSelectionCanvas.toDataURL()
+    const cyPng = cy.png({
+      output: 'base64uri',
+      bg: 'transparent',
+      full: false,
+      maxHeight: cy.height(),
+      maxWidth: cy.width()
     });
-    // Remove the temporary canvas
-    finalSelectionCanvas.remove();
-    // Reset the state variables
-    selectionCanvasContext = undefined;
-    selection = {};
-    // hide the help text
-    helpTextDiv.style['display'] = 'none';
-    // hide selection layer and remove event listeners
-    selectionLayer.removeEventListener('mouseup', mouseUpEventListener);
-    selectionLayer.removeEventListener('mousedown', mouseDownEventListener);
-    selectionLayer.removeEventListener('mousemove', mouseMoveEventListener);
-    selectionLayer.style['display'] = 'none';
+    const tmpImage = document.getElementById('tmpImage');
+    tmpImage.width = cy.width();
+    tmpImage.height = cy.height();
+    tmpImage.src = cyPng;
+    tmpImage.style['display'] = 'none';
+    tmpImage.onload = () => {
+      const finalSelectionCanvas = document.createElement('canvas');
+      finalSelectionCanvas.width = selection.width;
+      finalSelectionCanvas.height = selection.height;
+      const finalSelectionCanvasContext = finalSelectionCanvas.getContext('2d');
+      finalSelectionCanvasContext.drawImage(tmpImage, selection.top, selection.left, selection.width, selection.height, 0, 0, selection.width, selection.height);
+      // Call back to the extension context to save the selected image to the workspace folder.
+      vscode.postMessage({
+        command: 'saveAsPng',
+        text: finalSelectionCanvas.toDataURL()
+      });
+      // Reset the state variables
+      selectionCanvasContext = undefined;
+      selection = {};
+      // hide the help text
+      helpTextDiv.style['display'] = 'none';
+      // hide selection layer and remove event listeners
+      selectionLayer.removeEventListener('mouseup', mouseUpEventListener);
+      selectionLayer.removeEventListener('mousedown', mouseDownEventListener);
+      selectionLayer.removeEventListener('mousemove', mouseMoveEventListener);
+      selectionLayer.style['display'] = 'none';
+    };
   }
 
   function mouseDownEventListener(event) {
@@ -114,25 +123,22 @@
   }
 
   function saveSelectionAsPng() {
-    // visDiv = graphDiv.firstElementChild;
-    // graphCanvas = visDiv.firstElementChild;
+    // show the help text
+    helpTextDiv.style['display'] = 'block';
 
-    // // show the help text
-    // helpTextDiv.style['display'] = 'block';
+    // show the selection layer
+    selectionLayer.style['display'] = 'block';
 
-    // // show the selection layer
-    // selectionLayer.style['display'] = 'block';
+    // make sure the selection canvas covers the whole screen
+    selectionCanvas.width = window.innerWidth;
+    selectionCanvas.height = window.innerHeight;
+    // reset the current context and selection
+    selectionCanvasContext = undefined;
+    selection = {};
 
-    // // make sure the selection canvas covers the whole screen
-    // selectionCanvas.width = window.innerWidth;
-    // selectionCanvas.height = window.innerHeight;
-    // // reset the current context and selection
-    // selectionCanvasContext = undefined;
-    // selection = {};
-
-    // selectionLayer.addEventListener("mouseup", mouseUpEventListener, true);
-    // selectionLayer.addEventListener("mousedown", mouseDownEventListener, true);
-    // selectionLayer.addEventListener("mousemove", mouseMoveEventListener, true);
+    selectionLayer.addEventListener("mouseup", mouseUpEventListener, true);
+    selectionLayer.addEventListener("mousedown", mouseDownEventListener, true);
+    selectionLayer.addEventListener("mousemove", mouseMoveEventListener, true);
   }
 
   function openFileInVsCode(filepath) {
