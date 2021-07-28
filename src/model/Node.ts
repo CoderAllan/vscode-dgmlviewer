@@ -12,6 +12,9 @@ export class Node extends BaseElement {
   public reference: string | undefined;
   public isVertical: boolean | undefined;
   public group: string | undefined;
+    // Cytoscape specific attributes
+  public parent: string | undefined;
+  public hasChildren: boolean = false;
   // CommonAttributes
   public label: string | undefined;
   public visibility: string | undefined;
@@ -95,7 +98,7 @@ export class Node extends BaseElement {
         jsStringProperties.push(`borderColor: \'${this.stroke}\'`);
       }
       else {
-        jsStringProperties.push(`borderColor: \'grey\'`);
+        jsStringProperties.push(`borderColor: \'black\'`);
       }
     }
     if (this.strokeThickness === undefined &&
@@ -108,15 +111,7 @@ export class Node extends BaseElement {
         jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`);
       }
       else {
-        if (this.stroke !== undefined ||
-          this.categoryRef !== undefined && this.categoryRef.stroke !== undefined ||
-          this.strokeDashArray !== undefined ||
-          this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
-            jsStringProperties.push(`borderWidth: 2`);
-        }
-        else {
-          jsStringProperties.push(`borderWidth: 0`);
-        }
+        jsStringProperties.push(`borderWidth: 2`);
       }
     }
     if (this.strokeDashArray === undefined &&
@@ -128,7 +123,9 @@ export class Node extends BaseElement {
       if (this.strokeDashArray !== undefined) {
         jsStringProperties.push(`borderStyle: \'dashed\'`);
       }
-      jsStringProperties.push(`borderStyle: \'solid\'`);
+      else {
+        jsStringProperties.push(`borderStyle: \'solid\'`);
+      }
     }
     // if (this.fontFamily === undefined &&
     //   this.categoryRef !== undefined &&
@@ -180,6 +177,15 @@ export class Node extends BaseElement {
     }
     else {
       jsStringProperties.push(`filepath: \'\'`);
+    }
+    if(this.parent !== undefined) {
+      jsStringProperties.push(`parent: '${this.parent}'`);
+    }
+    if(this.hasChildren) {
+      jsStringProperties.push(`labelvalign: 'top'`);
+    }
+    else {
+      jsStringProperties.push(`labelvalign: 'center'`);
     }
     // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
     //   let title = titleElements.join('\\n');

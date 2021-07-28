@@ -85,6 +85,9 @@ export class Link extends BaseElement {
     //   let title = titleElements.join('\\n');
     //   jsStringProperties.push(`title: "${title}"`);
     // }
+    if (this.categoryRef !== undefined && this.categoryRef .isContainment) {
+      return ''; // if the link has a containment category then no links element should be created
+    }
     return `{ data: {${jsStringProperties.join(', ')}}}`;
   }
 }

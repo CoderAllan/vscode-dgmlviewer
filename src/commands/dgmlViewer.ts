@@ -81,6 +81,7 @@ export class DgmlViewer {
         .join(',\n');
       const edgesJson = this.directedGraph.links
         .map((link, index, arr) => { return link.toJsString(); })
+        .filter(link => link !== '')
         .join(',\n');
       const jsContent = this.generateJavascriptContent(nodesJson, edgesJson);
       const outputJsFilename = DgmlViewer._name + '.js';

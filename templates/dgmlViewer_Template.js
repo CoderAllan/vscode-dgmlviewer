@@ -219,12 +219,14 @@
             'width': 'data(width)',
             'label': 'data(label)',
             'text-valign': 'center',
-            'color': "white",
+            'color': 'white',
             'shape': 'round-rectangle',
             'background-color': 'data(background)',
             'border-style': 'data(borderStyle)',
             'border-width': 'data(borderWidth)',
             'border-color': 'data(borderColor)',
+            'text-valign': 'data(labelvalign)',
+            'text-halign': 'center',
           }
         },
         {

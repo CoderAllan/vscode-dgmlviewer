@@ -438,6 +438,8 @@ export class DgmlParser {
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
+    const containmentCategories = directedGraph.categories.filter(category=> category.isContainment).map(category => category.id);
+    const containmentLinks = directedGraph.links.filter(link => link.category !== undefined && containmentCategories.includes(link.category));
     directedGraph.nodes.forEach(node => {
       if (node.filePath !== undefined) {
         node.filePath = this.replacePaths(node.filePath, directedGraph);
@@ -452,6 +454,16 @@ export class DgmlParser {
             }
           }
         });
+      }
+      if(containmentLinks.length > 0) {
+        const targetLink = containmentLinks.find(link => link.target === node.id);
+        if(targetLink !== undefined) {
+          node.parent = targetLink.source;
+          var parentNode = directedGraph.nodes.find(pNode => pNode.id === node.parent);
+          if (parentNode) {
+            parentNode.hasChildren = true;
+          }
+        }
       }
     });
   }
