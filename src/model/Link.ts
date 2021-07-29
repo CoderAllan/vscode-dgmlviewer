@@ -35,6 +35,36 @@ export class Link extends BaseElement {
       jsStringProperties.push(`label: "${this.label}"`);
       titleElements.push(`Label: ${this.label}`);
     }
+    if (this.fontWeight !== undefined) {
+      jsStringProperties.push(`fontWeight: '${this.fontWeight}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontWeight !== undefined) {
+      jsStringProperties.push(`fontWeight: '${this.categoryRef.fontWeight}'`);
+    }
+    else {
+      jsStringProperties.push(`fontWeight: 'normal'`);
+    }
+    if (this.fontFamily !== undefined) {
+      jsStringProperties.push(`fontFamily: '${this.fontFamily}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontFamily !== undefined) {
+      jsStringProperties.push(`fontFamily: '${this.categoryRef.fontFamily}'`);
+    }
+    else{
+      jsStringProperties.push(`fontFamily: 'sans-serif'`);
+    }
+    if (this.fontSize !== undefined) {
+      jsStringProperties.push(`fontSize: '${this.fontSize}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontSize !== undefined) {
+      jsStringProperties.push(`fontSize: '${this.categoryRef.fontSize}'`);
+    }
+    else {
+      jsStringProperties.push(`fontSize: '1em'`);
+    }
     if (this.source !== undefined) {
       jsStringProperties.push(`source: "${this.source}"`);
       titleElements.push(`Source: ${this.source}`);

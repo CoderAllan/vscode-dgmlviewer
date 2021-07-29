@@ -12,7 +12,7 @@ export class Node extends BaseElement {
   public reference: string | undefined;
   public isVertical: boolean | undefined;
   public group: string | undefined;
-    // Cytoscape specific attributes
+  // Cytoscape specific attributes
   public parent: string | undefined;
   public hasChildren: boolean = false;
   // CommonAttributes
@@ -62,18 +62,11 @@ export class Node extends BaseElement {
     if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
     let label = this.convertNewlines(this.label);
     titleElements.push(`Label: ${this.removeNewLines(label)}`);
-    if (this.fontWeight !== undefined &&
-      this.fontWeight.toLowerCase().startsWith('bold')) {
-      label = `<b>${label}</b>`;
-    }
     const description = this.convertNewlines(this.description);
     if (this.description !== undefined) {
       jsStringProperties.push(`title: "${description}"`);
       titleElements.push(`Description: ${this.removeNewLines(description)}`);
     }
-    // const jsStringFontProperties: string[] = [];
-    // if (this.fontFamily === undefined) { jsStringFontProperties.push(`face: ${this.fontFamily}`); }
-    // if (this.fontSize === undefined) { jsStringFontProperties.push(`size: ${this.fontSize}`); }
     // if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
     if (this.background === undefined &&
       this.categoryRef !== undefined &&
@@ -127,26 +120,36 @@ export class Node extends BaseElement {
         jsStringProperties.push(`borderStyle: \'solid\'`);
       }
     }
-    // if (this.fontFamily === undefined &&
-    //   this.categoryRef !== undefined &&
-    //   this.categoryRef.fontFamily !== undefined) {
-    //   jsStringFontProperties.push(`face: ${this.categoryRef.fontFamily}`);
-    // }
-    // if (this.fontSize === undefined &&
-    //   this.categoryRef !== undefined &&
-    //   this.categoryRef.fontSize !== undefined) {
-    //   jsStringFontProperties.push(`size: ${this.categoryRef.fontSize}`);
-    // }
-    // if (this.fontWeight === undefined &&
-    //   this.categoryRef !== undefined &&
-    //   this.categoryRef.fontWeight !== undefined &&
-    //   this.categoryRef.fontWeight.toLowerCase().startsWith('bold')) {
-    //   label = `<b>${label}</b>`;
-    // }
-    // if (jsStringFontProperties.length > 0) {
-    //   jsStringFontProperties.push(`multi: 'html'`);
-    //   jsStringProperties.push(`font: { ${jsStringFontProperties.join(', ')} }`);
-    // }
+    if (this.fontWeight !== undefined) {
+      jsStringProperties.push(`fontWeight: '${this.fontWeight}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontWeight !== undefined) {
+      jsStringProperties.push(`fontWeight: '${this.categoryRef.fontWeight}'`);
+    }
+    else {
+      jsStringProperties.push(`fontWeight: 'normal'`);
+    }
+    if (this.fontFamily !== undefined) {
+      jsStringProperties.push(`fontFamily: '${this.fontFamily}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontFamily !== undefined) {
+      jsStringProperties.push(`fontFamily: '${this.categoryRef.fontFamily}'`);
+    }
+    else{
+      jsStringProperties.push(`fontFamily: 'sans-serif'`);
+    }
+    if (this.fontSize !== undefined) {
+      jsStringProperties.push(`fontSize: '${this.fontSize}'`);
+    }
+    else if (this.categoryRef !== undefined &&
+      this.categoryRef.fontSize !== undefined) {
+      jsStringProperties.push(`fontSize: '${this.categoryRef.fontSize}'`);
+    }
+    else {
+      jsStringProperties.push(`fontSize: '1em'`);
+    }
     if (this.label !== undefined) {
       jsStringProperties.push(`label: "${label}"`);
     } else {
@@ -178,10 +181,10 @@ export class Node extends BaseElement {
     else {
       jsStringProperties.push(`filepath: \'\'`);
     }
-    if(this.parent !== undefined) {
+    if (this.parent !== undefined) {
       jsStringProperties.push(`parent: '${this.parent}'`);
     }
-    if(this.hasChildren) {
+    if (this.hasChildren) {
       jsStringProperties.push(`labelvalign: 'top'`);
     }
     else {
