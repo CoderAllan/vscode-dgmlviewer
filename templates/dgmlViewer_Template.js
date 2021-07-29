@@ -219,7 +219,7 @@
             'width': 'data(width)',
             'label': 'data(label)',
             'text-valign': 'center',
-            'color': 'white',
+            'color': 'black',
             'shape': 'round-rectangle',
             'background-color': 'data(background)',
             'border-style': 'data(borderStyle)',

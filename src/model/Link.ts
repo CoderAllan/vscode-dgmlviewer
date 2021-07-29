@@ -51,7 +51,7 @@ export class Link extends BaseElement {
       jsStringProperties.push(`backgroundColor: \'${this.convertColorValue(this.categoryRef.background)}\'`);
     }
     else {
-      jsStringProperties.push(`backgroundColor: \'grey\'`);
+      jsStringProperties.push(`backgroundColor: \'rgba(63, 124, 227, 1)\'`);
     }
     if (this.categoryRef !== undefined && this.categoryRef.stroke !== undefined) {
       jsStringProperties.push(`color: \'${this.convertColorValue(this.categoryRef.stroke)}\'`);
@@ -61,7 +61,7 @@ export class Link extends BaseElement {
         jsStringProperties.push(`color: \'${this.convertColorValue(this.stroke)}\'`);
       }
       else {
-        jsStringProperties.push(`color: \'grey\'`);
+        jsStringProperties.push(`color: \'rgba(63, 124, 227, 1)\'`);
       }
     }
     if (this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
@@ -78,7 +78,7 @@ export class Link extends BaseElement {
         jsStringProperties.push(`width: ${this.strokeThickness}`);
       }
       else {
-        jsStringProperties.push(`width: 2`);
+        jsStringProperties.push(`width: 1`);
       }
     }
     // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {

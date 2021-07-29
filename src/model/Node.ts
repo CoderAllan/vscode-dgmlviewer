@@ -85,7 +85,7 @@ export class Node extends BaseElement {
         jsStringProperties.push(`background: "${this.convertColorValue(this.background)}"`);
       }
       else {
-        jsStringProperties.push(`background: \'grey\'`);
+        jsStringProperties.push(`background: \'rgba(156, 193, 248, 1)\'`);
       }
     }
     if (this.stroke === undefined &&
@@ -98,7 +98,7 @@ export class Node extends BaseElement {
         jsStringProperties.push(`borderColor: \'${this.stroke}\'`);
       }
       else {
-        jsStringProperties.push(`borderColor: \'black\'`);
+        jsStringProperties.push(`borderColor: \'rgba(75, 133, 227, 1)\'`);
       }
     }
     if (this.strokeThickness === undefined &&
@@ -111,7 +111,7 @@ export class Node extends BaseElement {
         jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`);
       }
       else {
-        jsStringProperties.push(`borderWidth: 2`);
+        jsStringProperties.push(`borderWidth: 1`);
       }
     }
     if (this.strokeDashArray === undefined &&
