@@ -42,7 +42,7 @@ export class DgmlParser {
         if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'nodes') {
           directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename, config.showPopupsOverNodesAndLinks);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'links') {
-          directedGraph.links = this.convertXmlToLinks(xmlNode.children, config.showPopupsOverNodesAndLinks);
+          directedGraph.links = this.convertXmlToEdges(xmlNode.children, config.showPopupsOverNodesAndLinks);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'categories') {
           directedGraph.categories = this.convertXmlToCategories(xmlNode.children);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'properties') {
@@ -57,6 +57,7 @@ export class DgmlParser {
       this.addCategoryStylingToNodes(directedGraph);
       this.addCategoryStylingToLinks(directedGraph);
       this.enrichNodes(directedGraph);
+      this.enrichEdges(directedGraph);
     }
     return directedGraph;
   }
@@ -143,7 +144,7 @@ export class DgmlParser {
     return value;
   }
 
-  private convertXmlToLinks(xmlNodes: IXmlNode[], showPopupsOverNodesAndLinks: boolean): Link[] {
+  private convertXmlToEdges(xmlNodes: IXmlNode[], showPopupsOverNodesAndLinks: boolean): Link[] {
     const links: Link[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
@@ -476,5 +477,13 @@ export class DgmlParser {
       });
     }
     return fixedFilepath;
+  }
+
+  private enrichEdges(directedGraph: IDirectedGraph): void {
+    const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({[node.id]: node.label})));
+    directedGraph.links.forEach(link => {
+      link.sourceLabel = nodeLabelDict[link.source];
+      link.targetLabel = nodeLabelDict[link.target];
+    });
   }
 }

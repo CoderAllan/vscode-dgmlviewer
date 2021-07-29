@@ -2,8 +2,10 @@ import { ICategory } from '@model';
 import { BaseElement } from './BaseElement';
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
 export class Link extends BaseElement {
-  public source: string | undefined;
-  public target: string | undefined;
+  public source: string = '';
+  public sourceLabel: string | undefined;
+  public target: string = '';
+  public targetLabel: string | undefined;
   public mutualLinkCount: number = 1;
   public category: string | undefined;
   // CommonAttributes
@@ -67,16 +69,16 @@ export class Link extends BaseElement {
     }
     if (this.source !== undefined) {
       jsStringProperties.push(`source: "${this.source}"`);
-      titleElements.push(`Source: ${this.source}`);
+      titleElements.push(`Source: ${this.sourceLabel !== undefined ? this.sourceLabel : this.source}`);
     }
     if (this.target !== undefined) {
       jsStringProperties.push(`target: "${this.target}"`);
-      titleElements.push(`Target: ${this.target}`);
+      titleElements.push(`Target: ${this.targetLabel !== undefined ? this.targetLabel : this.target}`);
     }
     // if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
-    // if (this.categoryRef !== undefined) {
-    //   titleElements.push(`Category: ${this.categoryRef.id}`);
-    // }
+    if (this.categoryRef !== undefined) {
+      titleElements.push(`Category: ${this.categoryRef.id}`);
+    }
     if (this.categoryRef !== undefined && this.categoryRef.background !== undefined) {
       jsStringProperties.push(`backgroundColor: \'${this.convertColorValue(this.categoryRef.background)}\'`);
     }
@@ -111,10 +113,10 @@ export class Link extends BaseElement {
         jsStringProperties.push(`width: 1`);
       }
     }
-    // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
-    //   let title = titleElements.join('\\n');
-    //   jsStringProperties.push(`title: "${title}"`);
-    // }
+    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+      let title = titleElements.join('<br>\\n');
+      jsStringProperties.push(`title: "${title}"`);
+    }
     if (this.categoryRef !== undefined && this.categoryRef .isContainment) {
       return ''; // if the link has a containment category then no links element should be created
     }

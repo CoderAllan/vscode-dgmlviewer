@@ -6,7 +6,7 @@ import { BaseElement } from "./BaseElement";
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
 export class Node extends BaseElement {
   public filename: string;
-  public id: string | undefined;
+  public id: string = '';
   public category: string | undefined;
   public description: string | undefined;
   public reference: string | undefined;
@@ -64,10 +64,9 @@ export class Node extends BaseElement {
     titleElements.push(`Label: ${this.removeNewLines(label)}`);
     const description = this.convertNewlines(this.description);
     if (this.description !== undefined) {
-      jsStringProperties.push(`title: "${description}"`);
       titleElements.push(`Description: ${this.removeNewLines(description)}`);
     }
-    // if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
+    if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
     if (this.background === undefined &&
       this.categoryRef !== undefined &&
       this.categoryRef.background !== undefined) {
@@ -172,7 +171,7 @@ export class Node extends BaseElement {
         referencePropertyValue = this.getReferenceFilename(firstReferenceProperty.value);
       }
       this.customProperties.forEach(property => {
-        titleElements.push(`${property.id}: ${property.value}`);
+        titleElements.push(`${property.id}: ${property.value?.split('\\').join('/')}`);
       });
     }
     if (referencePropertyValue !== undefined) {
@@ -190,10 +189,10 @@ export class Node extends BaseElement {
     else {
       jsStringProperties.push(`labelvalign: 'center'`);
     }
-    // if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
-    //   let title = titleElements.join('\\n');
-    //   jsStringProperties.push(`title: "${title}"`);
-    // }
+    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+      let title = titleElements.join('<br>\\n');
+      jsStringProperties.push(`title: "${title}"`);
+    }
     return `{ data: {${jsStringProperties.join(', ')}}${position}}`;
   }
 

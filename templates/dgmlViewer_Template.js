@@ -9,6 +9,7 @@
 
   const defaultLayout = ''; // The graph layout from the dgml file itself
   const cyContainerDiv = document.getElementById('cy');
+  const cyPopupDiv = document.getElementById('cyPopup');
   const txtCanvas = document.createElement('canvas');
   const txtCtx = txtCanvas.getContext('2d');
   const layoutDiv = document.getElementById('layoutDiv');
@@ -340,9 +341,19 @@
       if (filepath && filepath.length > 0) {
         evt.cy.container().style.cursor = 'pointer';
       }
+      var title = evt.target.data().title;
+      showPopup(title, evt);
     });
     cy.on('mouseout', 'node', function (evt) {
       evt.cy.container().style.cursor = 'default';
+      hidePopup();
+    });
+    cy.on('mouseover', 'edge', function (evt) {
+      var title = evt.target.data().title;
+      showPopup(title, evt);
+    });
+    cy.on('mouseout', 'edge', function (evt) {
+      hidePopup();
     });
     cy.on('zoom', function (evt) {
       vscode.postMessage({
@@ -350,5 +361,18 @@
         text: cy.zoom()
       });
     });
+  }
+
+  function showPopup(title, evt) {
+    console.log(title);
+    cyPopupDiv.innerHTML = title;
+    const top = String(parseInt(evt.renderedPosition.y)) + 'px';
+    const left = String(parseInt(evt.renderedPosition.x)) + 'px';
+    cyPopupDiv.style.top = top;
+    cyPopupDiv.style.left = left;
+    cyPopupDiv.style.display = 'block';
+  }
+  function hidePopup() {
+    cyPopupDiv.style.display = 'none';
   }
 }());
