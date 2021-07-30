@@ -163,7 +163,6 @@ export class Node extends BaseElement {
     let referencePropertyValue: string | undefined;
     if (this.filePath !== undefined) {
       referencePropertyValue = this.getReferenceFilename(this.filePath);
-      titleElements.push(`Filepath: ${referencePropertyValue}`);
     }
     if (referencePropertyValue === undefined && this.customProperties.length > 0) {
       const firstReferenceProperty = this.customProperties.find(property => property.isReference === true);
@@ -176,6 +175,7 @@ export class Node extends BaseElement {
     }
     if (referencePropertyValue !== undefined) {
       jsStringProperties.push(`filepath: "${referencePropertyValue}"`);
+      titleElements.push(`Filepath: ${referencePropertyValue}`);
     }
     else {
       jsStringProperties.push(`filepath: \'\'`);
