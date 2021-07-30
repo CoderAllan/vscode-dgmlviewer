@@ -1,12 +1,12 @@
 import { ICategory } from '@model';
 import { BaseElement } from './BaseElement';
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
-export class Link extends BaseElement {
+export class Edge extends BaseElement {
   public source: string = '';
   public sourceLabel: string | undefined;
   public target: string = '';
   public targetLabel: string | undefined;
-  public mutualLinkCount: number = 1;
+  public mutualEdgeCount: number = 1;
   public category: string | undefined;
   // CommonAttributes
   public label: string | undefined;
@@ -28,7 +28,7 @@ export class Link extends BaseElement {
     this.categoryRef = categoryRef;
   }
 
-  public showPopupsOverNodesAndLinks: boolean = true;
+  public showPopupsOverNodesAndEdges: boolean = true;
 
   public toJsString(): string {
     const jsStringProperties: string[] = [];
@@ -113,12 +113,12 @@ export class Link extends BaseElement {
         jsStringProperties.push(`width: 1`);
       }
     }
-    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+    if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
       let title = titleElements.join('<br>\\n');
       jsStringProperties.push(`title: "${title}"`);
     }
     if (this.categoryRef !== undefined && this.categoryRef .isContainment) {
-      return ''; // if the link has a containment category then no links element should be created
+      return ''; // if the edge has a containment category then no edge element should be created
     }
     return `{ data: {${jsStringProperties.join(', ')}}}`;
   }

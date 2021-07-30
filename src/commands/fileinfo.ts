@@ -21,7 +21,7 @@ export class FileInfo {
           dgmlViewerOutput.clear();
           dgmlViewerOutput.appendLine(`File info for ${doc.fileName}\n`);
           dgmlViewerOutput.appendLine(`Nodes: ${directedGraph.nodes.length}`);
-          dgmlViewerOutput.appendLine(`Links: ${directedGraph.links.length}`);
+          dgmlViewerOutput.appendLine(`Edges: ${directedGraph.edges.length}`);
           dgmlViewerOutput.appendLine(`Categories: ${directedGraph.categories.length}`);
           dgmlViewerOutput.appendLine(`Properties: ${directedGraph.properties.length}`);
           dgmlViewerOutput.appendLine(`Styles: ${directedGraph.styles.length}`);

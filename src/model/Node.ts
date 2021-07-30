@@ -49,7 +49,7 @@ export class Node extends BaseElement {
   }
 
   public customProperties: IProperty[] = [];
-  public showPopupsOverNodesAndLinks: boolean = true;
+  public showPopupsOverNodesAndEdges: boolean = true;
 
   constructor(filename: string) {
     super();
@@ -189,7 +189,7 @@ export class Node extends BaseElement {
     else {
       jsStringProperties.push(`labelvalign: 'center'`);
     }
-    if (this.showPopupsOverNodesAndLinks && titleElements.length > 0) {
+    if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
       let title = titleElements.join('<br>\\n');
       jsStringProperties.push(`title: "${title}"`);
     }

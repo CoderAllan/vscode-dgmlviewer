@@ -25,5 +25,5 @@ export class Config {
   public get graphSelectionColor(): string { return this.getSetting<string>('graphSelectionColor', 'red'); }
   public get graphSelectionWidth(): number { return this.getSetting<number>('graphSelectionWidth', 2); }
   public get dgmlViewerPngFilename(): string { return this.getSetting<string>('pngFilename', 'DirectedGraph.png'); }
-  public get showPopupsOverNodesAndLinks(): boolean { return this.getSetting<boolean>('showPopupsOverNodesAndLinks', true); }
+  public get showPopupsOverNodesAndEdges(): boolean { return this.getSetting<boolean>('showPopupsOverNodesAndLinks', true); }
 }
