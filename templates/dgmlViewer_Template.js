@@ -22,6 +22,7 @@
   showHierarchicalOptions();
 
   const vscode = acquireVsCodeApi();
+  let doShowPopup = false;
   let lastMouseX = lastMouseY = 0;
   let mouseX = mouseY = 0;
   let selection;
@@ -319,6 +320,7 @@
     cy.zoom(defaultZoom);
     cy.center();
     cy.on('dragfree', 'node', function (evt) {
+      doShowPopup = true;
       nodeId = evt.target.id();
       position = evt.target.position();
       nodeCoordinates[nodeId] = position;
@@ -330,7 +332,12 @@
         }
       });
     });
+    cy.on('drag', 'node', function(evt) {
+      doShowPopup = false;
+      hidePopup();
+    });
     cy.on('click', 'node', function (evt) {
+      doShowPopup = false;
       var filepath = evt.target.data().filepath;
       if (filepath && filepath.length > 0) {
         openFileInVsCode(filepath);
@@ -341,16 +348,16 @@
       if (filepath && filepath.length > 0) {
         evt.cy.container().style.cursor = 'pointer';
       }
-      var title = evt.target.data().title;
-      showPopup(title, evt);
+      doShowPopup = true;
+      setTimeout(showPopup, 500, evt);
     });
     cy.on('mouseout', 'node', function (evt) {
       evt.cy.container().style.cursor = 'default';
       hidePopup();
     });
     cy.on('mouseover', 'edge', function (evt) {
-      var title = evt.target.data().title;
-      showPopup(title, evt);
+      doShowPopup = true;
+      setTimeout(showPopup, 500, evt);
     });
     cy.on('mouseout', 'edge', function (evt) {
       hidePopup();
@@ -363,16 +370,18 @@
     });
   }
 
-  function showPopup(title, evt) {
-    console.log(title);
-    cyPopupDiv.innerHTML = title;
-    const top = String(parseInt(evt.renderedPosition.y)) + 'px';
-    const left = String(parseInt(evt.renderedPosition.x)) + 'px';
-    cyPopupDiv.style.top = top;
-    cyPopupDiv.style.left = left;
-    cyPopupDiv.style.display = 'block';
+  function showPopup(evt) {
+    if (doShowPopup) {
+      cyPopupDiv.innerHTML = evt.target.data().title;
+      const top = String(parseInt(evt.renderedPosition.y)) + 'px';
+      const left = String(parseInt(evt.renderedPosition.x)) + 'px';
+      cyPopupDiv.style.top = top;
+      cyPopupDiv.style.left = left;
+      cyPopupDiv.style.display = 'block';
+    }
   }
   function hidePopup() {
     cyPopupDiv.style.display = 'none';
+    doShowPopup = false;
   }
 }());
