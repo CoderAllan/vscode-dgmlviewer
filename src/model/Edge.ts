@@ -34,8 +34,11 @@ export class Edge extends BaseElement {
     const jsStringProperties: string[] = [];
     const titleElements: string[] = [];
     if (this.label !== undefined) {
-      jsStringProperties.push(`label: "${this.label}"`);
+      jsStringProperties.push(`label: '${this.label}'`);
       titleElements.push(`Label: ${this.label}`);
+    }
+    else {
+      jsStringProperties.push(`label: ''`);
     }
     if (this.fontWeight !== undefined) {
       jsStringProperties.push(`fontWeight: '${this.fontWeight}'`);
