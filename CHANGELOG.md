@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 1.3.4
+
+- Maintenance: Bump packages to latest
+
 ## Version 1.3.3
 
 - Bugfix: When edges have the same source and target the edges no longer overlap.
