@@ -18,7 +18,7 @@ export class Config {
   public readonly dgmlZoomLevel = '-1';
   public get defaultNodeBackgroundColor(): string { return this.getSetting<string>('defaultNodeBackgroundColor', '#D2E5FF'); }
   public get defaultLayout(): string { return this.getSetting<string>('defaultLayout', 'preset'); }
-  public get nodeShape(): string { return this.getSetting<string>('nodeShape', 'box'); }
+  public get nodeShape(): string { return this.getSetting<string>('nodeShape', 'round-rectangle'); }
   public get edgeArrowToType(): string { return this.getSetting<string>('edgeArrowToType', 'triangle'); }
   public get graphSelectionGuidelineColor(): string { return this.getSetting<string>('graphSelectionGuidelineColor', 'blue'); }
   public get graphSelectionGuidelineWidth(): number { return this.getSetting<number>('graphSelectionGuidelineWidth', 1); }
