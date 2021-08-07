@@ -40,12 +40,12 @@ export class DgmlViewer {
             return;
           case 'nodeCoordinateUpdate':
             if (this.directedGraph !== undefined) {
-              const nodeId = message.text.nodeId;
-              const position = message.text.position;
-              const node = this.directedGraph.nodes.find(node => node.id === nodeId);
+              const node = this.directedGraph.nodes.find(node => node.id === message.text.nodeId);
               if (node !== undefined) {
-                node.boundsX = position.x;
-                node.boundsY = position.y;
+                node.boundsX = message.text.position.x;
+                node.boundsY = message.text.position.y;
+                node.boundsWidth = message.text.width;
+                node.boundsHeight = message.text.height;
                 this.generateAndWriteJavascriptFile(() => { });
               }
             }
@@ -98,8 +98,7 @@ export class DgmlViewer {
     let template = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateJsFilename)), 'utf8');
     let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
     jsContent = jsContent.replace('var edgeElements = [];', `var edgeElements = [${edgesJson}];`);
-    jsContent = jsContent.replace('background: "#D2E5FF" // nodes default background color', `background: "${this.config.defaultNodeBackgroundColor}" // nodes default background color`);
-    jsContent = jsContent.replace('\'shape\': \'round-rectangle\' // The shape of the nodes.', `shape: '${this.config.nodeShape}'// The shape of the nodes.`);
+    jsContent = jsContent.replace('\'shape\': \'round-rectangle\',', `'shape': '${this.config.nodeShape}',`);
     jsContent = jsContent.replace('const edgeArrowType = \'triangle\' // edge arrow to type', `const edgeArrowType = \'${this.config.edgeArrowToType}\' // edge arrow to type}`);
     jsContent = jsContent.replace('ctx.strokeStyle = \'blue\'; // graph selection guideline color', `ctx.strokeStyle = '${this.config.graphSelectionGuidelineColor}'; // graph selection guideline color`);
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);

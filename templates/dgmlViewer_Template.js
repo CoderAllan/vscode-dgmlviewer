@@ -336,17 +336,9 @@
       cy.on('dragfree', 'node', function (evt) {
           doShowPopup = true;
           if (layoutSelect.value === 'preset') {
-            nodeId = evt.target.id();
-            position = evt.target.position();
-            nodeCoordinates[nodeId] = position;
-            vscode.postMessage({
-              command: 'nodeCoordinateUpdate',
-              text: {
-                nodeId: nodeId,
-                position: position
-              }
-
-            });
+            postChildrenPositionAndSize(evt.target);
+            nodeCoordinates[evt.target.id()] = evt.target.position();
+            postNodePositionAndSize(evt.target);
           }
         });
         cy.on('drag', 'node', function (evt) {
@@ -385,6 +377,28 @@
             text: cy.zoom()
           });
         });
+      }
+
+      function postNodePositionAndSize(node) {
+        vscode.postMessage({
+          command: 'nodeCoordinateUpdate',
+          text: {
+            nodeId: node.id(),
+            position: node.position(),
+            width: node.width(),
+            height: node.height()
+          }
+        });
+      }
+
+      function postChildrenPositionAndSize(node) {
+        if(node.isParent()) {
+          node.children().forEach(child => {
+            nodeCoordinates[child.id()] = child.position();
+            postNodePositionAndSize(child);
+            postChildrenPositionAndSize(child);
+          });
+        }
       }
 
       function showPopup(evt) {
