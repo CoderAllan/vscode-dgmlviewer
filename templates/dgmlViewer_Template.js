@@ -245,6 +245,8 @@
               'target-arrow-shape': edgeArrowType,
               'target-arrow-color': 'data(color)',
               'line-style': 'data(lineStyle)',
+              'text-background-color': 'data(backgroundColor)',
+              'text-background-opacity': 'data(backgroundOpacity)',
             }
           }
         ],

@@ -415,7 +415,7 @@ export class DgmlParser {
                 if (setter.property.toLowerCase() === 'fontweight') {
                   category.fontWeight = setter.value;
                 }
-                if (setter.property.toLowerCase() === 'background') {
+                if (setter.property.toLowerCase() === 'background' && category.background === undefined) { // background color on the category overrides background color on the styling
                   category.background = setter.value;
                 }
                 if (setter.property.toLowerCase() === 'horizontalalignment') {
