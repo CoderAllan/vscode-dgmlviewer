@@ -201,16 +201,30 @@
       });
     }
 
-    function calculateLabelWidths() {
+    function calculateLabelHeightsAndWidths() {
       nodeElements.forEach(node => {
         if (node.data.label && node.data.label.length > 0) {
-          node.data.width = txtCtx.measureText(node.data.label).width * 1.75; // Don't know why, but the width of node has to be about 75% bigger than the width of the label text.
+          let labelText = node.data.label;
+          let metrics = txtCtx.measureText(labelText);
+          if (labelText.indexOf('\n') > -1){
+            let longestStringLength = 0;
+            const lines = node.data.label.split('\n');
+            lines.forEach(s => {
+              if (s.length > longestStringLength) {
+                longestStringLength = s.length;
+                labelText = s;
+              }
+            });
+            metrics = txtCtx.measureText(labelText);
+            node.data.height = (metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent) * (lines.length + 2);
+          }
+          node.data.width = metrics.width * 1.75; // Don't know why, but the width of node has to be about 75% bigger than the width of the label text.
         }
       });
     }
 
     function setNetworkLayout() {
-      calculateLabelWidths();
+      calculateLabelHeightsAndWidths();
       cy = cytoscape({
         container: cyContainerDiv,
 
@@ -218,9 +232,11 @@
             selector: 'node',
             style: {
               'width': 'data(width)',
+              'height': 'data(height)',
               'label': 'data(label)',
               'text-valign': 'data(labelvalign)',
               'text-halign': 'center',
+              'text-wrap': 'wrap',
               'font-family': 'data(fontFamily)',
               'font-size': 'data(fontSize)',
               'font-weight': 'data(fontWeight)',

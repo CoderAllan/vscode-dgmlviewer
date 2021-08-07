@@ -151,8 +151,8 @@ export class Node extends BaseElement {
     else {
       jsStringProperties.push(`fontSize: '1em'`);
     }
-    if (this.label !== undefined) {
-      jsStringProperties.push(`label: '${this.label.replace("'", "\\'")}'`);
+    if (label !== '') {
+      jsStringProperties.push(`label: '${label}'`);
     } else {
       jsStringProperties.push(`label: '${this.id}'`);
     }
