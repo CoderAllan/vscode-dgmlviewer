@@ -1,6 +1,6 @@
 import { ICategory, IProperty } from "@model";
 import path = require("path");
-import { FileSystemUtils } from "@src";
+import { Config, FileSystemUtils } from "@src";
 import { BaseElement } from "./BaseElement";
 
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
@@ -51,6 +51,8 @@ export class Node extends BaseElement {
   public customProperties: IProperty[] = [];
   public showPopupsOverNodesAndEdges: boolean = true;
 
+  private config = new Config();
+
   constructor(filename: string) {
     super();
     this.filename = filename;
@@ -59,7 +61,7 @@ export class Node extends BaseElement {
   public toJsString(): string {
     const jsStringProperties: string[] = [];
     const titleElements: string[] = [];
-    if (this.id !== undefined) { jsStringProperties.push(`id: "${this.id}"`); }
+    if (this.id !== undefined) { jsStringProperties.push(`id: '${this.id}'`); }
     let label = this.convertNewlines(this.label);
     titleElements.push(`Label: ${this.removeNewLines(label)}`);
     const description = this.convertNewlines(this.description);
@@ -70,27 +72,27 @@ export class Node extends BaseElement {
     if (this.background === undefined &&
       this.categoryRef !== undefined &&
       this.categoryRef.background !== undefined) {
-      jsStringProperties.push(`background: \'${this.convertColorValue(this.categoryRef.background)}\'`);
+      jsStringProperties.push(`background: '${this.convertColorValue(this.categoryRef.background)}'`);
     }
     else {
       if (this.background !== undefined) {
         jsStringProperties.push(`background: "${this.convertColorValue(this.background)}"`);
       }
       else {
-        jsStringProperties.push(`background: \'rgba(156, 193, 248, 1)\'`);
+        jsStringProperties.push(`background: '${this.convertColorValue(this.config.defaultNodeBackgroundColor)}'`);
       }
     }
     if (this.stroke === undefined &&
       this.categoryRef !== undefined &&
       this.categoryRef.stroke !== undefined) {
-      jsStringProperties.push(`borderColor: \'${this.convertColorValue(this.categoryRef.stroke)}\'`);
+      jsStringProperties.push(`borderColor: '${this.convertColorValue(this.categoryRef.stroke)}'`);
     }
     else {
       if (this.stroke !== undefined) {
-        jsStringProperties.push(`borderColor: \'${this.stroke}\'`);
+        jsStringProperties.push(`borderColor: '${this.stroke}'`);
       }
       else {
-        jsStringProperties.push(`borderColor: \'rgba(75, 133, 227, 1)\'`);
+        jsStringProperties.push(`borderColor: 'rgba(75, 133, 227, 1)'`);
       }
     }
     if (this.strokeThickness === undefined &&
@@ -100,7 +102,7 @@ export class Node extends BaseElement {
     }
     else {
       if (this.strokeThickness !== undefined) {
-        jsStringProperties.push(`borderWidth: "${this.strokeThickness}"`);
+        jsStringProperties.push(`borderWidth: ${this.strokeThickness}`);
       }
       else {
         jsStringProperties.push(`borderWidth: 1`);
@@ -109,14 +111,14 @@ export class Node extends BaseElement {
     if (this.strokeDashArray === undefined &&
       this.categoryRef !== undefined &&
       this.categoryRef.strokeDashArray !== undefined) {
-      jsStringProperties.push(`borderStyle: \'dashed\'`);
+      jsStringProperties.push(`borderStyle: 'dashed'`);
     }
     else {
       if (this.strokeDashArray !== undefined) {
-        jsStringProperties.push(`borderStyle: \'dashed\'`);
+        jsStringProperties.push(`borderStyle: 'dashed'`);
       }
       else {
-        jsStringProperties.push(`borderStyle: \'solid\'`);
+        jsStringProperties.push(`borderStyle: 'solid'`);
       }
     }
     if (this.fontWeight !== undefined) {
@@ -150,9 +152,9 @@ export class Node extends BaseElement {
       jsStringProperties.push(`fontSize: '1em'`);
     }
     if (this.label !== undefined) {
-      jsStringProperties.push(`label: "${label}"`);
+      jsStringProperties.push(`label: '${this.label.replace("'", "\\'")}'`);
     } else {
-      jsStringProperties.push(`label: "${this.id}"`);
+      jsStringProperties.push(`label: '${this.id}'`);
     }
     let position = '';
     if (this.boundsX !== undefined && this.boundsY !== undefined) {
@@ -174,11 +176,11 @@ export class Node extends BaseElement {
       });
     }
     if (referencePropertyValue !== undefined) {
-      jsStringProperties.push(`filepath: "${referencePropertyValue}"`);
+      jsStringProperties.push(`filepath: '${referencePropertyValue}'`);
       titleElements.push(`Filepath: ${referencePropertyValue}`);
     }
     else {
-      jsStringProperties.push(`filepath: \'\'`);
+      jsStringProperties.push(`filepath: ''`);
     }
     if (this.parent !== undefined) {
       jsStringProperties.push(`parent: '${this.parent}'`);
@@ -190,8 +192,8 @@ export class Node extends BaseElement {
       jsStringProperties.push(`labelvalign: 'center'`);
     }
     if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
-      let title = titleElements.join('<br>\\n');
-      jsStringProperties.push(`title: "${title}"`);
+      let title = titleElements.join('<br>\\n').replace("'", "\\'");
+      jsStringProperties.push(`title: '${title}'`);
     }
     return `{ data: {${jsStringProperties.join(', ')}}${position}}`;
   }

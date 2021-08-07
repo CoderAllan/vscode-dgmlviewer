@@ -34,7 +34,7 @@ export class Edge extends BaseElement {
     const jsStringProperties: string[] = [];
     const titleElements: string[] = [];
     if (this.label !== undefined) {
-      jsStringProperties.push(`label: '${this.label}'`);
+      jsStringProperties.push(`label: '${this.label.replace("'", "\\'")}'`);
       titleElements.push(`Label: ${this.label}`);
     }
     else {
@@ -71,11 +71,11 @@ export class Edge extends BaseElement {
       jsStringProperties.push(`fontSize: '1em'`);
     }
     if (this.source !== undefined) {
-      jsStringProperties.push(`source: "${this.source}"`);
+      jsStringProperties.push(`source: '${this.source}'`);
       titleElements.push(`Source: ${this.sourceLabel !== undefined ? this.sourceLabel : this.source}`);
     }
     if (this.target !== undefined) {
-      jsStringProperties.push(`target: "${this.target}"`);
+      jsStringProperties.push(`target: '${this.target}'`);
       titleElements.push(`Target: ${this.targetLabel !== undefined ? this.targetLabel : this.target}`);
     }
     // if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
@@ -83,20 +83,20 @@ export class Edge extends BaseElement {
       titleElements.push(`Category: ${this.categoryRef.id}`);
     }
     if (this.categoryRef !== undefined && this.categoryRef.background !== undefined) {
-      jsStringProperties.push(`backgroundColor: \'${this.convertColorValue(this.categoryRef.background)}\'`);
+      jsStringProperties.push(`backgroundColor: '${this.convertColorValue(this.categoryRef.background)}'`);
     }
     else {
-      jsStringProperties.push(`backgroundColor: \'rgba(63, 124, 227, 1)\'`);
+      jsStringProperties.push(`backgroundColor: 'rgba(63, 124, 227, 1)'`);
     }
     if (this.categoryRef !== undefined && this.categoryRef.stroke !== undefined) {
-      jsStringProperties.push(`color: \'${this.convertColorValue(this.categoryRef.stroke)}\'`);
+      jsStringProperties.push(`color: '${this.convertColorValue(this.categoryRef.stroke)}'`);
     }
     else {
       if (this.stroke !== undefined) {
-        jsStringProperties.push(`color: \'${this.convertColorValue(this.stroke)}\'`);
+        jsStringProperties.push(`color: '${this.convertColorValue(this.stroke)}'`);
       }
       else {
-        jsStringProperties.push(`color: \'rgba(63, 124, 227, 1)\'`);
+        jsStringProperties.push(`color: 'rgba(63, 124, 227, 1)'`);
       }
     }
     if (this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
@@ -117,8 +117,8 @@ export class Edge extends BaseElement {
       }
     }
     if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
-      let title = titleElements.join('<br>\\n');
-      jsStringProperties.push(`title: "${title}"`);
+      let title = titleElements.join('<br>\\n').replace("'", "\\'");
+      jsStringProperties.push(`title: '${title}'`);
     }
     if (this.categoryRef !== undefined && this.categoryRef .isContainment) {
       return ''; // if the edge has a containment category then no edge element should be created
