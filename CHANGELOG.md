@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.0.0
+
+- The core Javascript library used for rendering the directed graph has been changed from Vis.js to Cytoscape.js. The change was done because Cytoscape.js can render nested nodes which Vis.js was not capable of.
+
 ## Version 1.3.4
 
 - Maintenance: Bump packages to latest
