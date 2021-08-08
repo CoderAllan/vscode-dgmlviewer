@@ -11,7 +11,7 @@ import {
   ISetter,
   IStyle,
   IXmlNode,
-  Link,
+  Edge,
   Node
 } from '@model';
 import { Config } from '@src';
@@ -40,9 +40,9 @@ export class DgmlParser {
       const children: IXmlNode[] = obj.root.children as IXmlNode[];
       children.forEach(xmlNode => {
         if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'nodes') {
-          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename, config.showPopupsOverNodesAndLinks);
+          directedGraph.nodes = this.convertXmlToNodes(xmlNode.children, filename, config.showPopupsOverNodesAndEdges);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'links') {
-          directedGraph.links = this.convertXmlToLinks(xmlNode.children, config.showPopupsOverNodesAndLinks);
+          directedGraph.edges = this.convertXmlToEdges(xmlNode.children, config.showPopupsOverNodesAndEdges);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'categories') {
           directedGraph.categories = this.convertXmlToCategories(xmlNode.children);
         } else if (xmlNode.name !== undefined && xmlNode.name.toLowerCase() === 'properties') {
@@ -55,8 +55,9 @@ export class DgmlParser {
       });
       this.addStylingToCategories(directedGraph);
       this.addCategoryStylingToNodes(directedGraph);
-      this.addCategoryStylingToLinks(directedGraph);
+      this.addCategoryStylingToEdges(directedGraph);
       this.enrichNodes(directedGraph);
+      this.enrichEdges(directedGraph);
     }
     return directedGraph;
   }
@@ -73,7 +74,7 @@ export class DgmlParser {
     return dictKeysCopy;
   }
 
-  private convertXmlToNodes(xmlNodes: IXmlNode[], filename: string, showPopupsOverNodesAndLinks: boolean): Node[] {
+  private convertXmlToNodes(xmlNodes: IXmlNode[], filename: string, showPopupsOverNodesAndEdges: boolean): Node[] {
     const nodes: Node[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
@@ -81,7 +82,7 @@ export class DgmlParser {
           const newNode = new Node(filename);
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           newNode.id = this.getAttributeValue(attributesCopy, 'id');
-          newNode.showPopupsOverNodesAndLinks = showPopupsOverNodesAndLinks;
+          newNode.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
           newNode.category = this.getAttributeValue(attributesCopy, 'category');
           newNode.description = this.getAttributeValue(attributesCopy, 'description');
           newNode.reference = this.getAttributeValue(attributesCopy, 'reference');
@@ -143,42 +144,42 @@ export class DgmlParser {
     return value;
   }
 
-  private convertXmlToLinks(xmlNodes: IXmlNode[], showPopupsOverNodesAndLinks: boolean): Link[] {
-    const links: Link[] = [];
+  private convertXmlToEdges(xmlNodes: IXmlNode[], showPopupsOverNodesAndEdges: boolean): Edge[] {
+    const edges: Edge[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
         if (xmlNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
-          const newLink = new Link();
-          newLink.showPopupsOverNodesAndLinks = showPopupsOverNodesAndLinks;
-          newLink.source = attributesCopy['source'];
-          newLink.target = attributesCopy['target'];
-          newLink.label = attributesCopy['label'];
-          newLink.category = attributesCopy['category'];
-          newLink.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
-          newLink.background = attributesCopy['background'];
-          newLink.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
-          newLink.fontFamily = attributesCopy['fontfamily'];
-          newLink.fontStyle = attributesCopy['fontstyle'];
-          newLink.fontWeight = attributesCopy['fontweight'];
-          newLink.stroke = attributesCopy['stroke'];
-          newLink.strokeThickness = attributesCopy['strokethickness'];
-          newLink.strokeDashArray = attributesCopy['strokedasharray'];
-          newLink.seeder = attributesCopy['seeder'] !== undefined ? attributesCopy['seeder'] === 'true' : undefined;
-          newLink.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
-          if (newLink.category === undefined) {
-            newLink.category = this.createCategoryRef(xmlNode);
+          const newEdge = new Edge();
+          newEdge.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
+          newEdge.source = attributesCopy['source'];
+          newEdge.target = attributesCopy['target'];
+          newEdge.label = attributesCopy['label'];
+          newEdge.category = attributesCopy['category'];
+          newEdge.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
+          newEdge.background = attributesCopy['background'];
+          newEdge.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
+          newEdge.fontFamily = attributesCopy['fontfamily'];
+          newEdge.fontStyle = attributesCopy['fontstyle'];
+          newEdge.fontWeight = attributesCopy['fontweight'];
+          newEdge.stroke = attributesCopy['stroke'];
+          newEdge.strokeThickness = attributesCopy['strokethickness'];
+          newEdge.strokeDashArray = attributesCopy['strokedasharray'];
+          newEdge.seeder = attributesCopy['seeder'] !== undefined ? attributesCopy['seeder'] === 'true' : undefined;
+          newEdge.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
+          if (newEdge.category === undefined) {
+            newEdge.category = this.createCategoryRef(xmlNode);
           }
-          const mutualLinks = links.filter(l => l.target === newLink.source && l.source === newLink.target);
-          if (mutualLinks.length > 0) {
-            newLink.mutualLinkCount += 1;
-            mutualLinks.forEach(l => l.mutualLinkCount += 1 );
+          const mutualEdges = edges.filter(l => l.target === newEdge.source && l.source === newEdge.target);
+          if (mutualEdges.length > 0) {
+            newEdge.mutualEdgeCount += 1;
+            mutualEdges.forEach(l => l.mutualEdgeCount += 1 );
           }
-          links.push(newLink);
+          edges.push(newEdge);
         }
       });
     }
-    return links;
+    return edges;
   }
 
   private createCategoryRef(xmlNode: IXmlNode): string | undefined {
@@ -355,15 +356,15 @@ export class DgmlParser {
     }
   }
 
-  private addCategoryStylingToLinks(directedGraph: IDirectedGraph): void {
-    if (directedGraph.links !== undefined &&
-      directedGraph.links.length > 0 &&
+  private addCategoryStylingToEdges(directedGraph: IDirectedGraph): void {
+    if (directedGraph.edges !== undefined &&
+      directedGraph.edges.length > 0 &&
       directedGraph.categories !== undefined &&
       directedGraph.categories.length > 0) {
-      directedGraph.links.forEach(link => {
-        if (link.category !== undefined) {
-          const category = directedGraph.categories.find(category => category.id.toLowerCase() === link.category?.toLowerCase());
-          link.setCategoryRef(category);
+      directedGraph.edges.forEach(edge => {
+        if (edge.category !== undefined) {
+          const category = directedGraph.categories.find(category => category.id.toLowerCase() === edge.category?.toLowerCase());
+          edge.setCategoryRef(category);
         }
       });
     }
@@ -414,7 +415,7 @@ export class DgmlParser {
                 if (setter.property.toLowerCase() === 'fontweight') {
                   category.fontWeight = setter.value;
                 }
-                if (setter.property.toLowerCase() === 'background') {
+                if (setter.property.toLowerCase() === 'background' && category.background === undefined) { // background color on the category overrides background color on the styling
                   category.background = setter.value;
                 }
                 if (setter.property.toLowerCase() === 'horizontalalignment') {
@@ -438,6 +439,8 @@ export class DgmlParser {
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
+    const containmentCategories = directedGraph.categories.filter(category=> category.isContainment).map(category => category.id);
+    const containmentEdges = directedGraph.edges.filter(edge => edge.category !== undefined && containmentCategories.includes(edge.category));
     directedGraph.nodes.forEach(node => {
       if (node.filePath !== undefined) {
         node.filePath = this.replacePaths(node.filePath, directedGraph);
@@ -453,6 +456,16 @@ export class DgmlParser {
           }
         });
       }
+      if(containmentEdges.length > 0) {
+        const targetEdge = containmentEdges.find(edge => edge.target === node.id);
+        if(targetEdge !== undefined) {
+          node.parent = targetEdge.source;
+          var parentNode = directedGraph.nodes.find(pNode => pNode.id === node.parent);
+          if (parentNode) {
+            parentNode.hasChildren = true;
+          }
+        }
+      }
     });
   }
   
@@ -464,5 +477,13 @@ export class DgmlParser {
       });
     }
     return fixedFilepath;
+  }
+
+  private enrichEdges(directedGraph: IDirectedGraph): void {
+    const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({[node.id]: node.label})));
+    directedGraph.edges.forEach(edge => {
+      edge.sourceLabel = nodeLabelDict[edge.source];
+      edge.targetLabel = nodeLabelDict[edge.target];
+    });
   }
 }

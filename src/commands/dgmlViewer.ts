@@ -13,6 +13,8 @@ export class DgmlViewer {
   private extensionContext: vscode.ExtensionContext;
   private config = new Config();
   private fsUtils = new FileSystemUtils();
+  private directedGraph: IDirectedGraph | undefined;
+  private zoom: number = 1.25;
   public static get commandName(): string { return DgmlViewer._name; }
 
   constructor(context: vscode.ExtensionContext) {
@@ -28,13 +30,29 @@ export class DgmlViewer {
             this.saveAsPng(message.text);
             return;
           case 'openFile':
-              const filename = message.text;
-              if (this.fsUtils.fileExists(filename)) {
-                var openPath = vscode.Uri.parse("file:///" + filename);
-                vscode.workspace.openTextDocument(openPath).then(doc => {
-                  vscode.window.showTextDocument(doc);
-                });
+            const filename = message.text;
+            if (this.fsUtils.fileExists(filename)) {
+              var openPath = vscode.Uri.parse("file:///" + filename);
+              vscode.workspace.openTextDocument(openPath).then(doc => {
+                vscode.window.showTextDocument(doc);
+              });
+            }
+            return;
+          case 'nodeCoordinateUpdate':
+            if (this.directedGraph !== undefined) {
+              const node = this.directedGraph.nodes.find(node => node.id === message.text.nodeId);
+              if (node !== undefined) {
+                node.boundsX = message.text.position.x;
+                node.boundsY = message.text.position.y;
+                node.boundsWidth = message.text.width;
+                node.boundsHeight = message.text.height;
+                this.generateAndWriteJavascriptFile(() => { });
               }
+            }
+            return;
+          case 'zoom':
+            this.zoom = message.text;
+            this.generateAndWriteJavascriptFile(() => { });
             return;
         }
       },
@@ -46,49 +64,48 @@ export class DgmlViewer {
       let doc = vscode.window.activeTextEditor.document;
       if (doc.fileName.toLowerCase().endsWith('.dgml')) {
         const dgmlParser = new DgmlParser();
-        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName, this.config);
-        if (directedGraph !== undefined) {
-          const nodesJson = directedGraph.nodes
-            .map((node, index, arr) => { return node.toJsString(); })
-            .join(',\n');
-          const edgesJson = directedGraph.links
-            .map((link, index, arr) => { return link.toJsString(); })
-            .join(',\n');
-          try {
-            const jsContent = this.generateJavascriptContent(nodesJson, edgesJson, directedGraph);
-            const outputJsFilename = DgmlViewer._name + '.js';
-            let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
-
-            // this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', DgmlViewer._name + '.html')), htmlContent, () => { }); // For debugging
-            this.fsUtils.writeFile(
-              this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)),
-              jsContent,
-              () => {
-                webview.html = htmlContent;
-              }
-            );
-          } catch (ex) {
-            console.log('Dgml Viewer Exception:' + ex);
-          }
-        }
+        this.directedGraph = dgmlParser.parseDgmlFile(doc.fileName, this.config);
+        const outputJsFilename = DgmlViewer._name + '.js';
+        let htmlContent = this.generateHtmlContent(webview, outputJsFilename);
+        this.generateAndWriteJavascriptFile(() => {
+          webview.html = htmlContent;
+        });
       }
     }
   }
 
-  private generateJavascriptContent(nodesJson: string, edgesJson: string, directedGraph: IDirectedGraph): string {
+  private generateAndWriteJavascriptFile(callbackFunction: () => void) {
+    if (this.directedGraph !== undefined) {
+      const nodesJson = this.directedGraph.nodes
+        .map((node, index, arr) => { return node.toJsString(); })
+        .join(',\n');
+      const edgesJson = this.directedGraph.edges
+        .map((edge, index, arr) => { return edge.toJsString(); })
+        .filter(edge => edge !== '')
+        .join(',\n');
+      const jsContent = this.generateJavascriptContent(nodesJson, edgesJson);
+      const outputJsFilename = DgmlViewer._name + '.js';
+      try {
+        this.fsUtils.writeFile(this.extensionContext?.asAbsolutePath(path.join('.', outputJsFilename)), jsContent, callbackFunction);
+      } catch (ex) {
+        console.log('Dgml Viewer Exception:' + ex);
+      }
+    }
+  }
+
+  private generateJavascriptContent(nodesJson: string, edgesJson: string): string {
     const templateJsFilename = DgmlViewer._name + '_Template.js';
     let template = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateJsFilename)), 'utf8');
-    let jsContent = template.replace('var nodes = new vis.DataSet([]);', `var nodes = new vis.DataSet([${nodesJson}]);`);
-    jsContent = jsContent.replace('var edges = new vis.DataSet([]);', `var edges = new vis.DataSet([${edgesJson}]);`);
-    jsContent = jsContent.replace('background: "#D2E5FF" // nodes default background color', `background: "${this.config.defaultNodeBackgroundColor}" // nodes default background color`);
-    jsContent = jsContent.replace('shape: \'box\' // The shape of the nodes.', `shape: '${this.config.nodeShape}'// The shape of the nodes.`);
-    jsContent = jsContent.replace('type: "triangle" // edge arrow to type', `type: "${this.config.edgeArrowToType}" // edge arrow to type}`);
+    let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
+    jsContent = jsContent.replace('var edgeElements = [];', `var edgeElements = [${edgesJson}];`);
+    jsContent = jsContent.replace('\'shape\': \'round-rectangle\',', `'shape': '${this.config.nodeShape}',`);
+    jsContent = jsContent.replace('const edgeArrowType = \'triangle\' // edge arrow to type', `const edgeArrowType = \'${this.config.edgeArrowToType}\' // edge arrow to type}`);
     jsContent = jsContent.replace('ctx.strokeStyle = \'blue\'; // graph selection guideline color', `ctx.strokeStyle = '${this.config.graphSelectionGuidelineColor}'; // graph selection guideline color`);
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
     jsContent = jsContent.replace('selectionCanvasContext.lineWidth = 2;', `selectionCanvasContext.lineWidth = ${this.config.graphSelectionWidth};`);
-    jsContent = jsContent.replace("const defaultGraphDirection = ''; // The graph direction from the dgml file itself", `const defaultGraphDirection = '${this.convertGraphDirectionToVisLayoutValues(directedGraph)}'; // The graph direction from the dgml file itself`);
-    jsContent = jsContent.replace('layout: {} // The layout of the directed graph', `layout: {${this.getDirectedGraphLayoutJs(directedGraph)}} // The layout of the directed graph`);
+    jsContent = jsContent.replace("const defaultLayout = ''; // The graph layout from the dgml file itself", `const defaultLayout = '${this.config.defaultLayout}'; // The graph layout from the dgml file itself`);
+    jsContent = jsContent.replace('const defaultZoom = 1.25;', `const defaultZoom = ${this.zoom};`);
     return jsContent;
   }
 
@@ -96,19 +113,14 @@ export class DgmlViewer {
     const templateHtmlFilename = DgmlViewer._name + '_Template.html';
     let htmlContent = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateHtmlFilename)), 'utf8');
 
-    const visJsMinJs = 'vis-network.min.js';
-    const visPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', visJsMinJs);
-    const visUri = webview.asWebviewUri(visPath);
-    htmlContent = htmlContent.replace(visJsMinJs, visUri.toString());
+    const cytoscapeMinJs = 'cytoscape.min.js';
+    const cytoscapePath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', cytoscapeMinJs);
+    const cytoscapeUri = webview.asWebviewUri(cytoscapePath);
+    htmlContent = htmlContent.replace(cytoscapeMinJs, cytoscapeUri.toString());
 
     const cssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', DgmlViewer._name + '.css');
     const cssUri = webview.asWebviewUri(cssPath);
     htmlContent = htmlContent.replace(DgmlViewer._name + '.css', cssUri.toString());
-    
-    const visJsMinCss = 'vis-network.min.css';
-    const visCssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', visJsMinCss);
-    const visCssUri = webview.asWebviewUri(visCssPath);
-    htmlContent = htmlContent.replace(visJsMinCss, visCssUri.toString());
 
     const nonce = this.getNonce();
     htmlContent = htmlContent.replace('nonce-nonce', `nonce-${nonce}`);
@@ -128,28 +140,6 @@ export class DgmlViewer {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
-  }
-
-  private convertGraphDirectionToVisLayoutValues(directedGraph: IDirectedGraph): string {
-    let direction: string = '';
-    if (directedGraph.graphDirection !== undefined) {
-      switch (directedGraph.graphDirection.toLowerCase()) {
-        case 'lefttoright': direction = 'LR'; break;
-        case 'righttoleft': direction = 'RL'; break;
-        case 'toptobottom': direction = 'UD'; break;
-        case 'bottomtotop': direction = 'DU'; break;
-        default: direction = 'LR'; break;
-      }
-    }
-    return direction;
-  }
-
-  private getDirectedGraphLayoutJs(directedGraph: IDirectedGraph): string {
-    if (directedGraph.graphDirection !== undefined) {
-      let direction: string = this.convertGraphDirectionToVisLayoutValues(directedGraph);
-      return `hierarchical: {enabled: true, direction: '${direction}', sortMethod: 'hubsize' }`;
-    }
-    return 'hierarchical: { enabled: false }';
   }
 
   private saveAsPng(messageText: string) {

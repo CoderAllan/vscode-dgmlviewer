@@ -3,7 +3,7 @@ import {
   IPath,
   IProperty,
   IStyle,
-  Link,
+  Edge,
   Node
 } from '@model';
 
@@ -19,7 +19,7 @@ export interface IDirectedGraph {
   zoomLevel: number;
 
   nodes: Node[];
-  links: Link[];
+  edges: Edge[];
   categories: ICategory[];
   properties: IProperty[];
   styles: IStyle[];

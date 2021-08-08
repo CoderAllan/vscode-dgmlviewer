@@ -41,3 +41,11 @@ input[type=button] {
   display: none;
   margin-left: 3px;
 }
+
+#cyPopup {
+  position: absolute;
+  background-color: lightgoldenrodyellow;
+  display: none;
+  color: black;
+  padding: 2px;
+}

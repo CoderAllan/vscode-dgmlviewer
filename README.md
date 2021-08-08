@@ -2,21 +2,19 @@
 
 ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/coderAllan.vscode-dgmlviewer) ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/coderAllan.vscode-dgmlviewer) ![GitHub top language](https://img.shields.io/github/languages/top/CoderAllan/vscode-dgmlviewer.svg) ![GitHub last commit](https://img.shields.io/github/last-commit/CoderAllan/vscode-dgmlviewer.svg) ![GitHub](https://img.shields.io/github/license/CoderAllan/vscode-dgmlviewer.svg)
 
-The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) can be used to visualize things like processes, hierarchies flows and many other things.
+The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) can be used to visualize things like processes, hierarchies, flows and many other things.
 
 This extension for Visual Studio Code can be used to render a *.dgml file into a graphical representation of the graph. Find it on the [Visual Studio Code marketplace](https://marketplace.visualstudio.com/items?itemName=coderAllan.vscode-dgmlviewer).
 
 ## Visualize DGML files
 
-To visualize a dgml file i Visual Studio code you click on the file to open it, then you select the DGML Viewer command from the command pallette to render the graph into a graphical representation.
+To visualize a dgml file in Visual Studio Code you click on the file to open it, then you select the "DGMLViewer: Render the dgml graph" command from the command pallette to render the graph.
 
-When the dgml file has been rendered you can save the representation into a PNG file.
+When the dgml file has been rendered you can save the representation as a PNG file.
 
 ![DGML save to Png file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_save.gif)
 
-You can also choose to only save a selected part of the graph.
-
-You do this by clicking the 'Save selection as png' button, then right-click and drag to select the area you want to save. The selection is saved when you let go of the mouse button.
+You can also choose to only save part of the graph. You do this by clicking the 'Save selection as png' button, then right-click and drag to select the area you want to save. The selection is saved when you let go of the mouse button.
 
 ![DGML save selection to Png file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_saveSelection.gif)
 
@@ -24,7 +22,7 @@ In a DirectedGraph file you can [link a node to  an external file](https://docs.
 
 ![DGML click on a node](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_clickOnNodes.gif)
 
-By default if the DirectedGraph element of the dgml file has a GraphDirection attribute, then this value is used to layout the graph. But by clicking the 'Change layout' checkbox you can change the layout of the graph. It will not change the dgml file itself, it will only change the rendering of the file.
+You can change the rendered layout of the directed graph by clicking the 'Change layout' checkbox and the choose a layout in the dropdown box. It will not change the dgml file itself, it will only change the rendering of the graph.
 
 ![DGML change layout](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_changeLayout.gif)
 
@@ -57,3 +55,7 @@ See the full list of settings below the screenshot.
 ## Known Issues
 
 The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) has the ability to specify conditional rendering of the graph. This is done by using the Style elements in the specification. In the current version of this DGMLViewer extension for Visual Studio code this conditional rendering is very limited. Only the 'HasCategory(...)' condition is evaluated.
+
+## Third party components and resources
+
+* [Cytoscape.js](https://js.cytoscape.org/) - Used for rendering the directed graph.

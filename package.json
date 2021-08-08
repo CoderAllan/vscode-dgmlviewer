@@ -4,7 +4,7 @@
   "displayName": "DGMLViewer",
   "description": "DGMLViewer is viewer for dgml (Directed Graph Markup Language) files",
   "icon": "icon.png",
-  "version": "1.3.4",
+  "version": "2.0.0",
   "repository": "https://github.com/CoderAllan/vscode-dgmlviewer",
   "engines": {
     "vscode": "^1.59.0"
@@ -14,7 +14,9 @@
     "Visualization"
   ],
   "keywords": [
-    "dgml"
+    "dgml",
+    "graph",
+    "visualization"
   ],
   "activationEvents": [
     "onCommand:vscode-dgmlviewer.dgmlViewer",
@@ -44,36 +46,49 @@
           "type": "string",
           "default": "triangle",
           "enum": [
-            "arrow",
-            "bar",
-            "box",
+            "chevron",
+            "circle-triangle",
             "circle",
-            "crow",
-            "curve",
             "diamond",
-            "inv_curve",
-            "inv_triangle",
+            "square",
+            "tee",
+            "triangle-backcurve",
+            "triangle-cross",
+            "triangle-tee",
             "triangle",
-            "vee"
+            "vee",
+            "none"
           ],
           "description": "The default ending of the edges."
         },
         "dgmlViewer.nodeShape": {
           "type": "string",
-          "default": "box",
+          "default": "round-rectangle",
           "enum": [
-            "ellipse",
-            "circle",
-            "database",
-            "box",
-            "text",
+            "barrel",
+            "bottom-round-rectangle",
+            "concave-hexagon",
+            "cut-rectangle",
             "diamond",
-            "dot",
-            "star",
-            "triangle",
-            "triangleDown",
+            "ellipse",
+            "heptagon",
             "hexagon",
-            "square "
+            "octagon",
+            "pentagon",
+            "rectangle",
+            "rhomboid",
+            "round-diamond",
+            "round-heptagon",
+            "round-hexagon",
+            "round-octagon",
+            "round-pentagon",
+            "round-rectangle",
+            "round-tag",
+            "round-triangle",
+            "star",
+            "tag",
+            "triangle",
+            "vee"
           ],
           "description": "The shape of the nodes in the directed graph. Notice that 'ellipse','circle','database','box' and 'text' have the label inside the shape, the rest have the label outside the shape."
         },
