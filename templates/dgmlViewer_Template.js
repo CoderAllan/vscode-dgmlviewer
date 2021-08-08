@@ -105,7 +105,7 @@
       mouseX = parseInt(event.clientX - selectionCanvas.offsetLeft);
       mouseY = parseInt(event.clientY - selectionCanvas.offsetTop);
       showGuideLines();
-      if (selectionCanvasContext != undefined) {
+      if (selectionCanvasContext !== undefined) {
         selectionCanvasContext.beginPath();
         selectionCanvasContext.setLineDash([]);
         const width = mouseX - lastMouseX;
@@ -180,7 +180,6 @@
       }
     }
 
-
     function storeCoordinates(cy) {
       cy.elements().forEach(ele => {
         if (ele.isNode()) {
@@ -206,7 +205,7 @@
         if (node.data.label && node.data.label.length > 0) {
           let labelText = node.data.label;
           let metrics = txtCtx.measureText(labelText);
-          if (labelText.indexOf('\n') > -1){
+          if (labelText.indexOf('\n') > -1){ // If the label text contains newlines, then we should find the longest line of them in order to find the width of the node.
             let longestStringLength = 0;
             const lines = node.data.label.split('\n');
             lines.forEach(s => {
@@ -218,7 +217,7 @@
             metrics = txtCtx.measureText(labelText);
             node.data.height = (metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent) * (lines.length + 2);
           }
-          node.data.width = metrics.width * 1.75; // Don't know why, but the width of node has to be about 75% bigger than the width of the label text.
+          node.data.width = metrics.width * 1.5; // Don't know why, but the width of node has to be about 50% bigger than the width of the label text.
         }
       });
     }
