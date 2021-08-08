@@ -363,6 +363,7 @@
           hidePopup();
         });
         cy.on('click', 'node', function (evt) {
+          hidePopup();
           doShowPopup = false;
           var filepath = evt.target.data().filepath;
           if (filepath && filepath.length > 0) {
@@ -389,6 +390,7 @@
           hidePopup();
         });
         cy.on('zoom', function (evt) {
+          hidePopup();
           vscode.postMessage({
             command: 'zoom',
             text: cy.zoom()
