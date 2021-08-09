@@ -37,11 +37,6 @@ input[type=button] {
   z-index: 200;
 }
 
-#hierarchicalOptions_direction, #hierarchicalOptions_sortmethod {
-  display: none;
-  margin-left: 3px;
-}
-
 #cyPopup {
   position: absolute;
   background-color: lightgoldenrodyellow;
