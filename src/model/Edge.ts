@@ -90,7 +90,7 @@ export class Edge extends BaseElement {
         jsStringProperties.push(`backgroundColor: '${this.convertColorValue(this.categoryRef.background)}', backgroundOpacity: 1`);
       }
       else {
-        jsStringProperties.push(`backgroundColor: '', backgroundOpacity: 0`);
+        jsStringProperties.push(`backgroundColor: 'rgba(0, 0, 0, 0)', backgroundOpacity: 0`);
       }
     }
     if (this.categoryRef !== undefined && this.categoryRef.stroke !== undefined) {
