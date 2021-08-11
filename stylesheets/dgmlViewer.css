@@ -27,10 +27,6 @@
   z-index: 300;
 }
 
-input[type=button] {
-  margin-right: 10px;
-}
-
 #selectionLayer {
   display: none;
   background-color: rgba(240, 240, 240, 0.4);
@@ -43,4 +39,15 @@ input[type=button] {
   display: none;
   color: black;
   padding: 2px;
+}
+
+#refresh {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAOBAMAAADQ9FGEAAAAJ1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADdEvm1AAAADXRSTlMAzgT+tKMb9tPFfPQdvCI9yQAAAFZJREFUCNdjYFBiChQUlFzEwMDmkgRkSexiYEgx9mFgYGDqZGBwNjZRADIFGRgCy0XBLAgmmsUE1AdlAc1iYJihwAA1f3WjoKComksCA4PWRCBLQYkBAMD4DcyUSChYAAAAAElFTkSuQmCC);
+  background-repeat:  no-repeat;
+  background-position: left center;
+  width: 18px;
+  height: 14px;
+  margin: 0px 5px 0px 5px;
+  padding: 0px;
+  display: none;
 }

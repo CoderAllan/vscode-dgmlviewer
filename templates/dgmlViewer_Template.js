@@ -19,6 +19,7 @@
     const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
     const selectionLayer = document.getElementById('selectionLayer');
     const helpTextDiv = document.getElementById('helpText');
+    const refreshDiv = document.getElementById('refresh');
     const vscode = acquireVsCodeApi();
     let doShowPopup = false;
     let lastMouseX = lastMouseY = 0;
@@ -34,6 +35,7 @@
     saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
     showLayoutOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
     layoutSelect.addEventListener('change', setNetworkLayout);
+    refreshDiv.addEventListener('click', setNetworkLayout);
 
     function mouseUpEventListener(event) {
       // Convert the canvas to image data that can be saved
@@ -326,13 +328,22 @@
               componentSpacing: 5,
               numIter: 5000,
             };
+            refreshDiv.style.display = 'inline-block';
+            refreshDiv.style.cursor = 'pointer';
           } else if (layoutSelect.value === 'circle' || layoutSelect.value === 'grid') {
             options = {
               name: layoutSelect.value,
               spacingFactor: 0.5,
               padding: 1
             };
-          } 
+          } else if (layoutSelect.value === 'random') {
+            refreshDiv.style.display = 'inline-block';
+            refreshDiv.style.cursor = 'pointer';
+          }
+          if (layoutSelect.value !== 'cose' && layoutSelect.value !== 'random') {
+            refreshDiv.style.display = 'none';
+            refreshDiv.style.cursor = 'default';
+          }          
           if (layoutSelect.value === 'preset') {
             restoreCoordinates(cy);
           }
