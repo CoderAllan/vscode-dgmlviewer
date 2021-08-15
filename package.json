@@ -112,10 +112,10 @@
           "default": "2",
           "description": "The width of the selection rectangle shown when selecting part of a directed graph"
         },
-        "dgmlViewer.pngFilename": {
+        "dgmlViewer.saveAsFilename": {
           "type": "string",
-          "default": "DirectedGraph.png",
-          "description": "The default name used when saving the directed graph to a Png file."
+          "default": "DirectedGraph",
+          "description": "The default name used when saving the directed graph as a Png, Jpg, Svg or Json file."
         },
         "dgmlViewer.showPopupsOverNodesAndLinks": {
           "type": "boolean",

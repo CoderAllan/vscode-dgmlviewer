@@ -8,13 +8,22 @@
   <link href="dgmlViewer.css" rel="stylesheet">
   
   <script type="text/javascript" src="cytoscape.min.js"></script>
+  <script type="text/javascript" src="cytoscape-svg.js"></script>
 
 </head>
 
 <body>
   <div id="buttons">
-    <input type="button" id="saveAsPngButton" value="Save as png">
-    <input type="button" id="saveSelectionAsPngButton" value="Save selection as png">
+    <div class="dropdown">
+      <button id="saveAsButton" ><div><i class="imageDownload"></i><div class="saveAsText">Save as ...</div></div></button>
+      <div class="dropdown-content">
+        <a href="#" id="saveAsPngButton"><i class="imagePng"></i> <div class="saveAsText">Save as Png</div></a>
+        <a href="#" Id="saveAsJpgButton"><i class="imageJpg"></i> <div class="saveAsText">Save as Jpg</div></a>
+        <a href="#" Id="saveAsSvgButton"><i class="imageSvg"></i> <div class="saveAsText">Save as Svg</div></a>
+        <a href="#" Id="saveAsJsonButton"><i class="imageJson"></i> <div class="saveAsText">Save as Json</div></a>
+      </div>
+    </div>
+    <button id="saveSelectionAsPngButton">Save selection as png</button>
     <div id="hierarchical">Change layout:<input type="checkbox" id="showLayoutOptions"></div>
     <div id="layoutDiv">
       <div id="refresh"></div>

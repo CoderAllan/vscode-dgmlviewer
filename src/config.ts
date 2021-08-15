@@ -24,6 +24,6 @@ export class Config {
   public get graphSelectionGuidelineWidth(): number { return this.getSetting<number>('graphSelectionGuidelineWidth', 1); }
   public get graphSelectionColor(): string { return this.getSetting<string>('graphSelectionColor', 'red'); }
   public get graphSelectionWidth(): number { return this.getSetting<number>('graphSelectionWidth', 2); }
-  public get dgmlViewerPngFilename(): string { return this.getSetting<string>('pngFilename', 'DirectedGraph.png'); }
+  public get dgmlViewerSaveAsFilename(): string { return this.getSetting<string>('saveAsFilename', 'DirectedGraph'); }
   public get showPopupsOverNodesAndEdges(): boolean { return this.getSetting<boolean>('showPopupsOverNodesAndLinks', true); }
 }
