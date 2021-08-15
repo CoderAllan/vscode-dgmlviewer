@@ -10,9 +10,9 @@ This extension for Visual Studio Code can be used to render a *.dgml file into a
 
 To visualize a dgml file in Visual Studio Code you click on the file to open it, then you select the "DGMLViewer: Render the dgml graph" command from the command pallette to render the graph.
 
-When the dgml file has been rendered you can save the representation as a PNG file.
+When the dgml file has been rendered you can save the representation as a Png, Jpg or Svg image file or save the internal Cytoscape json object if you need to extract data from the graph.
 
-![DGML save to Png file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_save.gif)
+![DGML save graph to a Png, Jpg, Svg or Json file](https://github.com/CoderAllan/vscode-dgmlviewer/raw/main/images/dgmlViewer_save.gif)
 
 You can also choose to only save part of the graph. You do this by clicking the 'Save selection as png' button, then right-click and drag to select the area you want to save. The selection is saved when you let go of the mouse button.
 
