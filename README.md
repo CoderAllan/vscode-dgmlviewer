@@ -59,3 +59,4 @@ The [Directed Graph Markup Language (dgml)](https://en.wikipedia.org/wiki/DGML) 
 ## Third party components and resources
 
 * [Cytoscape.js](https://js.cytoscape.org/) - Used for rendering the directed graph.
+* Icons are from [Icon8](https://icons8.com/)
