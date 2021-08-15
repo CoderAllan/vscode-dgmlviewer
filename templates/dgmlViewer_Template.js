@@ -13,29 +13,36 @@
     const txtCanvas = document.createElement('canvas');
     const txtCtx = txtCanvas.getContext('2d');
     const layoutDiv = document.getElementById('layoutDiv');
-    const showLayoutOptionsCheckbox = document.getElementById('showLayoutOptions');
-    const layoutSelect = document.getElementById('layout');
-    const saveAsPngButton = document.getElementById('saveAsPngButton');
-    const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
     const selectionLayer = document.getElementById('selectionLayer');
     const helpTextDiv = document.getElementById('helpText');
-    const refreshDiv = document.getElementById('refresh');
     const vscode = acquireVsCodeApi();
     let doShowPopup = false;
     let lastMouseX = lastMouseY = 0;
     let mouseX = mouseY = 0;
     let selection;
-    showHierarchicalOptions();
 
     const selectionCanvas = selectionLayer.firstElementChild;
     let selectionCanvasContext;
 
-    // add button event listeners
+    // add event listeners
+    const saveAsPngButton = document.getElementById('saveAsPngButton');
     saveAsPngButton.addEventListener('click', saveAsPng);
+    const saveAsJpgButton = document.getElementById('saveAsJpgButton');
+    saveAsJpgButton.addEventListener('click', saveAsJpg);
+    const saveAsSvgButton = document.getElementById('saveAsSvgButton');
+    saveAsSvgButton.addEventListener('click', saveAsSvg);
+    const saveAsJsonButton = document.getElementById('saveAsJsonButton');
+    saveAsJsonButton.addEventListener('click', saveAsJson);
+    const saveSelectionAsPngButton = document.getElementById('saveSelectionAsPngButton');
     saveSelectionAsPngButton.addEventListener('click', saveSelectionAsPng);
+    const showLayoutOptionsCheckbox = document.getElementById('showLayoutOptions');
     showLayoutOptionsCheckbox.addEventListener('click', showHierarchicalOptions);
+    const layoutSelect = document.getElementById('layout');
     layoutSelect.addEventListener('change', setNetworkLayout);
+    const refreshDiv = document.getElementById('refresh');
     refreshDiv.addEventListener('click', setNetworkLayout);
+
+    showHierarchicalOptions();
 
     function mouseUpEventListener(event) {
       // Convert the canvas to image data that can be saved
@@ -151,18 +158,48 @@
       });
     }
 
-    function saveAsPng() {
+    function getSaveAsOptions(){
       const boundingBox = cy.elements().renderedBoundingBox();
-      const cyPng = cy.png({
+      return {
         output: 'base64uri',
         bg: 'transparent',
         full: true,
         maxHeight: boundingBox.h,
         maxWidth: boundingBox.w
-      });
+      };
+    }
+    
+    function saveAsPng() {
+      const options = getSaveAsOptions();
+      const cyPng = cy.png(options);
       vscode.postMessage({
         command: 'saveAsPng',
         text: cyPng
+      });
+    }
+
+    function saveAsJpg() {
+      const options = getSaveAsOptions();
+      const cyJpg = cy.jpg(options);
+      vscode.postMessage({
+        command: 'saveAsJpg',
+        text: cyJpg
+      });
+    }
+  
+    function saveAsSvg() {
+      const cySvg = cy.svg({scale: 1, full: true, bg: '#FFF'});
+      vscode.postMessage({
+        command: 'saveAsSvg',
+        text: cySvg
+      });
+    }
+
+    function saveAsJson() {
+      const json = JSON.stringify(cy.json());
+      vscode.postMessage({
+        command: 'saveAsJson',
+        text: json
       });
     }
 

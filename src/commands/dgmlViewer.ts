@@ -27,7 +27,16 @@ export class DgmlViewer {
       message => {
         switch (message.command) {
           case 'saveAsPng':
-            this.saveAsPng(message.text);
+            this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.png`);
+            return;
+          case 'saveAsJpg':
+            this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.jpg`);
+            return;
+          case 'saveAsSvg':
+            this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.svg`, true);
+            return;
+          case 'saveAsJson':
+            this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.json`, true);
             return;
           case 'openFile':
             const filename = message.text;
@@ -113,10 +122,12 @@ export class DgmlViewer {
     const templateHtmlFilename = DgmlViewer._name + '_Template.html';
     let htmlContent = fs.readFileSync(this.extensionContext?.asAbsolutePath(path.join('templates', templateHtmlFilename)), 'utf8');
 
-    const cytoscapeMinJs = 'cytoscape.min.js';
-    const cytoscapePath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', cytoscapeMinJs);
-    const cytoscapeUri = webview.asWebviewUri(cytoscapePath);
-    htmlContent = htmlContent.replace(cytoscapeMinJs, cytoscapeUri.toString());
+    const javascriptIncludes = ['cytoscape.min.js', 'cytoscape-svg.js'];
+    javascriptIncludes.forEach((includeFile) => {
+      const includePath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'javascript', includeFile);
+      const includeUri = webview.asWebviewUri(includePath);
+      htmlContent = htmlContent.replace(includeFile, includeUri.toString());
+    });
 
     const cssPath = vscode.Uri.joinPath(this.extensionContext.extensionUri, 'stylesheets', DgmlViewer._name + '.css');
     const cssUri = webview.asWebviewUri(cssPath);
@@ -142,17 +153,24 @@ export class DgmlViewer {
     return text;
   }
 
-  private saveAsPng(messageText: string) {
+  private saveAs(messageText: string, filename: string, asText: boolean = false) {
     const dataUrl = messageText.split(',');
-    if (dataUrl.length > 0) {
-      const u8arr = Base64.toUint8Array(dataUrl[1]);
-
-      const workspaceDirectory = this.fsUtils.getWorkspaceFolder();
-      const newFilePath = path.join(workspaceDirectory, this.config.dgmlViewerPngFilename);
-      this.fsUtils.writeFile(newFilePath, u8arr, () => { });
-
-      vscode.window.showInformationMessage(`The file ${this.config.dgmlViewerPngFilename} has been created in the root of the workspace.`);
+    if (!asText && dataUrl.length === 0) {
+      return;
     }
-  }
+    var content;
+    if (asText) {
+      content = messageText;
+    }
+    else {
+      content = Base64.toUint8Array(dataUrl[1]);
+    }
 
+    const workspaceDirectory = this.fsUtils.getWorkspaceFolder();
+    const newFilePath = path.join(workspaceDirectory, filename);
+    this.fsUtils.writeFile(newFilePath, content, () => { });
+
+    vscode.window.showInformationMessage(`The file ${filename} has been created in the root of the workspace.`);
+  }
+  
 }
