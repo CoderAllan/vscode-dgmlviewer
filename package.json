@@ -20,7 +20,8 @@
   ],
   "activationEvents": [
     "onCommand:vscode-dgmlviewer.dgmlViewer",
-    "onCommand:vscode-dgmlviewer.dgmlFileInfo"
+    "onCommand:vscode-dgmlviewer.dgmlFileInfo",
+    "onCommand:vscode-dgmlviewer.dgmlTest"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -32,6 +33,10 @@
       {
         "command": "vscode-dgmlviewer.dgmlFileInfo",
         "title": "DGMLViewer: Show file info"
+      },
+      {
+        "command": "vscode-dgmlviewer.dgmlTest",
+        "title": "DGMLViewer: Testing"
       }
     ],
     "configuration": {
@@ -137,11 +142,13 @@
   },
   "devDependencies": {
     "@types/glob": "^7.1.4",
+    "@types/nearley": "^2.11.2",
     "@types/node": "^16.7.1",
     "@types/vscode": "^1.59.0",
-    "@typescript-eslint/eslint-plugin": "^4.29.2",
-    "@typescript-eslint/parser": "^4.29.2",
+    "@typescript-eslint/eslint-plugin": "^4.29.3",
+    "@typescript-eslint/parser": "^4.29.3",
     "eslint": "^7.32.0",
+    "nearley": "^2.20.1",
     "ts-loader": "^9.2.5",
     "tscpaths": "0.0.9",
     "typescript": "^4.3.5",
