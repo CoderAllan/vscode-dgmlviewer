@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DirectedGraph GraphDirection="LeftToRight" Layout="Sugiyama" ZoomLevel="-1" xmlns="http://schemas.microsoft.com/vs/2009/dgml">
+  <Nodes>
+    <Node Id="cm-about" Category="RootComponent" Bounds="413.85,223.96,71.7266666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\about\about.component.ts" Label="cm-about" />
+    <Node Id="cm-app-component" Category="RootComponent" Bounds="317.803333333333,60,126.61,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\app.component.ts" Label="cm-app-component" UseManualLocation="True" />
+    <Node Id="cm-customer-details" Category="RootComponent" Bounds="2.24166666666667,280,129.213333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customer\customer-details\customer-details.component.ts" Label="cm-customer-details" />
+    <Node Id="cm-customer-edit" Category="RootComponent" Bounds="420.963333333333,279.92,115.106666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customer\customer-edit\customer-edit.component.ts" Label="cm-customer-edit" />
+    <Node Id="cm-customer-orders" Category="RootComponent" Bounds="0,335.96,128.603333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customer\customer-orders\customer-orders.component.ts" Label="cm-customer-orders" />
+    <Node Id="cm-customers" Category="RootComponent" Bounds="19.3066666666666,168,95.0833333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customers\customers.component.ts" Label="cm-customers" />
+    <Node Id="cm-customers-card" Bounds="163.696666666667,224,122.773333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customers\customers-card\customers-card.component.ts" Label="cm-customers-card" />
+    <Node Id="cm-customers-grid" Bounds="164.535,168,121.096666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customers\customers-grid\customers-grid.component.ts" Label="cm-customers-grid" />
+    <Node Id="cm-customers-orders" Category="RootComponent" Bounds="0,0,133.696666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\orders\orders.component.ts" Label="cm-customers-orders" />
+    <Node Id="cm-filter-textbox" FontWeight="bold" Bounds="170.546666666667,112,109.073333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\shared\filter-textbox\filter-textbox.component.ts" Label="cm-filter-textbox" />
+    <Node Id="cm-growler" Category="Category10" Bounds="473.08,168,80.98,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\core\growler\growler.component.ts" Label="cm-growler" />
+    <Node Id="cm-login" Category="RootComponent" Bounds="316.47,223.96,67.38,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\login\login.component.ts" Label="cm-login" />
+    <Node Id="cm-map" Bounds="192.995,280,64.1766666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\shared\map\map.component.ts" Label="cm-map" />
+    <Node Id="cm-map-point" Bounds="176.671666666667,56,96.8233333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\shared\map\map-point.component.ts" Label="cm-map-point" />
+    <Node Id="cm-modal" Category="Category10" Bounds="476.506666666667,112,74.1266666666666,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\core\modal\modal.component.ts" Label="cm-modal" />
+    <Node Id="cm-navbar" Category="Category9" Bounds="475.241666666667,56,76.6566666666667,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\core\navbar\navbar.component.ts" Label="cm-navbar" />
+    <Node Id="cm-orders" Category="RootComponent" Bounds="316.47,279.92,74.4933333333333,25.96" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\customer\customer.component.ts" Label="cm-orders" />
+    <Node Id="cm-overlay" Category="Category9" Bounds="472,2,86,30" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\core\overlay\overlay.component.ts" Label="cm-overlay" />
+    <Node Id="cm-pagination" Bounds="172,2,110,30" ComponentFilename="d:\Src\Angular-Examples\Angular-JumpStart\src\app\shared\pagination\pagination.component.ts" Label="cm-pagination" UseManualLocation="True" />
+  </Nodes>
+  <Links>
+    <Link Source="cm-app-component" Target="cm-growler" Category="Category10" Label="Link label" Bounds="397.028281697471,85.96,93.6464127028646,76.3526620237887" />
+    <Link Source="cm-app-component" Target="cm-modal" Category="Category9" Label="MLabel" Bounds="414.172803205128,85.96,57.9551348020705,22.7512387964391" />
+    <Link Source="cm-app-component" Target="cm-navbar" Category="Category10" Bounds="444.413333333333,70.4090695217998,21.8324340066348,0.659283083356485" />
+    <Link Source="cm-app-component" Target="cm-overlay" Category="Category10" Bounds="409.764207222222,29.6734594806402,66.9517350238103,30.3265405193598" />
+    <Link Source="cm-customer-details" Target="cm-map" Bounds="131.455,292.979970414784,52.5400000000008,1.66018895697562E-05" />
+    <Link Source="cm-customers" Target="cm-customers-card" Bounds="103.524945833333,193.96,76.397428902556,27.0373559487037" />
+    <Link Source="cm-customers" Target="cm-customers-grid" Bounds="114.39,180.98,41.145,0" />
+    <Link Source="cm-customers" Target="cm-filter-textbox" Bounds="103.524945833333,140.962644051296,76.397428902556,27.0373559487037" />
+    <Link Source="cm-customers" Target="cm-map" Bounds="81.9018020629883,193.960006713867,114.516380310059,81.3094940185547" />
+    <Link Source="cm-customers" Target="cm-map-point" Bounds="85.1866395833333,87.1595860109793,114.212347388864,80.8404139890207" />
+    <Link Source="cm-customers" Target="cm-pagination" Category="Implements" Bounds="77.8721923828125,30.5671253204346,118.642395019531,137.432874679565" />
+    <Link Source="cm-customers-orders" Target="cm-pagination" Bounds="133.696666666667,12.1312544083387,34.3019834848861,0.287825665641327" />
+  </Links>
+  <Categories>
+    <Category Id="Category10" Label="Category 10" Background="#FFEEEEEE" IsTag="True" />
+    <Category Id="Category9" Label="Category 9" IsTag="True" />
+    <Category Id="Implements" Label="Implements" />
+    <Category Id="RootComponent" Label="Root component" Background="#FF00AA00" IsTag="True" />
+  </Categories>
+  <Properties>
+    <Property Id="Background" Label="Background" Description="The background color" DataType="System.Windows.Media.Brush" />
+    <Property Id="Bounds" DataType="System.Windows.Rect" />
+    <Property Id="ComponentFilename" DataType="System.String" IsReference="True"/>
+    <Property Id="Expression" DataType="System.String" />
+    <Property Id="GraphDirection" DataType="Microsoft.VisualStudio.Diagrams.Layout.LayoutOrientation" />
+    <Property Id="GroupLabel" DataType="System.String" />
+    <Property Id="IsEnabled" DataType="System.Boolean" />
+    <Property Id="IsTag" DataType="System.Boolean" />
+    <Property Id="Label" Label="Label" Description="Displayable label of an Annotatable object" DataType="System.String" />
+    <Property Id="Layout" DataType="System.String" />
+    <Property Id="TargetType" DataType="System.Type" />
+    <Property Id="UseManualLocation" DataType="System.Boolean" />
+    <Property Id="Value" DataType="System.String" />
+    <Property Id="ValueLabel" DataType="System.String" />
+    <Property Id="ZoomLevel" DataType="System.String" />
+  </Properties>
+  <Styles>
+    <Style TargetType="Link" GroupLabel="Implements" ValueLabel="True">
+      <Condition Expression="HasCategory('Implements')" />
+      <Setter Property="Stroke" Value="#8000A600" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Category 10" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Category10')" />
+      <Setter Property="Background" Value="#FF672878" />
+      <Setter Property="Stroke" Value="#FFA60000" />
+      <Setter Property="StrokeDashArray" Value="2 2" />
+      <Setter Property="DrawArrow" Value="true" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Category 5" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Category5')" />
+      <Setter Property="Background" Value="#FF9B4F96" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Category 9" ValueLabel="Has category">
+      <Condition Expression="HasCategory('Category9')" />
+      <Setter Property="Background" Value="#FF00539C" />
+      <Setter Property="FontWeight" Value="bold" />
+    </Style>
+    <Style TargetType="Node" GroupLabel="Root component" ValueLabel="Has category">
+      <Condition Expression="HasCategory('RootComponent')" />
+      <Setter Property="#FF00AA00" />
+    </Style>
+  </Styles>
+</DirectedGraph>
