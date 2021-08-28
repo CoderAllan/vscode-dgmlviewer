@@ -132,7 +132,7 @@
   },
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
-    "webpack": "nearleyc ./expressionGrammar.ne -o ./javascript/expressionGrammar.js && webpack --mode development",
+    "webpack": "nearleyc ./src/expressionGrammar.ne -o ./javascript/expressionGrammar.js && webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./ && tscpaths -p ./tsconfig.json -s ./src -o ./out",
     "lint": "eslint src --ext ts",
@@ -143,7 +143,7 @@
   "devDependencies": {
     "@types/glob": "^7.1.4",
     "@types/nearley": "^2.11.2",
-    "@types/node": "^16.7.2",
+    "@types/node": "^16.7.4",
     "@types/vscode": "^1.59.0",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
