@@ -143,7 +143,7 @@
   "devDependencies": {
     "@types/glob": "^7.1.4",
     "@types/nearley": "^2.11.2",
-    "@types/node": "^16.7.11",
+    "@types/node": "^16.7.13",
     "@types/vscode": "^1.60.0",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.0",
@@ -156,7 +156,7 @@
     "webpack-cli": "^4.8.0"
   },
   "dependencies": {
-    "js-base64": "^3.6.1",
+    "js-base64": "^3.6.2",
     "xml-parser": "^1.2.1"
   }
 }
