@@ -134,7 +134,7 @@
     "vscode:prepublish": "webpack --mode production",
     "webpack": "nearleyc ./src/expressionGrammar.ne -o ./javascript/expressionGrammar.js && webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
-    "compile": "tsc -p ./ && tscpaths -p ./tsconfig.json -s ./src -o ./out",
+    "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
     "watch": "tsc -p ./ && tscpaths -p ./tsconfig.json -s ./src -o ./out && tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
@@ -150,7 +150,6 @@
     "eslint": "^7.32.0",
     "nearley": "^2.20.1",
     "ts-loader": "^9.2.6",
-    "tscpaths": "0.0.9",
     "typescript": "^4.4.3",
     "webpack": "^5.53.0",
     "webpack-cli": "^4.8.0"
