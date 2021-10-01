@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 
-import { DgmlViewer, FileInfo } from '@commands';
+import { DgmlViewer, FileInfo, Test } from '@commands';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -25,6 +25,13 @@ export function activate(context: vscode.ExtensionContext) {
     command.execute();
   });
   context.subscriptions.push(fileInfoDisposable);
+
+  let testingDisposable = vscode.commands.registerCommand(`${cmdPrefix}.${Test.commandName}`, () => {
+    const command = new Test();
+    command.execute();
+  });
+  context.subscriptions.push(testingDisposable);
+
 }
 
 export function deactivate() {}

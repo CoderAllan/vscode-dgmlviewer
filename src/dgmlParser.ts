@@ -1,5 +1,7 @@
 var fs = require('fs');
 var parse = require('xml-parser');
+var grammar = require('../javascript/expressionGrammar.js');
+import nearley = require("nearley");
 import * as vscode from 'vscode';
 
 import {
@@ -173,7 +175,7 @@ export class DgmlParser {
           const mutualEdges = edges.filter(l => l.target === newEdge.source && l.source === newEdge.target);
           if (mutualEdges.length > 0) {
             newEdge.mutualEdgeCount += 1;
-            mutualEdges.forEach(l => l.mutualEdgeCount += 1 );
+            mutualEdges.forEach(l => l.mutualEdgeCount += 1);
           }
           edges.push(newEdge);
         }
@@ -380,15 +382,36 @@ export class DgmlParser {
           style.condition.expression !== undefined &&
           style.setters !== undefined &&
           style.setters.length > 0) {
-          const regex = /HasCategory\(['"](.+)['"]\)+/ig;
-          const match = regex.exec(style.condition.expression);
-          if (match) {
-            const categoryName = match[1];
-            let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
-            if (!category) {
-              category = { id: categoryName };
-              directedGraph.categories.push(category);
+          let category: ICategory | undefined;
+          let expressionParsedOk: boolean;
+          try {
+            const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
+            parser.feed(style.condition.expression);
+            parser.finish();
+            // const result = JSON.stringify(parser.results);
+            const parserResult = parser.results[0];
+            if (parserResult.type === 'methodCall') {
+              if (parserResult.name.toLowerCase() === 'hascategory') {
+                const categoryName = parserResult.args[0];
+                category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
+                if (!category) {
+                  category = { id: categoryName };
+                  directedGraph.categories.push(category);
+                }
+                expressionParsedOk = true;
+              } else {
+                expressionParsedOk = false;
+              }
+            } else if (parserResult.type === 'value') {
+              expressionParsedOk = true;
+              console.log(`value: ${JSON.stringify(parserResult)}`);
+            } else {
+              expressionParsedOk = false;
             }
+          } catch {
+            expressionParsedOk = false;
+          }
+          if (expressionParsedOk) {
             style.setters.forEach(setter => {
               if (category && setter.property !== undefined) {
                 if (setter.property.toLowerCase() === 'stroke') {
@@ -439,7 +462,7 @@ export class DgmlParser {
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
-    const containmentCategories = directedGraph.categories.filter(category=> category.isContainment).map(category => category.id);
+    const containmentCategories = directedGraph.categories.filter(category => category.isContainment).map(category => category.id);
     const containmentEdges = directedGraph.edges.filter(edge => edge.category !== undefined && containmentCategories.includes(edge.category));
     directedGraph.nodes.forEach(node => {
       if (node.filePath !== undefined) {
@@ -456,9 +479,9 @@ export class DgmlParser {
           }
         });
       }
-      if(containmentEdges.length > 0) {
+      if (containmentEdges.length > 0) {
         const targetEdge = containmentEdges.find(edge => edge.target === node.id);
-        if(targetEdge !== undefined) {
+        if (targetEdge !== undefined) {
           node.parent = targetEdge.source;
           var parentNode = directedGraph.nodes.find(pNode => pNode.id === node.parent);
           if (parentNode) {
@@ -468,7 +491,7 @@ export class DgmlParser {
       }
     });
   }
-  
+
   private replacePaths(filePath: string | undefined, directedGraph: IDirectedGraph): string | undefined {
     let fixedFilepath = filePath;
     if (fixedFilepath !== undefined && directedGraph.paths !== undefined && directedGraph.paths.length > 0) {
@@ -480,7 +503,7 @@ export class DgmlParser {
   }
 
   private enrichEdges(directedGraph: IDirectedGraph): void {
-    const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({[node.id]: node.label})));
+    const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({ [node.id]: node.label })));
     directedGraph.edges.forEach(edge => {
       edge.sourceLabel = nodeLabelDict[edge.source];
       edge.targetLabel = nodeLabelDict[edge.target];
