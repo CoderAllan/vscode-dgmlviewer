@@ -6,3 +6,4 @@ dist
 dgmlViewer.html
 dgmlViewer.js
 *.vsix
+bump.cmd
