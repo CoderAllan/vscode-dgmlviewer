@@ -396,9 +396,9 @@ export class DgmlParser {
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
-    const containmentCategories = directedGraph.categories.filter(category => category.isContainment).map(category => category.id);
-    const containmentEdges = directedGraph.edges.filter(edge => edge.category !== undefined && containmentCategories.includes(edge.category));
-    directedGraph.nodes.forEach(node => {
+    const containmentCategories = directedGraph.categories?.filter(category => category.isContainment).map(category => category.id);
+    const containmentEdges = directedGraph.edges?.filter(edge => edge.category !== undefined && containmentCategories?.includes(edge.category));
+    directedGraph.nodes?.forEach(node => {
       if (node.filePath !== undefined) {
         node.filePath = this.replacePaths(node.filePath, directedGraph);
       }
@@ -413,7 +413,7 @@ export class DgmlParser {
           }
         });
       }
-      if (containmentEdges.length > 0) {
+      if (containmentEdges !== undefined && containmentEdges.length > 0) {
         const targetEdge = containmentEdges.find(edge => edge.target === node.id);
         if (targetEdge !== undefined) {
           node.parent = targetEdge.source;
@@ -438,7 +438,7 @@ export class DgmlParser {
 
   private enrichEdges(directedGraph: IDirectedGraph): void {
     const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({ [node.id]: node.label })));
-    directedGraph.edges.forEach(edge => {
+    directedGraph.edges?.forEach(edge => {
       edge.sourceLabel = nodeLabelDict[edge.source];
       edge.targetLabel = nodeLabelDict[edge.target];
     });
