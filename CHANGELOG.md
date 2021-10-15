@@ -1,5 +1,12 @@
 # Change Log
 
+## Version 2.2.0
+
+- If no nodes has a position/bounds defined then the layout of the graph is changed to 'cose'
+- Bugfix: Can now render graphs without categories correctly.
+- Bugfix: Styling now respects the TargetType property of the Style tags.
+- Fixed various linting errors and warnings
+
 ## Version 2.1.0
 
 - It is now possible to save the graph as Png, Jpg, Svg and as Json.
