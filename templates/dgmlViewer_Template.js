@@ -338,7 +338,15 @@
       });
 
       layoutDiv.style['display'] = showLayoutOptionsCheckbox.checked ? 'block' : 'none';
-
+      let hasPositions = false;
+      nodeElements.forEach(node => {
+        if(node.position) {
+          hasPositions = true;
+        }
+      });
+      if (!hasPositions) {
+        layoutSelect.value = 'cose';
+      }
       let options = {
         name: layoutSelect.value ? layoutSelect.value : defaultLayout
       };
