@@ -1,5 +1,5 @@
 import {
-  ICategory,
+  Category,
   IPath,
   IProperty,
   IStyle,
@@ -20,7 +20,7 @@ export interface IDirectedGraph {
 
   nodes: Node[];
   edges: Edge[];
-  categories: ICategory[];
+  categories: Category[];
   properties: IProperty[];
   styles: IStyle[];
   paths: IPath[];

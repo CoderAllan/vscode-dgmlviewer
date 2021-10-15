@@ -7,7 +7,7 @@
   "version": "2.1.0",
   "repository": "https://github.com/CoderAllan/vscode-dgmlviewer",
   "engines": {
-    "vscode": "^1.59.0"
+    "vscode": "^1.61.0"
   },
   "categories": [
     "Other",
@@ -132,7 +132,7 @@
   },
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
-    "webpack": "nearleyc ./src/expressionGrammar.ne -o ./javascript/expressionGrammar.js && webpack --mode development",
+    "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
     "lint": "eslint src --ext ts",
@@ -143,19 +143,19 @@
   "devDependencies": {
     "@types/glob": "^7.1.4",
     "@types/nearley": "^2.11.2",
-    "@types/node": "^16.10.2",
-    "@types/vscode": "^1.60.0",
-    "@typescript-eslint/eslint-plugin": "^4.32.0",
-    "@typescript-eslint/parser": "^4.32.0",
-    "eslint": "^7.32.0",
-    "nearley": "^2.20.1",
+    "@types/node": "^16.11.0",
+    "@types/vscode": "^1.61.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.1",
     "ts-loader": "^9.2.6",
-    "typescript": "^4.4.3",
-    "webpack": "^5.55.1",
-    "webpack-cli": "^4.8.0"
+    "typescript": "^4.4.4",
+    "webpack": "^5.58.2",
+    "webpack-cli": "^4.9.0"
   },
   "dependencies": {
     "js-base64": "^3.7.2",
+    "nearley": "^2.20.1",
     "xml-parser": "^1.2.1"
   }
 }

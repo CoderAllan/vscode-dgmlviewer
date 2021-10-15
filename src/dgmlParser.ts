@@ -1,11 +1,12 @@
 var fs = require('fs');
 var parse = require('xml-parser');
 var grammar = require('../javascript/expressionGrammar.js');
-import nearley = require("nearley");
+import nearley = require('nearley');
 import * as vscode from 'vscode';
 
 import {
-  ICategory,
+  Category,
+  Edge,
   ICondition,
   IDirectedGraph,
   IPath,
@@ -13,7 +14,6 @@ import {
   ISetter,
   IStyle,
   IXmlNode,
-  Edge,
   Node
 } from '@model';
 import { Config } from '@src';
@@ -30,13 +30,13 @@ export class DgmlParser {
     const directedGraph: IDirectedGraph = {} as IDirectedGraph;
     // Create a dictionary with all keys in lowercase, because we don't know the casing of the dgml file
     const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(obj.root.attributes);
-    directedGraph.title = attributesCopy['title'];
+    directedGraph.background = attributesCopy['background'];
+    directedGraph.backgroundImage = attributesCopy['backgroundImage'];
+    directedGraph.butterflyMode = attributesCopy['butterflymode'] !== undefined ? attributesCopy['butterflymode'].toLowerCase() === 'true' : false;
     directedGraph.graphDirection = attributesCopy['graphdirection'];
     directedGraph.layout = attributesCopy['layout'];
-    directedGraph.backgroundImage = attributesCopy['backgroundImage'];
-    directedGraph.background = attributesCopy['background'];
-    directedGraph.butterflyMode = attributesCopy['butterflymode'] !== undefined ? attributesCopy['butterflymode'].toLowerCase() === 'true' : false;
     directedGraph.neighborhoodDistance = attributesCopy['neighborhooddistance'] !== undefined ? +attributesCopy['neighborhooddistance'] : -1;
+    directedGraph.title = attributesCopy['title'];
     directedGraph.zoomLevel = attributesCopy['zoomlevel'] !== undefined ? +attributesCopy['zoomlevel'] : -1;
     if (obj.root.children !== undefined) {
       const children: IXmlNode[] = obj.root.children as IXmlNode[];
@@ -83,37 +83,37 @@ export class DgmlParser {
         if (xmlNode.attributes !== undefined) {
           const newNode = new Node(filename);
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
-          newNode.id = this.getAttributeValue(attributesCopy, 'id');
-          newNode.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
+          newNode.background = this.getAttributeValue(attributesCopy, 'background');
           newNode.category = this.getAttributeValue(attributesCopy, 'category');
           newNode.description = this.getAttributeValue(attributesCopy, 'description');
-          newNode.reference = this.getAttributeValue(attributesCopy, 'reference');
-          const isVertical = this.getAttributeValue(attributesCopy, 'isvertical');
-          newNode.isVertical = isVertical !== undefined ? isVertical === 'true' : undefined;
-          newNode.group = this.getAttributeValue(attributesCopy, 'group');
-          newNode.label = this.getAttributeValue(attributesCopy, 'label');
-          newNode.visibility = this.getAttributeValue(attributesCopy, 'visibility');
-          newNode.background = this.getAttributeValue(attributesCopy, 'background');
+          newNode.filePath = this.getAttributeValue(attributesCopy, 'filepath');
+          newNode.fontFamily = this.getAttributeValue(attributesCopy, 'fontfamily');
           const fontsize = this.getAttributeValue(attributesCopy, 'fontsize');
           newNode.fontSize = fontsize !== undefined ? +fontsize : undefined;
-          newNode.fontFamily = this.getAttributeValue(attributesCopy, 'fontfamily');
           newNode.fontStyle = this.getAttributeValue(attributesCopy, 'fontstyle');
           newNode.fontWeight = this.getAttributeValue(attributesCopy, 'fontweight');
-          newNode.stroke = this.getAttributeValue(attributesCopy, 'stroke');
-          newNode.strokeThickness = this.getAttributeValue(attributesCopy, 'strokethickness');
-          newNode.strokeDashArray = this.getAttributeValue(attributesCopy, 'strokedasharray');
-          newNode.icon = this.getAttributeValue(attributesCopy, 'icon');
-          newNode.shape = this.getAttributeValue(attributesCopy, 'shape');
-          newNode.style = this.getAttributeValue(attributesCopy, 'style');
+          newNode.group = this.getAttributeValue(attributesCopy, 'group');
           newNode.horizontalAlignment = this.getAttributeValue(attributesCopy, 'horizontalalignment');
-          newNode.verticalAlignment = this.getAttributeValue(attributesCopy, 'verticalalignment');
-          newNode.filePath = this.getAttributeValue(attributesCopy, 'filepath');
-          const minWidth = this.getAttributeValue(attributesCopy, 'minwidth');
-          newNode.minWidth = minWidth !== undefined ? +minWidth : undefined;
+          newNode.icon = this.getAttributeValue(attributesCopy, 'icon');
+          newNode.id = this.getAttributeValue(attributesCopy, 'id');
+          const isVertical = this.getAttributeValue(attributesCopy, 'isvertical');
+          newNode.isVertical = isVertical !== undefined ? isVertical === 'true' : undefined;
+          newNode.label = this.getAttributeValue(attributesCopy, 'label');
           const maxWidth = this.getAttributeValue(attributesCopy, 'maxwidth');
           newNode.maxWidth = maxWidth !== undefined ? +maxWidth : undefined;
+          const minWidth = this.getAttributeValue(attributesCopy, 'minwidth');
+          newNode.minWidth = minWidth !== undefined ? +minWidth : undefined;
           const nodeRadius = this.getAttributeValue(attributesCopy, 'noderadius');
           newNode.nodeRadius = nodeRadius !== undefined ? +nodeRadius : undefined;
+          newNode.reference = this.getAttributeValue(attributesCopy, 'reference');
+          newNode.shape = this.getAttributeValue(attributesCopy, 'shape');
+          newNode.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
+          newNode.stroke = this.getAttributeValue(attributesCopy, 'stroke');
+          newNode.strokeDashArray = this.getAttributeValue(attributesCopy, 'strokedasharray');
+          newNode.strokeThickness = this.getAttributeValue(attributesCopy, 'strokethickness');
+          newNode.style = this.getAttributeValue(attributesCopy, 'style');
+          newNode.verticalAlignment = this.getAttributeValue(attributesCopy, 'verticalalignment');
+          newNode.visibility = this.getAttributeValue(attributesCopy, 'visibility');
           if (newNode.category === undefined) {
             newNode.category = this.createCategoryRef(xmlNode);
           }
@@ -153,22 +153,22 @@ export class DgmlParser {
         if (xmlNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           const newEdge = new Edge();
-          newEdge.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
-          newEdge.source = attributesCopy['source'];
-          newEdge.target = attributesCopy['target'];
-          newEdge.label = attributesCopy['label'];
-          newEdge.category = attributesCopy['category'];
-          newEdge.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
+          newEdge.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
           newEdge.background = attributesCopy['background'];
-          newEdge.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
+          newEdge.category = attributesCopy['category'];
           newEdge.fontFamily = attributesCopy['fontfamily'];
+          newEdge.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
           newEdge.fontStyle = attributesCopy['fontstyle'];
           newEdge.fontWeight = attributesCopy['fontweight'];
-          newEdge.stroke = attributesCopy['stroke'];
-          newEdge.strokeThickness = attributesCopy['strokethickness'];
-          newEdge.strokeDashArray = attributesCopy['strokedasharray'];
+          newEdge.label = attributesCopy['label'];
           newEdge.seeder = attributesCopy['seeder'] !== undefined ? attributesCopy['seeder'] === 'true' : undefined;
-          newEdge.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
+          newEdge.showPopupsOverNodesAndEdges = showPopupsOverNodesAndEdges;
+          newEdge.source = attributesCopy['source'];
+          newEdge.stroke = attributesCopy['stroke'];
+          newEdge.strokeDashArray = attributesCopy['strokedasharray'];
+          newEdge.strokeThickness = attributesCopy['strokethickness'];
+          newEdge.target = attributesCopy['target'];
+          newEdge.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
           if (newEdge.category === undefined) {
             newEdge.category = this.createCategoryRef(xmlNode);
           }
@@ -197,48 +197,46 @@ export class DgmlParser {
     return categoryRef;
   }
 
-  private convertXmlToCategories(xmlNodes: IXmlNode[]): ICategory[] {
-    const categories: ICategory[] = [];
+  private convertXmlToCategories(xmlNodes: IXmlNode[]): Category[] {
+    const categories: Category[] = [];
     if (xmlNodes.length > 0) {
       xmlNodes.forEach(xmlNode => {
         if (xmlNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
-          const newCategory = {
-            id: attributesCopy['id'],
-            basedOn: attributesCopy['basedon'],
-            canLinkedNodesBeDataDriven: attributesCopy['canlinkednodesbedatadriven'],
-            canBeDataDriven: attributesCopy['canbedatadriven'],
-            defaultAction: attributesCopy['defaultaction'],
-            incomingActionLabel: attributesCopy['incomingactionlabel'],
-            isProviderRoot: attributesCopy['isproviderroot'] !== undefined ? attributesCopy['isproviderroot'].toLowerCase() === 'true' : undefined,
-            isContainment: attributesCopy['iscontainment'] !== undefined ? attributesCopy['iscontainment'].toLowerCase() === 'true' : undefined,
-            isTag: attributesCopy['istag'] !== undefined ? attributesCopy['istag'] === 'true' : undefined,
-            navigationActionLabel: attributesCopy['navigationactionlabel'],
-            outgoingActionLabel: attributesCopy['outgoingactionlabel'],
-            sourceCategory: attributesCopy['sourcecategory'],
-            targetCategory: attributesCopy['targetcategory'],
-            details: attributesCopy['details'],
-            inboundName: attributesCopy['inboundname'],
-            outboundName: attributesCopy['outboundname'],
-            label: attributesCopy['label'],
-            visibility: attributesCopy['visibility'],
-            background: attributesCopy['background'],
-            fontSize: attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined,
-            fontFamily: attributesCopy['fontfamily'],
-            fontStyle: attributesCopy['fontstyle'],
-            fontWeight: attributesCopy['fontweight'],
-            stroke: attributesCopy['stroke'],
-            strokeThickness: attributesCopy['strokethickness'],
-            strokeDashArray: attributesCopy['strokedasharray'],
-            icon: attributesCopy['icon'],
-            shape: attributesCopy['shape'],
-            style: attributesCopy['style'],
-            horizontalAlignment: attributesCopy['horizontalalignment'],
-            verticalAlignment: attributesCopy['verticalalignment'],
-            minWidth: attributesCopy['minwidth'] !== undefined ? +attributesCopy['minwidth'] : undefined,
-            maxWidth: attributesCopy['maxwidth'] !== undefined ? +attributesCopy['maxwidth'] : undefined,
-            nodeRadius: attributesCopy['noderadius'] !== undefined ? +attributesCopy['noderadius'] : undefined,
-          } as ICategory;
+          const newCategory = new Category(attributesCopy['id']);
+          newCategory.background = attributesCopy['background'];
+          newCategory.basedOn = attributesCopy['basedon'];
+          newCategory.canBeDataDriven = attributesCopy['canbedatadriven'];
+          newCategory.canLinkedNodesBeDataDriven = attributesCopy['canlinkednodesbedatadriven'];
+          newCategory.defaultAction = attributesCopy['defaultaction'];
+          newCategory.details = attributesCopy['details'];
+          newCategory.fontFamily = attributesCopy['fontfamily'];
+          newCategory.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
+          newCategory.fontStyle = attributesCopy['fontstyle'];
+          newCategory.fontWeight = attributesCopy['fontweight'];
+          newCategory.horizontalAlignment = attributesCopy['horizontalalignment'];
+          newCategory.icon = attributesCopy['icon'];
+          newCategory.inboundName = attributesCopy['inboundname'];
+          newCategory.incomingActionLabel = attributesCopy['incomingactionlabel'];
+          newCategory.isContainment = attributesCopy['iscontainment'] !== undefined ? attributesCopy['iscontainment'].toLowerCase() === 'true' : undefined;
+          newCategory.isProviderRoot = attributesCopy['isproviderroot'] !== undefined ? attributesCopy['isproviderroot'].toLowerCase() === 'true' : undefined;
+          newCategory.isTag = attributesCopy['istag'] !== undefined ? attributesCopy['istag'] === 'true' : undefined;
+          newCategory.label = attributesCopy['label'];
+          newCategory.maxWidth = attributesCopy['maxwidth'] !== undefined ? +attributesCopy['maxwidth'] : undefined;
+          newCategory.minWidth = attributesCopy['minwidth'] !== undefined ? +attributesCopy['minwidth'] : undefined;
+          newCategory.navigationActionLabel = attributesCopy['navigationactionlabel'];
+          newCategory.nodeRadius = attributesCopy['noderadius'] !== undefined ? +attributesCopy['noderadius'] : undefined;
+          newCategory.outboundName = attributesCopy['outboundname'];
+          newCategory.outgoingActionLabel = attributesCopy['outgoingactionlabel'];
+          newCategory.shape = attributesCopy['shape'];
+          newCategory.sourceCategory = attributesCopy['sourcecategory'];
+          newCategory.stroke = attributesCopy['stroke'];
+          newCategory.strokeDashArray = attributesCopy['strokedasharray'];
+          newCategory.strokeThickness = attributesCopy['strokethickness'];
+          newCategory.style = attributesCopy['style'];
+          newCategory.targetCategory = attributesCopy['targetcategory'];
+          newCategory.verticalAlignment = attributesCopy['verticalalignment'];
+          newCategory.visibility = attributesCopy['visibility'];
           categories.push(newCategory);
         }
       });
@@ -275,13 +273,13 @@ export class DgmlParser {
         if (xmlNode.attributes !== undefined) {
           const attributesCopy: { [key: string]: string } = this.toLowercaseDictionary(xmlNode.attributes);
           const newProperty = {
-            targetType: attributesCopy['targettype'],
-            isEnabled: attributesCopy['isenabled'] !== undefined ? attributesCopy['isenabled'].toLowerCase() === 'true' : undefined,
-            groupLabel: attributesCopy['grouplabel'],
-            valueLabel: attributesCopy['valuelabel'],
-            toolTip: attributesCopy['tooltip'],
             condition: this.createCondition(xmlNode),
-            setters: this.createSetter(xmlNode)
+            groupLabel: attributesCopy['grouplabel'],
+            isEnabled: attributesCopy['isenabled'] !== undefined ? attributesCopy['isenabled'].toLowerCase() === 'true' : undefined,
+            setters: this.createSetter(xmlNode),
+            targetType: attributesCopy['targettype'],
+            toolTip: attributesCopy['tooltip'],
+            valueLabel: attributesCopy['valuelabel']
           } as IStyle;
           styles.push(newProperty);
         }
@@ -351,7 +349,7 @@ export class DgmlParser {
       directedGraph.categories.length > 0) {
       directedGraph.nodes.forEach(node => {
         if (node.category !== undefined) {
-          const category = directedGraph.categories.find(category => category.id.toLowerCase() === node.category?.toLowerCase());
+          const category = directedGraph.categories.find(category => category.id.toLowerCase() === node.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'node'));
           node.setCategoryRef(category);
         }
       });
@@ -365,7 +363,7 @@ export class DgmlParser {
       directedGraph.categories.length > 0) {
       directedGraph.edges.forEach(edge => {
         if (edge.category !== undefined) {
-          const category = directedGraph.categories.find(category => category.id.toLowerCase() === edge.category?.toLowerCase());
+          const category = directedGraph.categories.find(category => category.id.toLowerCase() === edge.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'link'));
           edge.setCategoryRef(category);
         }
       });
@@ -382,7 +380,6 @@ export class DgmlParser {
           style.condition.expression !== undefined &&
           style.setters !== undefined &&
           style.setters.length > 0) {
-          let category: ICategory | undefined;
           let expressionParsedOk: boolean;
           try {
             const parser = new nearley.Parser(nearley.Grammar.fromCompiled(grammar));
@@ -393,11 +390,13 @@ export class DgmlParser {
             if (parserResult.type === 'methodCall') {
               if (parserResult.name.toLowerCase() === 'hascategory') {
                 const categoryName = parserResult.args[0];
-                category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
+                let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType === style.targetType));
                 if (!category) {
-                  category = { id: categoryName };
+                  category = new Category(categoryName);
                   directedGraph.categories.push(category);
                 }
+                category.styleTargetType = style.targetType;
+                category.setStyleRef(style);
                 expressionParsedOk = true;
               } else {
                 expressionParsedOk = false;
@@ -411,60 +410,15 @@ export class DgmlParser {
           } catch {
             expressionParsedOk = false;
           }
-          if (expressionParsedOk) {
-            style.setters.forEach(setter => {
-              if (category && setter.property !== undefined) {
-                if (setter.property.toLowerCase() === 'stroke') {
-                  category.stroke = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'strokethickness') {
-                  category.strokeThickness = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'strokedasharray') {
-                  category.strokeDashArray = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'strokedasharray') {
-                  category.strokeDashArray = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'fontfamily') {
-                  category.fontFamily = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'fontsize') {
-                  category.fontSize = +setter.value;
-                }
-                if (setter.property.toLowerCase() === 'fontstyle') {
-                  category.fontStyle = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'fontweight') {
-                  category.fontWeight = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'background' && category.background === undefined) { // background color on the category overrides background color on the styling
-                  category.background = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'horizontalalignment') {
-                  category.horizontalAlignment = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'verticalalignment') {
-                  category.verticalAlignment = setter.value;
-                }
-                if (setter.property.toLowerCase() === 'minwidth') {
-                  category.minWidth = +setter.value;
-                }
-                if (setter.property.toLowerCase() === 'maxwidth') {
-                  category.maxWidth = +setter.value;
-                }
-              }
-            });
-          }
         }
       });
     }
   }
 
   private enrichNodes(directedGraph: IDirectedGraph): void {
-    const containmentCategories = directedGraph.categories.filter(category => category.isContainment).map(category => category.id);
-    const containmentEdges = directedGraph.edges.filter(edge => edge.category !== undefined && containmentCategories.includes(edge.category));
-    directedGraph.nodes.forEach(node => {
+    const containmentCategories = directedGraph.categories?.filter(category => category.isContainment).map(category => category.id);
+    const containmentEdges = directedGraph.edges?.filter(edge => edge.category !== undefined && containmentCategories?.includes(edge.category));
+    directedGraph.nodes?.forEach(node => {
       if (node.filePath !== undefined) {
         node.filePath = this.replacePaths(node.filePath, directedGraph);
       }
@@ -479,7 +433,7 @@ export class DgmlParser {
           }
         });
       }
-      if (containmentEdges.length > 0) {
+      if (containmentEdges !== undefined && containmentEdges.length > 0) {
         const targetEdge = containmentEdges.find(edge => edge.target === node.id);
         if (targetEdge !== undefined) {
           node.parent = targetEdge.source;
@@ -496,7 +450,7 @@ export class DgmlParser {
     let fixedFilepath = filePath;
     if (fixedFilepath !== undefined && directedGraph.paths !== undefined && directedGraph.paths.length > 0) {
       directedGraph.paths.forEach(path => {
-        fixedFilepath = fixedFilepath?.replace(`\$(${path.id})`, path.value);
+        fixedFilepath = fixedFilepath?.replace(`$(${path.id})`, path.value);
       });
     }
     return fixedFilepath;
@@ -504,7 +458,7 @@ export class DgmlParser {
 
   private enrichEdges(directedGraph: IDirectedGraph): void {
     const nodeLabelDict = Object.assign({}, ...directedGraph.nodes.map((node) => ({ [node.id]: node.label })));
-    directedGraph.edges.forEach(edge => {
+    directedGraph.edges?.forEach(edge => {
       edge.sourceLabel = nodeLabelDict[edge.source];
       edge.targetLabel = nodeLabelDict[edge.target];
     });

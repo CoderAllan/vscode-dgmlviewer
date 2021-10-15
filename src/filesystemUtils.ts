@@ -34,7 +34,7 @@ export class FileSystemUtils {
   }
   private isDirectory(directoryName: any): boolean {
     return fs.lstatSync(directoryName).isDirectory();
-  };
+  }
 
   public listDirectories(
     dir: string,
@@ -51,7 +51,7 @@ export class FileSystemUtils {
           result.push(directory);
           const subDirectories = this.listDirectories(directory, excludeDirectories);
           if (subDirectories.length > 0) {
-            result = result.concat(subDirectories.filter((element, index, array) => { return !(excludeDirectories.includes(path.basename(element))); }));
+            result = result.concat(subDirectories.filter(element => { return !(excludeDirectories.includes(path.basename(element))); }));
           }
         }
       });

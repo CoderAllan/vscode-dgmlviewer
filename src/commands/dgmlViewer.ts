@@ -26,19 +26,23 @@ export class DgmlViewer {
     webview.onDidReceiveMessage(
       message => {
         switch (message.command) {
-          case 'saveAsPng':
+          case 'saveAsPng': {
             this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.png`);
             return;
-          case 'saveAsJpg':
+          }
+          case 'saveAsJpg': {
             this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.jpg`);
             return;
-          case 'saveAsSvg':
+          }
+          case 'saveAsSvg': {
             this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.svg`, true);
             return;
-          case 'saveAsJson':
+          }
+          case 'saveAsJson': {
             this.saveAs(message.text, `${this.config.dgmlViewerSaveAsFilename}.json`, true);
             return;
-          case 'openFile':
+          }
+          case 'openFile': {
             const filename = message.text;
             if (this.fsUtils.fileExists(filename)) {
               var openPath = vscode.Uri.parse("file:///" + filename);
@@ -47,7 +51,8 @@ export class DgmlViewer {
               });
             }
             return;
-          case 'nodeCoordinateUpdate':
+          }
+          case 'nodeCoordinateUpdate': {
             if (this.directedGraph !== undefined) {
               const node = this.directedGraph.nodes.find(node => node.id === message.text.nodeId);
               if (node !== undefined) {
@@ -59,10 +64,12 @@ export class DgmlViewer {
               }
             }
             return;
-          case 'zoom':
+          }
+          case 'zoom': {
             this.zoom = message.text;
             this.generateAndWriteJavascriptFile(() => { });
             return;
+          }
         }
       },
       undefined,
@@ -86,10 +93,10 @@ export class DgmlViewer {
   private generateAndWriteJavascriptFile(callbackFunction: () => void) {
     if (this.directedGraph !== undefined) {
       const nodesJson = this.directedGraph.nodes
-        .map((node, index, arr) => { return node.toJsString(); })
+        .map(node => { return node.toJsString(); })
         .join(',\n');
       const edgesJson = this.directedGraph.edges
-        .map((edge, index, arr) => { return edge.toJsString(); })
+        .map(edge => { return edge.toJsString(); })
         .filter(edge => edge !== '')
         .join(',\n');
       const jsContent = this.generateJavascriptContent(nodesJson, edgesJson);
@@ -108,7 +115,7 @@ export class DgmlViewer {
     let jsContent = template.replace('var nodeElements = [];', `var nodeElements = [${nodesJson}];`);
     jsContent = jsContent.replace('var edgeElements = [];', `var edgeElements = [${edgesJson}];`);
     jsContent = jsContent.replace('\'shape\': \'round-rectangle\',', `'shape': '${this.config.nodeShape}',`);
-    jsContent = jsContent.replace('const edgeArrowType = \'triangle\' // edge arrow to type', `const edgeArrowType = \'${this.config.edgeArrowToType}\' // edge arrow to type}`);
+    jsContent = jsContent.replace('const edgeArrowType = \'triangle\' // edge arrow to type', `const edgeArrowType = '${this.config.edgeArrowToType}' // edge arrow to type}`);
     jsContent = jsContent.replace('ctx.strokeStyle = \'blue\'; // graph selection guideline color', `ctx.strokeStyle = '${this.config.graphSelectionGuidelineColor}'; // graph selection guideline color`);
     jsContent = jsContent.replace('ctx.lineWidth = 1; // graph selection guideline width', `ctx.lineWidth = ${this.config.graphSelectionGuidelineWidth}; // graph selection guideline width`);
     jsContent = jsContent.replace('selectionCanvasContext.strokeStyle = \'red\';', `selectionCanvasContext.strokeStyle = '${this.config.graphSelectionColor}';`);
@@ -172,5 +179,5 @@ export class DgmlViewer {
 
     vscode.window.showInformationMessage(`The file ${filename} has been created in the root of the workspace.`);
   }
-  
+
 }

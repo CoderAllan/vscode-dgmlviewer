@@ -1,4 +1,4 @@
-import { ICategory } from '@model';
+import { Category } from '@model';
 import { BaseElement } from './BaseElement';
 // https://schemas.microsoft.com/vs/2009/dgml/dgml.xsd
 export class Edge extends BaseElement {
@@ -23,8 +23,8 @@ export class Edge extends BaseElement {
   public seeder: boolean | undefined;
   public attractConsumers: boolean | undefined;
 
-  private categoryRef: ICategory | undefined;
-  public setCategoryRef(categoryRef: ICategory | undefined) {
+  private categoryRef: Category | undefined;
+  public setCategoryRef(categoryRef: Category | undefined) {
     this.categoryRef = categoryRef;
   }
 
@@ -40,36 +40,6 @@ export class Edge extends BaseElement {
     else {
       jsStringProperties.push(`label: ''`);
     }
-    if (this.fontWeight !== undefined) {
-      jsStringProperties.push(`fontWeight: '${this.fontWeight}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontWeight !== undefined) {
-      jsStringProperties.push(`fontWeight: '${this.categoryRef.fontWeight}'`);
-    }
-    else {
-      jsStringProperties.push(`fontWeight: 'normal'`);
-    }
-    if (this.fontFamily !== undefined) {
-      jsStringProperties.push(`fontFamily: '${this.fontFamily}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontFamily !== undefined) {
-      jsStringProperties.push(`fontFamily: '${this.categoryRef.fontFamily}'`);
-    }
-    else{
-      jsStringProperties.push(`fontFamily: 'sans-serif'`);
-    }
-    if (this.fontSize !== undefined) {
-      jsStringProperties.push(`fontSize: '${this.fontSize}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontSize !== undefined) {
-      jsStringProperties.push(`fontSize: '${this.categoryRef.fontSize}'`);
-    }
-    else {
-      jsStringProperties.push(`fontSize: '1em'`);
-    }
     if (this.source !== undefined) {
       jsStringProperties.push(`source: '${this.source}'`);
       titleElements.push(`Source: ${this.sourceLabel !== undefined ? this.sourceLabel : this.source}`);
@@ -82,50 +52,20 @@ export class Edge extends BaseElement {
     if (this.categoryRef !== undefined) {
       titleElements.push(`Category: ${this.categoryRef.id}`);
     }
-    if (this.background !== undefined) {
-      jsStringProperties.push(`backgroundColor: '${this.convertColorValue(this.background)}', backgroundOpacity: 1`);
-    }
-    else {
-      if (this.categoryRef !== undefined && this.categoryRef.background !== undefined) {
-        jsStringProperties.push(`backgroundColor: '${this.convertColorValue(this.categoryRef.background)}', backgroundOpacity: 1`);
-      }
-      else {
-        jsStringProperties.push(`backgroundColor: 'rgba(0, 0, 0, 0)', backgroundOpacity: 0`);
-      }
-    }
-    if (this.categoryRef !== undefined && this.categoryRef.stroke !== undefined) {
-      jsStringProperties.push(`color: '${this.convertColorValue(this.categoryRef.stroke)}'`);
-    }
-    else {
-      if (this.stroke !== undefined) {
-        jsStringProperties.push(`color: '${this.convertColorValue(this.stroke)}'`);
-      }
-      else {
-        jsStringProperties.push(`color: 'rgba(63, 124, 227, 1)'`);
-      }
-    }
-    if (this.categoryRef !== undefined && this.categoryRef.strokeDashArray !== undefined) {
-      jsStringProperties.push(`lineStyle: 'dashed'`);
-    }
-    else {
-      jsStringProperties.push(`lineStyle: 'solid'`);
-    }
-    if (this.categoryRef !== undefined && this.categoryRef.strokeThickness !== undefined) {
-      jsStringProperties.push(`width: ${this.categoryRef.strokeThickness}`);
-    }
-    else {
-      if (this.strokeThickness !== undefined) {
-        jsStringProperties.push(`width: ${this.strokeThickness}`);
-      }
-      else {
-        jsStringProperties.push(`width: 1`);
-      }
-    }
+
+    this.pushValueStyling(this.fontWeight, this.categoryRef, this.categoryRef?.fontWeight, 'link', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
+    this.pushValueStyling(this.fontFamily, this.categoryRef, this.categoryRef?.fontFamily, 'link', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
+    this.pushValueStyling(this.fontSize, this.categoryRef, this.categoryRef?.fontSize, 'link', 'fontsize', jsStringProperties, 'fontSize', '1em');
+    this.pushColorStyling(this.background, this.categoryRef, this.categoryRef?.background, 'link', 'background', jsStringProperties, 'backgroundColor', 'rgba(0, 0, 0, 0)', ', backgroundOpacity: 1', ', backgroundOpacity: 0');
+    this.pushColorStyling(this.stroke, this.categoryRef, this.categoryRef?.stroke, 'link', 'stroke', jsStringProperties, 'color', 'rgba(63, 124, 227, 1)');
+    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.categoryRef?.strokeDashArray, 'link', jsStringProperties, 'lineStyle');
+    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.categoryRef?.strokeThickness, 'link', 'strokethickness', jsStringProperties, 'width', '1');
+
     if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
       let title = titleElements.join('<br>\\n').replace("'", "\\'");
       jsStringProperties.push(`title: '${title}'`);
     }
-    if (this.categoryRef !== undefined && this.categoryRef .isContainment) {
+    if (this.categoryRef !== undefined && this.categoryRef.isContainment) {
       return ''; // if the edge has a containment category then no edge element should be created
     }
     return `{ data: {${jsStringProperties.join(', ')}}}`;

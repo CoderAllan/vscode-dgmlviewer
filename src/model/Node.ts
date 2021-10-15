@@ -1,4 +1,4 @@
-import { ICategory, IProperty } from "@model";
+import { Category, IProperty } from "@model";
 import path = require("path");
 import { Config, FileSystemUtils } from "@src";
 import { BaseElement } from "./BaseElement";
@@ -43,8 +43,8 @@ export class Node extends BaseElement {
   public boundsWidth: number | undefined;
   public boundsHeight: number | undefined;
 
-  private categoryRef: ICategory | undefined;
-  public setCategoryRef(categoryRef: ICategory | undefined) {
+  private categoryRef: Category | undefined;
+  public setCategoryRef(categoryRef: Category | undefined) {
     this.categoryRef = categoryRef;
   }
 
@@ -64,98 +64,25 @@ export class Node extends BaseElement {
     if (this.id !== undefined) { jsStringProperties.push(`id: '${this.id}'`); }
     let label = this.convertNewlines(this.label);
     titleElements.push(`Label: ${this.removeNewLines(label)}`);
-    const description = this.convertNewlines(this.description);
-    if (this.description !== undefined) {
-      titleElements.push(`Description: ${this.removeNewLines(description)}`);
-    }
-    if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
-    if (this.background === undefined &&
-      this.categoryRef !== undefined &&
-      this.categoryRef.background !== undefined) {
-      jsStringProperties.push(`background: '${this.convertColorValue(this.categoryRef.background)}'`);
-    }
-    else {
-      if (this.background !== undefined) {
-        jsStringProperties.push(`background: "${this.convertColorValue(this.background)}"`);
-      }
-      else {
-        jsStringProperties.push(`background: '${this.convertColorValue(this.config.defaultNodeBackgroundColor)}'`);
-      }
-    }
-    if (this.stroke === undefined &&
-      this.categoryRef !== undefined &&
-      this.categoryRef.stroke !== undefined) {
-      jsStringProperties.push(`borderColor: '${this.convertColorValue(this.categoryRef.stroke)}'`);
-    }
-    else {
-      if (this.stroke !== undefined) {
-        jsStringProperties.push(`borderColor: '${this.stroke}'`);
-      }
-      else {
-        jsStringProperties.push(`borderColor: 'rgba(75, 133, 227, 1)'`);
-      }
-    }
-    if (this.strokeThickness === undefined &&
-      this.categoryRef !== undefined &&
-      this.categoryRef.strokeThickness !== undefined) {
-      jsStringProperties.push(`borderWidth: ${this.categoryRef.strokeThickness}`);
-    }
-    else {
-      if (this.strokeThickness !== undefined) {
-        jsStringProperties.push(`borderWidth: ${this.strokeThickness}`);
-      }
-      else {
-        jsStringProperties.push(`borderWidth: 1`);
-      }
-    }
-    if (this.strokeDashArray === undefined &&
-      this.categoryRef !== undefined &&
-      this.categoryRef.strokeDashArray !== undefined) {
-      jsStringProperties.push(`borderStyle: 'dashed'`);
-    }
-    else {
-      if (this.strokeDashArray !== undefined) {
-        jsStringProperties.push(`borderStyle: 'dashed'`);
-      }
-      else {
-        jsStringProperties.push(`borderStyle: 'solid'`);
-      }
-    }
-    if (this.fontWeight !== undefined) {
-      jsStringProperties.push(`fontWeight: '${this.fontWeight}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontWeight !== undefined) {
-      jsStringProperties.push(`fontWeight: '${this.categoryRef.fontWeight}'`);
-    }
-    else {
-      jsStringProperties.push(`fontWeight: 'normal'`);
-    }
-    if (this.fontFamily !== undefined) {
-      jsStringProperties.push(`fontFamily: '${this.fontFamily}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontFamily !== undefined) {
-      jsStringProperties.push(`fontFamily: '${this.categoryRef.fontFamily}'`);
-    }
-    else{
-      jsStringProperties.push(`fontFamily: 'sans-serif'`);
-    }
-    if (this.fontSize !== undefined) {
-      jsStringProperties.push(`fontSize: '${this.fontSize}'`);
-    }
-    else if (this.categoryRef !== undefined &&
-      this.categoryRef.fontSize !== undefined) {
-      jsStringProperties.push(`fontSize: '${this.categoryRef.fontSize}'`);
-    }
-    else {
-      jsStringProperties.push(`fontSize: '1em'`);
-    }
     if (label !== '') {
       jsStringProperties.push(`label: '${label}'`);
     } else {
       jsStringProperties.push(`label: '${this.id}'`);
     }
+    const description = this.convertNewlines(this.description);
+    if (this.description !== undefined) {
+      titleElements.push(`Description: ${this.removeNewLines(description)}`);
+    }
+    if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
+    
+    this.pushColorStyling(this.background, this.categoryRef, this.categoryRef?.background, 'node', 'background', jsStringProperties, 'background', this.config.defaultNodeBackgroundColor);
+    this.pushColorStyling(this.stroke, this.categoryRef, this.categoryRef?.stroke, 'node', 'stroke', jsStringProperties, 'borderColor', 'rgba(75, 133, 227, 1)');
+    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.categoryRef?.strokeThickness, 'node', 'strokethickness', jsStringProperties, 'borderWidth', '1');
+    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.categoryRef?.strokeDashArray, 'node', jsStringProperties, 'borderStyle');
+    this.pushValueStyling(this.fontWeight, this.categoryRef, this.categoryRef?.fontWeight, 'node', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
+    this.pushValueStyling(this.fontFamily, this.categoryRef, this.categoryRef?.fontFamily, 'node', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
+    this.pushValueStyling(this.fontSize, this.categoryRef, this.categoryRef?.fontSize, 'node', 'fontsize', jsStringProperties, 'fontSize', '1em');
+    
     let position = '';
     if (this.boundsX !== undefined && this.boundsY !== undefined) {
       position = `, position: { x: ${Math.round(this.boundsX)}, y: ${Math.round(this.boundsY)}}`;

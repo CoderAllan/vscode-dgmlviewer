@@ -1,4 +1,4 @@
-export * from './ICategory';
+export * from './Category';
 export * from './ICondition';
 export * from './IDirectedGraph';
 export * from './Edge';
