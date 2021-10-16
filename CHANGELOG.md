@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.1
+
+- Bugfix: When no bounds are specified for any node it is now possible to change layout correctly
+
 ## Version 2.2.0
 
 - If no nodes has a position/bounds defined then the layout of the graph is changed to 'cose'
@@ -10,7 +14,7 @@
 ## Version 2.1.0
 
 - It is now possible to save the graph as Png, Jpg, Svg and as Json.
-- Added Refresh button to re-layout the graph when the chosen layout is either Cose or Rendom.
+- Added Refresh button to re-layout the graph when the chosen layout is either Cose or Random.
 
 ## Version 2.0.0
 
