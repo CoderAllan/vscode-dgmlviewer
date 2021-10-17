@@ -49,8 +49,8 @@ export class Edge extends BaseElement {
       titleElements.push(`Target: ${this.targetLabel !== undefined ? this.targetLabel : this.target}`);
     }
     // if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
-    if (this.categoryRef !== undefined) {
-      titleElements.push(`Category: ${this.categoryRef.id}`);
+    if (this.categoryRef !== undefined && this.categoryRef?.label !== undefined) {
+      titleElements.push(`Category: ${this.categoryRef?.label}`);
     }
 
     this.pushValueStyling(this.fontWeight, this.categoryRef, this.categoryRef?.fontWeight, 'link', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
