@@ -40,8 +40,7 @@ export class Category {
   public maxWidth?: number | undefined;
   public nodeRadius?: number | undefined;
   
-  public styleRef: IStyle | undefined;
-  public setStyleRef(styleRef: IStyle | undefined) {
-    this.styleRef = styleRef;
-  }
+  public nodeStyleRef: IStyle | undefined;
+  public linkStyleRef: IStyle | undefined;
+  
 }

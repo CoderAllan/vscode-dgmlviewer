@@ -154,6 +154,9 @@ export class DgmlParser {
           newEdge.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
           newEdge.background = attributesCopy['background'];
           newEdge.category = attributesCopy['category'];
+          if (newEdge.category === undefined) {
+            newEdge.category = this.createCategoryRef(xmlNode);
+          }
           newEdge.fontFamily = attributesCopy['fontfamily'];
           newEdge.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
           newEdge.fontStyle = attributesCopy['fontstyle'];
@@ -167,9 +170,6 @@ export class DgmlParser {
           newEdge.strokeThickness = attributesCopy['strokethickness'];
           newEdge.target = attributesCopy['target'];
           newEdge.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
-          if (newEdge.category === undefined) {
-            newEdge.category = this.createCategoryRef(xmlNode);
-          }
           const mutualEdges = edges.filter(l => l.target === newEdge.source && l.source === newEdge.target);
           if (mutualEdges.length > 0) {
             newEdge.mutualEdgeCount += 1;
@@ -373,7 +373,7 @@ export class DgmlParser {
       directedGraph.categories.length > 0 &&
       directedGraph.styles !== undefined &&
       directedGraph.styles.length > 0) {
-      directedGraph.styles.forEach(style => {
+        directedGraph.styles.forEach(style => {
         if (style.condition !== undefined &&
           style.condition.expression !== undefined &&
           style.setters !== undefined &&
@@ -382,13 +382,18 @@ export class DgmlParser {
           const match = regex.exec(style.condition.expression);
           if (match) {
             const categoryName = match[1];
-            let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType === style.targetType));
+            let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
             if (!category) {
               category = new Category(categoryName);
               directedGraph.categories.push(category);
             }
             category.styleTargetType = style.targetType;
-            category.setStyleRef(style);
+            if (style.targetType.toLowerCase() === 'node') {
+              category.nodeStyleRef = style;
+            }
+            else {
+              category.linkStyleRef = style;
+            }
           }
         }
       });
