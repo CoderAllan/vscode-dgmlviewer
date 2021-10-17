@@ -1,5 +1,12 @@
 # Change Log
 
+## Version 2.2.2
+
+- Bugfix: Style is now set correctly depending on style targettype
+- Bugfix: Category label is now shown correctly when hovering above an edge in the graph
+- Bugfix: Fixed bug in package.py
+- Removed redundant logging.
+
 ## Version 2.2.1
 
 - Bugfix: When no bounds are specified for any node it is now possible to change layout correctly
