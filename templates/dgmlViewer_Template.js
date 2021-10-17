@@ -342,7 +342,6 @@
     });
 
     layoutDiv.style['display'] = showLayoutOptionsCheckbox.checked ? 'block' : 'none';
-    console.log(`layoutSelect.value: ${layoutSelect.value}`);
     if (layoutSelect.value && layoutSelect.value === 'preset') {
       let hasPositions = false;
       nodeElements.forEach(node => {
