@@ -21,6 +21,7 @@ export class BaseElement {
   protected pushValueStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     setterProperty: string,
@@ -33,6 +34,14 @@ export class BaseElement {
     else {
       if (categoryRef !== undefined) {
         let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
+        }
         if (styleRef !== undefined) {
           const styleValue = styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
           if (styleValue !== undefined) {
@@ -61,6 +70,7 @@ export class BaseElement {
   protected pushColorStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     setterProperty: string,
@@ -75,6 +85,14 @@ export class BaseElement {
     else {
       if (categoryRef !== undefined) {
         let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
+        }
         if (styleRef !== undefined) {
           const styleColor = styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
           if (styleColor !== undefined) {
@@ -103,6 +121,7 @@ export class BaseElement {
   protected pushDashArrayStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     jsStringProperties: string[],
@@ -113,6 +132,14 @@ export class BaseElement {
     else {
       if (categoryRef !== undefined) {
         let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
+        }
         if (styleRef !== undefined) {
           const dashed = styleRef.setters.find(setter => setter.property.toLowerCase() === 'strokedasharray');
           if (dashed !== undefined) {

@@ -348,7 +348,7 @@ export class DgmlParser {
       directedGraph.nodes.forEach(node => {
         if (node.category !== undefined) {
           const category = directedGraph.categories.find(category => category.id.toLowerCase() === node.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'node'));
-          node.setCategoryRef(category);
+          node.categoryRef = category;
         }
       });
     }
@@ -362,7 +362,7 @@ export class DgmlParser {
       directedGraph.edges.forEach(edge => {
         if (edge.category !== undefined) {
           const category = directedGraph.categories.find(category => category.id.toLowerCase() === edge.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'link'));
-          edge.setCategoryRef(category);
+          edge.categoryRef = category;
         }
       });
     }
@@ -428,6 +428,10 @@ export class DgmlParser {
           }
         }
       }
+      if (node.categoryRef !== undefined && node.categoryRef.basedOn !== undefined) {
+        const basedOnCategory = directedGraph.categories.find(category => category.id === node.categoryRef?.basedOn);
+        node.basedOnCategoryRef = basedOnCategory;
+      }
     });
   }
 
@@ -446,6 +450,10 @@ export class DgmlParser {
     directedGraph.edges?.forEach(edge => {
       edge.sourceLabel = nodeLabelDict[edge.source];
       edge.targetLabel = nodeLabelDict[edge.target];
+      if (edge.categoryRef !== undefined && edge.categoryRef.basedOn !== undefined) {
+        const basedOnCategory = directedGraph.categories.find(category => category.id === edge.categoryRef?.basedOn);
+        edge.basedOnCategoryRef = basedOnCategory;
+      }
     });
   }
 }
