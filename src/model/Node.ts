@@ -43,10 +43,8 @@ export class Node extends BaseElement {
   public boundsWidth: number | undefined;
   public boundsHeight: number | undefined;
 
-  private categoryRef: Category | undefined;
-  public setCategoryRef(categoryRef: Category | undefined) {
-    this.categoryRef = categoryRef;
-  }
+  public categoryRef: Category | undefined;
+  public basedOnCategoryRef: Category | undefined;
 
   public customProperties: IProperty[] = [];
   public showPopupsOverNodesAndEdges: boolean = true;
@@ -75,13 +73,13 @@ export class Node extends BaseElement {
     }
     if (this.categoryRef !== undefined) { titleElements.push(`Category: ${this.categoryRef.id}`); }
     
-    this.pushColorStyling(this.background, this.categoryRef, this.categoryRef?.background, 'node', 'background', jsStringProperties, 'background', this.config.defaultNodeBackgroundColor);
-    this.pushColorStyling(this.stroke, this.categoryRef, this.categoryRef?.stroke, 'node', 'stroke', jsStringProperties, 'borderColor', 'rgba(75, 133, 227, 1)');
-    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.categoryRef?.strokeThickness, 'node', 'strokethickness', jsStringProperties, 'borderWidth', '1');
-    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.categoryRef?.strokeDashArray, 'node', jsStringProperties, 'borderStyle');
-    this.pushValueStyling(this.fontWeight, this.categoryRef, this.categoryRef?.fontWeight, 'node', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
-    this.pushValueStyling(this.fontFamily, this.categoryRef, this.categoryRef?.fontFamily, 'node', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
-    this.pushValueStyling(this.fontSize, this.categoryRef, this.categoryRef?.fontSize, 'node', 'fontsize', jsStringProperties, 'fontSize', '1em');
+    this.pushColorStyling(this.background, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.background, 'node', 'background', jsStringProperties, 'background', this.config.defaultNodeBackgroundColor);
+    this.pushColorStyling(this.stroke, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.stroke, 'node', 'stroke', jsStringProperties, 'borderColor', 'rgba(75, 133, 227, 1)');
+    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.strokeThickness, 'node', 'strokethickness', jsStringProperties, 'borderWidth', '1');
+    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.strokeDashArray, 'node', jsStringProperties, 'borderStyle');
+    this.pushValueStyling(this.fontWeight, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontWeight, 'node', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
+    this.pushValueStyling(this.fontFamily, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontFamily, 'node', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
+    this.pushValueStyling(this.fontSize, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontSize, 'node', 'fontsize', jsStringProperties, 'fontSize', '1em');
     
     let position = '';
     if (this.boundsX !== undefined && this.boundsY !== undefined) {

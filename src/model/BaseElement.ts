@@ -21,6 +21,7 @@ export class BaseElement {
   protected pushValueStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     setterProperty: string,
@@ -31,22 +32,33 @@ export class BaseElement {
       jsStringProperties.push(`${jsProperty}: '${propertyValue}'`);
     }
     else {
-      if (categoryRef !== undefined &&
-        categoryRef?.styleRef !== undefined &&
-        categoryRef?.styleRef.targetType !== undefined &&
-        categoryRef?.styleRef.targetType.toLowerCase() === targetType) {
-        const styleValue = categoryRef?.styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
-        if (styleValue !== undefined) {
-          jsStringProperties.push(`${jsProperty}: '${styleValue.value}'`);
+      if (categoryRef !== undefined) {
+        let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
         }
-        else {
-          if (categoryRef !== undefined &&
-            categoryProperty !== undefined) {
-            jsStringProperties.push(`${jsProperty}: '${categoryProperty}'`);
+        if (styleRef !== undefined) {
+          const styleValue = styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
+          if (styleValue !== undefined) {
+            jsStringProperties.push(`${jsProperty}: '${styleValue.value}'`);
           }
           else {
-            jsStringProperties.push(`${jsProperty}: '${defaultValue}'`);
+            if (categoryRef !== undefined &&
+              categoryProperty !== undefined) {
+              jsStringProperties.push(`${jsProperty}: '${categoryProperty}'`);
+            }
+            else {
+              jsStringProperties.push(`${jsProperty}: '${defaultValue}'`);
+            }
           }
+        }
+        else {
+          jsStringProperties.push(`${jsProperty}: '${defaultValue}'`);
         }
       }
       else {
@@ -58,6 +70,7 @@ export class BaseElement {
   protected pushColorStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     setterProperty: string,
@@ -70,22 +83,33 @@ export class BaseElement {
       jsStringProperties.push(`${jsProperty}: '${propertyValue}'`);
     }
     else {
-      if (categoryRef !== undefined &&
-        categoryRef?.styleRef !== undefined &&
-        categoryRef?.styleRef.targetType !== undefined &&
-        categoryRef?.styleRef.targetType.toLowerCase() === targetType) {
-        const styleColor = categoryRef?.styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
-        if (styleColor !== undefined) {
-          jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(styleColor.value)}'${valuePostFix}`);
+      if (categoryRef !== undefined) {
+        let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
         }
-        else {
-          if (categoryRef !== undefined &&
-            categoryProperty !== undefined) {
-            jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(categoryProperty as string)}'${valuePostFix}`);
+        if (styleRef !== undefined) {
+          const styleColor = styleRef.setters.find(setter => setter.property.toLowerCase() === setterProperty);
+          if (styleColor !== undefined) {
+            jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(styleColor.value)}'${valuePostFix}`);
           }
           else {
-            jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(defaultValue)}'${defaultValuePostFix}`);
+            if (categoryRef !== undefined &&
+              categoryProperty !== undefined) {
+              jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(categoryProperty as string)}'${valuePostFix}`);
+            }
+            else {
+              jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(defaultValue)}'${defaultValuePostFix}`);
+            }
           }
+        }
+        else {
+          jsStringProperties.push(`${jsProperty}: '${this.convertColorValue(defaultValue)}'${defaultValuePostFix}`);
         }
       }
       else {
@@ -97,6 +121,7 @@ export class BaseElement {
   protected pushDashArrayStyling(
     propertyValue: string | number | undefined,
     categoryRef: Category | undefined,
+    basedOnCategoryRef : Category | undefined,
     categoryProperty: string | number | undefined,
     targetType: string,
     jsStringProperties: string[],
@@ -105,22 +130,33 @@ export class BaseElement {
       jsStringProperties.push(`${jsProperty}: 'dashed'`);
     }
     else {
-      if (categoryRef !== undefined &&
-        categoryRef?.styleRef !== undefined &&
-        categoryRef?.styleRef.targetType !== undefined &&
-        categoryRef?.styleRef.targetType.toLowerCase() === targetType) {
-        const dashed = categoryRef?.styleRef.setters.find(setter => setter.property.toLowerCase() === 'strokedasharray');
-        if (dashed !== undefined) {
-          jsStringProperties.push(`${jsProperty}: 'dashed'`);
+      if (categoryRef !== undefined) {
+        let styleRef = targetType === 'node' ? categoryRef?.nodeStyleRef : categoryRef?.linkStyleRef;
+        if (basedOnCategoryRef !== undefined)  {
+          if ( targetType === 'node' && basedOnCategoryRef.nodeStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.nodeStyleRef;
+          } 
+          else if ( targetType === 'link' && basedOnCategoryRef.linkStyleRef !== undefined) {
+            styleRef = basedOnCategoryRef.linkStyleRef;
+          }
         }
-        else {
-          if (categoryRef !== undefined &&
-            categoryProperty !== undefined) {
+        if (styleRef !== undefined) {
+          const dashed = styleRef.setters.find(setter => setter.property.toLowerCase() === 'strokedasharray');
+          if (dashed !== undefined) {
             jsStringProperties.push(`${jsProperty}: 'dashed'`);
           }
           else {
-            jsStringProperties.push(`${jsProperty}: 'solid'`);
+            if (categoryRef !== undefined &&
+              categoryProperty !== undefined) {
+              jsStringProperties.push(`${jsProperty}: 'dashed'`);
+            }
+            else {
+              jsStringProperties.push(`${jsProperty}: 'solid'`);
+            }
           }
+        }
+        else {
+          jsStringProperties.push(`${jsProperty}: 'solid'`);
         }
       }
       else {

@@ -156,6 +156,9 @@ export class DgmlParser {
           newEdge.attractConsumers = attributesCopy['attractconsumers'] !== undefined ? attributesCopy['attractconsumers'].toLowerCase() === 'true' : undefined;
           newEdge.background = attributesCopy['background'];
           newEdge.category = attributesCopy['category'];
+          if (newEdge.category === undefined) {
+            newEdge.category = this.createCategoryRef(xmlNode);
+          }
           newEdge.fontFamily = attributesCopy['fontfamily'];
           newEdge.fontSize = attributesCopy['fontsize'] !== undefined ? +attributesCopy['fontsize'] : undefined;
           newEdge.fontStyle = attributesCopy['fontstyle'];
@@ -169,9 +172,6 @@ export class DgmlParser {
           newEdge.strokeThickness = attributesCopy['strokethickness'];
           newEdge.target = attributesCopy['target'];
           newEdge.visibility = attributesCopy['visibility'] !== undefined ? attributesCopy['visibility'].toLowerCase() === 'hidden' : false;
-          if (newEdge.category === undefined) {
-            newEdge.category = this.createCategoryRef(xmlNode);
-          }
           const mutualEdges = edges.filter(l => l.target === newEdge.source && l.source === newEdge.target);
           if (mutualEdges.length > 0) {
             newEdge.mutualEdgeCount += 1;
@@ -350,7 +350,7 @@ export class DgmlParser {
       directedGraph.nodes.forEach(node => {
         if (node.category !== undefined) {
           const category = directedGraph.categories.find(category => category.id.toLowerCase() === node.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'node'));
-          node.setCategoryRef(category);
+          node.categoryRef = category;
         }
       });
     }
@@ -364,7 +364,7 @@ export class DgmlParser {
       directedGraph.edges.forEach(edge => {
         if (edge.category !== undefined) {
           const category = directedGraph.categories.find(category => category.id.toLowerCase() === edge.category?.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType.toLowerCase() === 'link'));
-          edge.setCategoryRef(category);
+          edge.categoryRef = category;
         }
       });
     }
@@ -390,13 +390,18 @@ export class DgmlParser {
             if (parserResult.type === 'methodCall') {
               if (parserResult.name.toLowerCase() === 'hascategory') {
                 const categoryName = parserResult.args[0];
-                let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase() && (category.styleTargetType === undefined || category.styleTargetType === style.targetType));
+                let category = directedGraph.categories.find(category => category.id.toLowerCase() === categoryName.toLowerCase());
                 if (!category) {
                   category = new Category(categoryName);
                   directedGraph.categories.push(category);
                 }
                 category.styleTargetType = style.targetType;
-                category.setStyleRef(style);
+                if (style.targetType.toLowerCase() === 'node') {
+                  category.nodeStyleRef = style;
+                }
+                else {
+                  category.linkStyleRef = style;
+                }
                 expressionParsedOk = true;
               } else {
                 expressionParsedOk = false;
@@ -443,6 +448,10 @@ export class DgmlParser {
           }
         }
       }
+      if (node.categoryRef !== undefined && node.categoryRef.basedOn !== undefined) {
+        const basedOnCategory = directedGraph.categories.find(category => category.id === node.categoryRef?.basedOn);
+        node.basedOnCategoryRef = basedOnCategory;
+      }
     });
   }
 
@@ -461,6 +470,10 @@ export class DgmlParser {
     directedGraph.edges?.forEach(edge => {
       edge.sourceLabel = nodeLabelDict[edge.source];
       edge.targetLabel = nodeLabelDict[edge.target];
+      if (edge.categoryRef !== undefined && edge.categoryRef.basedOn !== undefined) {
+        const basedOnCategory = directedGraph.categories.find(category => category.id === edge.categoryRef?.basedOn);
+        edge.basedOnCategoryRef = basedOnCategory;
+      }
     });
   }
 }

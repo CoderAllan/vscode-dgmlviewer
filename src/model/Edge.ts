@@ -23,10 +23,8 @@ export class Edge extends BaseElement {
   public seeder: boolean | undefined;
   public attractConsumers: boolean | undefined;
 
-  private categoryRef: Category | undefined;
-  public setCategoryRef(categoryRef: Category | undefined) {
-    this.categoryRef = categoryRef;
-  }
+  public categoryRef: Category | undefined;
+  public basedOnCategoryRef: Category | undefined;
 
   public showPopupsOverNodesAndEdges: boolean = true;
 
@@ -49,17 +47,17 @@ export class Edge extends BaseElement {
       titleElements.push(`Target: ${this.targetLabel !== undefined ? this.targetLabel : this.target}`);
     }
     // if (this.visibility !== undefined) { jsStringProperties.push(`hidden: ${this.visibility}`); }
-    if (this.categoryRef !== undefined) {
-      titleElements.push(`Category: ${this.categoryRef.id}`);
+    if (this.categoryRef !== undefined && this.categoryRef?.label !== undefined) {
+      titleElements.push(`Category: ${this.categoryRef?.label}`);
     }
 
-    this.pushValueStyling(this.fontWeight, this.categoryRef, this.categoryRef?.fontWeight, 'link', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
-    this.pushValueStyling(this.fontFamily, this.categoryRef, this.categoryRef?.fontFamily, 'link', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
-    this.pushValueStyling(this.fontSize, this.categoryRef, this.categoryRef?.fontSize, 'link', 'fontsize', jsStringProperties, 'fontSize', '1em');
-    this.pushColorStyling(this.background, this.categoryRef, this.categoryRef?.background, 'link', 'background', jsStringProperties, 'backgroundColor', 'rgba(0, 0, 0, 0)', ', backgroundOpacity: 1', ', backgroundOpacity: 0');
-    this.pushColorStyling(this.stroke, this.categoryRef, this.categoryRef?.stroke, 'link', 'stroke', jsStringProperties, 'color', 'rgba(63, 124, 227, 1)');
-    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.categoryRef?.strokeDashArray, 'link', jsStringProperties, 'lineStyle');
-    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.categoryRef?.strokeThickness, 'link', 'strokethickness', jsStringProperties, 'width', '1');
+    this.pushValueStyling(this.fontWeight, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontWeight, 'link', 'fontweight', jsStringProperties, 'fontWeight', 'normal');
+    this.pushValueStyling(this.fontFamily, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontFamily, 'link', 'fontfamily', jsStringProperties, 'fontFamily', 'sans-serif');
+    this.pushValueStyling(this.fontSize, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.fontSize, 'link', 'fontsize', jsStringProperties, 'fontSize', '1em');
+    this.pushColorStyling(this.background, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.background, 'link', 'background', jsStringProperties, 'backgroundColor', 'rgba(0, 0, 0, 0)', ', backgroundOpacity: 1', ', backgroundOpacity: 0');
+    this.pushColorStyling(this.stroke, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.stroke, 'link', 'stroke', jsStringProperties, 'color', 'rgba(63, 124, 227, 1)');
+    this.pushDashArrayStyling(this.strokeDashArray, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.strokeDashArray, 'link', jsStringProperties, 'lineStyle');
+    this.pushValueStyling(this.strokeThickness, this.categoryRef, this.basedOnCategoryRef, this.categoryRef?.strokeThickness, 'link', 'strokethickness', jsStringProperties, 'width', '1');
 
     if (this.showPopupsOverNodesAndEdges && titleElements.length > 0) {
       let title = titleElements.join('<br>\\n').replace("'", "\\'");

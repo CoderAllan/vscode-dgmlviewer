@@ -91,14 +91,17 @@ export class DgmlViewer {
   }
 
   private generateAndWriteJavascriptFile(callbackFunction: () => void) {
-    if (this.directedGraph !== undefined) {
+    if (this.directedGraph !== undefined && this.directedGraph.nodes !== undefined) {
       const nodesJson = this.directedGraph.nodes
         .map(node => { return node.toJsString(); })
         .join(',\n');
-      const edgesJson = this.directedGraph.edges
-        .map(edge => { return edge.toJsString(); })
-        .filter(edge => edge !== '')
-        .join(',\n');
+      let edgesJson: string = '';
+      if (this.directedGraph.edges !== undefined) {
+        edgesJson = this.directedGraph.edges
+          .map(edge => { return edge.toJsString(); })
+          .filter(edge => edge !== '')
+          .join(',\n');
+      }
       const jsContent = this.generateJavascriptContent(nodesJson, edgesJson);
       const outputJsFilename = DgmlViewer._name + '.js';
       try {
