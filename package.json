@@ -144,13 +144,13 @@
     "@types/glob": "^7.1.4",
     "@types/node": "^16.11.1",
     "@types/vscode": "^1.61.0",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.1.0",
+    "@typescript-eslint/parser": "^5.1.0",
     "eslint": "^8.0.1",
     "ts-loader": "^9.2.6",
     "typescript": "^4.4.4",
     "webpack": "^5.58.2",
-    "webpack-cli": "^4.9.0"
+    "webpack-cli": "^4.9.1"
   },
   "dependencies": {
     "js-base64": "^3.7.2",
