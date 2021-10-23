@@ -61,11 +61,12 @@ export class Node extends BaseElement {
     const titleElements: string[] = [];
     if (this.id !== undefined) { jsStringProperties.push(`id: '${this.id}'`); }
     let label = this.convertNewlines(this.label);
-    titleElements.push(`Label: ${this.removeNewLines(label)}`);
-    if (label !== '') {
+    if (label !== '' && label !== undefined) {
       jsStringProperties.push(`label: '${label}'`);
+      titleElements.push(`Label: ${this.removeNewLines(label)}`);
     } else {
       jsStringProperties.push(`label: '${this.id}'`);
+      titleElements.push(`Label: ${this.id}`);
     }
     const description = this.convertNewlines(this.description);
     if (this.description !== undefined) {
