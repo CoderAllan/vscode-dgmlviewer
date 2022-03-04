@@ -143,13 +143,13 @@
   "devDependencies": {
     "@types/glob": "^7.2.0",
     "@types/node": "^17.0.21",
-    "@types/vscode": "^1.64.0",
+    "@types/vscode": "^1.65.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "eslint": "^8.10.0",
     "ts-loader": "^9.2.7",
     "typescript": "^4.6.2",
-    "webpack": "^5.69.1",
+    "webpack": "^5.70.0",
     "webpack-cli": "^4.9.2"
   },
   "dependencies": {
