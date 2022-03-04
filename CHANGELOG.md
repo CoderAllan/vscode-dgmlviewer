@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.3
+
+- Maintenance: Bump packages to latest
+
 ## Version 2.2.2
 
 - Bugfix: Style is now set correctly depending on style targettype
