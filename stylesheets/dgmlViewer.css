@@ -115,3 +115,14 @@ button {
 .imageJson {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAMAAADXqc3KAAAAZlBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwbJTWAAAAIXRSTlMASeOH9+IR7MfCfzQrIh0W+unVj4OAdW1i3NGxnJoNBwV7NTOAAAAAoUlEQVQoz32R1w7DIAxFTQZZjKwm6e79/59seSBuXZQjYRkOwxYUUBkiJ/qG14UBOEOeFmyEYJMQEELMuFYmU7FWSRmvJcxmQ9N1DWgGASzM2Pa2ri1IDz+iMXdQSGjddjGdn1grV+jx4kGV3kX7aLFYhcn7Gwh5EFxVEcYncIuqxD/cq+BYcPNKbovPDO7g/DX+iESXQP2iBF1fOUqyqBDfGmQcl4QGrpgAAAAASUVORK5CYII=);
 }
+
+#ErrorMessage {
+    padding: 0px 10px 25px 10px;
+    width: auto;
+    height: auto;
+    background-color: lightcoral;
+    color: #000;
+    border: 3px solid #fff;
+    border-radius: 10px;
+    font-size: medium;
+}

@@ -13,9 +13,19 @@ export class FileInfo {
   public execute(): void {
     if (vscode.window.activeTextEditor !== undefined) {
       let doc = vscode.window.activeTextEditor.document;
+      let directedGraph: IDirectedGraph | string | undefined;
       if (doc.fileName.toLowerCase().endsWith('.dgml')) {
         const dgmlParser = new DgmlParser();
-        const directedGraph: IDirectedGraph | undefined = dgmlParser.parseDgmlFile(doc.fileName, this.config);
+        try{
+            directedGraph = dgmlParser.parseDgmlFile(doc.fileName, this.config);
+        }catch(ex) {
+            vscode.window.showErrorMessage(`The xml file ${doc.fileName} could not be parsed.\nMake sure the dgml file is a valid xml file.`);
+            return;
+        }
+        if (typeof directedGraph === 'string') {
+            vscode.window.showErrorMessage(directedGraph);
+            return;
+        }
         if (directedGraph !== undefined) {
           const dgmlViewerOutput = vscode.window.createOutputChannel(this.config.dgmlViewerOutputChannel);
           dgmlViewerOutput.clear();

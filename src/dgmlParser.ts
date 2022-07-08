@@ -1,6 +1,5 @@
 var fs = require('fs');
 var parse = require('xml-parser');
-import * as vscode from 'vscode';
 
 import {
   Category,
@@ -18,12 +17,12 @@ import { Config } from '@src';
 
 export class DgmlParser {
 
-  public parseDgmlFile(filename: string, config: Config): IDirectedGraph | undefined {
-    const xml = fs.readFileSync(filename, 'utf8');
+  public parseDgmlFile(filename: string, config: Config): IDirectedGraph | string {
+    let xml = fs.readFileSync(filename, 'utf8');
+    xml = xml.replace(/[^\x20-\xaf]+/g, '');
     const obj = parse(xml);
     if (obj.root.name.toLowerCase() !== 'directedgraph') {
-      vscode.window.showErrorMessage(`The file is not a Directed Graph Markup Language file: ${filename}. The root element should be <DirectedGraph ...>`);
-      return undefined;
+      return `The file is not a Directed Graph Markup Language file: ${filename}. The root element should be <DirectedGraph ...>`;
     }
     const directedGraph: IDirectedGraph = {} as IDirectedGraph;
     // Create a dictionary with all keys in lowercase, because we don't know the casing of the dgml file
