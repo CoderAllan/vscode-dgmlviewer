@@ -1,5 +1,10 @@
 # Change Log
 
+## Version 2.2.4
+
+- Bugfix: Removing illegal character from the dgml file before parsing it.
+- Showing a graceful error message if the parsing of the dgml file fails.
+
 ## Version 2.2.3
 
 - Maintenance: Bump packages to latest
