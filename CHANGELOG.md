@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.5
+
+- Maintenance: Bump packages to latest
+
 ## Version 2.2.4
 
 - Bugfix: Removing illegal character from the dgml file before parsing it.
