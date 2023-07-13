@@ -4,10 +4,10 @@
   "displayName": "DGMLViewer",
   "description": "DGMLViewer is viewer for dgml (Directed Graph Markup Language) files",
   "icon": "icon.png",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "repository": "https://github.com/CoderAllan/vscode-dgmlviewer",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.80.0"
   },
   "categories": [
     "Other",
