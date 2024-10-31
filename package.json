@@ -142,7 +142,7 @@
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
-    "@types/node": "^22.8.4",
+    "@types/node": "^22.8.5",
     "@types/vscode": "^1.95.0",
     "@typescript-eslint/eslint-plugin": "^8.12.2",
     "@typescript-eslint/parser": "^8.12.2",
