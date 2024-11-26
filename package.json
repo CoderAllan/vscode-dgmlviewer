@@ -142,10 +142,10 @@
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
-    "@types/node": "^22.9.3",
+    "@types/node": "^22.9.4",
     "@types/vscode": "^1.95.0",
-    "@typescript-eslint/eslint-plugin": "^8.15.0",
-    "@typescript-eslint/parser": "^8.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
     "eslint": "^9.15.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
