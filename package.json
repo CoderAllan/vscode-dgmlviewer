@@ -4,10 +4,10 @@
   "displayName": "DGMLViewer",
   "description": "DGMLViewer is viewer for dgml (Directed Graph Markup Language) files",
   "icon": "icon.png",
-  "version": "2.2.6",
+  "version": "2.2.7",
   "repository": "https://github.com/CoderAllan/vscode-dgmlviewer",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.95.0"
   },
   "categories": [
     "Other",
@@ -135,7 +135,6 @@
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "compile": "tsc -p ./",
-    "lint": "eslint src --ext ts",
     "watch": "tsc -p ./ && tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "test": "node ./out/test/runTest.js"
@@ -144,9 +143,6 @@
     "@types/glob": "^8.1.0",
     "@types/node": "^22.10.0",
     "@types/vscode": "^1.95.0",
-    "@typescript-eslint/eslint-plugin": "^8.16.0",
-    "@typescript-eslint/parser": "^8.16.0",
-    "eslint": "^9.15.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.7.2",
     "webpack": "^5.96.1",

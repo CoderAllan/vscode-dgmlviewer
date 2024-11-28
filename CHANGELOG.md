@@ -1,5 +1,9 @@
 # Change Log
 
+## Version 2.2.7
+
+- Maintenance: Bump packages to latest
+
 ## Version 2.2.6
 
 - Maintenance: Bump packages to latest
