@@ -140,8 +140,8 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/glob": "^8.1.0",
-    "@types/node": "^24.0.8",
+    "@types/glob": "^9.0.0",
+    "@types/node": "^24.0.10",
     "@types/vscode": "^1.101.0",
     "ts-loader": "^9.5.2",
     "typescript": "^5.8.3",
