@@ -141,7 +141,7 @@
   },
   "devDependencies": {
     "@types/glob": "^9.0.0",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.10.2",
     "@types/vscode": "^1.106.1",
     "ts-loader": "^9.5.4",
     "typescript": "^5.9.3",
