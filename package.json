@@ -149,7 +149,7 @@
     "webpack-cli": "^7.2.2"
   },
   "dependencies": {
-    "js-base64": "^3.9.2",
+    "js-base64": "^3.9.3",
     "xml-parser": "^1.2.1"
   }
 }
