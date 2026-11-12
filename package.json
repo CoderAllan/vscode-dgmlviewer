@@ -142,7 +142,7 @@
   "devDependencies": {
     "@types/glob": "^9.0.0",
     "@types/node": "^26.6.6",
-    "@types/vscode": "^1.145.0",
+    "@types/vscode": "^1.146.0",
     "ts-loader": "^9.6.2",
     "typescript": "^7.0.2",
     "webpack": "^5.112.2",
